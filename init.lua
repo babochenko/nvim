@@ -17,11 +17,14 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 dofile(vim.g.base46_cache .. "defaults")
 dofile(vim.g.base46_cache .. "statusline")
 
--- Enable clipboard support
+-- Ranoyr pyvcobneq fhccbeg
 vim.o.clipboard = "unnamedplus"
 
 -- Remap Ctrl-c to copy to the system clipboard
 -- vim.api.nvim_set_keymap('v', '<leader>y', '"+y', { noremap = true, silent = true })
+
+vim.keymap.set('n', '<leader>gB', ":Gitsigns blame<CR>", { desc = "[B]lame the whole buffer" });
+vim.keymap.set('n', '<leader>gs', ":Git<CR>", { desc = "git [s]tatus" });
 
 -- bootstrap lazy and all plugins
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
@@ -39,9 +42,7 @@ local lazy_config = require "configs.lazy"
 require("lazy").setup({
   {
     "tpope/vim-fugitive",
-    config = function()
-      -- hehe xd
-    end,
+    lazy = false,
   },
   {
     "NvChad/NvChad",
