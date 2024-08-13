@@ -4,6 +4,15 @@ vim.g.mapleader = " "
 vim.wo.number = true
 vim.wo.relativenumber = true
 
+-- highlight on yank
+vim.api.nvim_create_autocmd('TextYankPost', {
+  desc = 'Highlight yanked text',
+  group = vim.api.nvim_create_augroup('yank-highlight', { clear = true }),
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+})
+
 -- load theme
 dofile(vim.g.base46_cache .. "defaults")
 dofile(vim.g.base46_cache .. "statusline")
@@ -12,7 +21,7 @@ dofile(vim.g.base46_cache .. "statusline")
 vim.o.clipboard = "unnamedplus"
 
 -- Remap Ctrl-c to copy to the system clipboard
-vim.api.nvim_set_keymap('v', '<leader>y>', '"+y', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('v', '<leader>y', '"+y', { noremap = true, silent = true })
 
 -- bootstrap lazy and all plugins
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
@@ -28,6 +37,12 @@ local lazy_config = require "configs.lazy"
 
 -- load plugins
 require("lazy").setup({
+  {
+    "tpope/vim-fugitive",
+    config = function()
+      -- hehe xd
+    end,
+  },
   {
     "NvChad/NvChad",
     lazy = false,
