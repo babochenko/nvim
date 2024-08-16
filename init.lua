@@ -26,6 +26,23 @@ vim.o.clipboard = "unnamedplus"
 vim.keymap.set('n', '<leader>gB', ":Gitsigns blame<CR>", { desc = "[B]lame the whole buffer" });
 vim.keymap.set('n', '<leader>gs', ":Git<CR>", { desc = "git [s]tatus" });
 
+vim.keymap.set('n', '<leader>ca', function()
+  vim.lsp.buf.code_action();
+end, { desc = "LSP [a]pply code action" });
+vim.keymap.set('n', '<leader>cd', function()
+  vim.diagnostic.open_float(nil, { focusable = false })
+end, { noremap = true, desc = "Show [d]iagnostics" })
+
+vim.keymap.set('n', '<leader>tm', function()
+  if vim.o.mouse == 'a' then
+    vim.o.mouse = ''
+    print("Mouse disabled")
+  else
+    vim.o.mouse = 'a'
+    print("Mouse enabled")
+  end
+end, { noremap = true, silent = true , desc = "toggle [m]ouse" })
+
 -- bootstrap lazy and all plugins
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
 
@@ -66,4 +83,5 @@ end)
 local lsp = require('lspconfig')
 lsp.pyright.setup{}
 lsp.tsserver.setup{}
+lsp.clangd.setup{}
 
