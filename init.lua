@@ -23,6 +23,10 @@ vim.o.clipboard = "unnamedplus"
 -- Remap Ctrl-c to copy to the system clipboard
 -- vim.api.nvim_set_keymap('v', '<leader>y', '"+y', { noremap = true, silent = true })
 
+vim.keymap.set('n', 'gd', function() vim.lsp.buf.definition(); end, { desc = "Go to [d]efinition" });
+vim.keymap.set('n', 'gu', function() vim.lsp.buf.references(); end, { desc = "Go to [u]sages" });
+vim.keymap.set('n', 'gr', function() vim.lsp.buf.rename() end, { desc = "[r]ename symbol" });
+
 vim.keymap.set('n', '<leader>gB', ":Gitsigns blame<CR>", { desc = "[B]lame the whole buffer" });
 vim.keymap.set('n', '<leader>gs', ":Git<CR>", { desc = "git [s]tatus" });
 
