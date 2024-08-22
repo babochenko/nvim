@@ -25,6 +25,32 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.bo.commentstring = "-- %s"
     end,
 })
+-- Remap Ctrl-c to copy to the system clipboard
+-- vim.api.nvim_set_keymap('v', '<leader>y', '"+y', { noremap = true, silent = true })
+
+vim.keymap.set('n', 'gd', function() vim.lsp.buf.definition(); end, { desc = "Go to [d]efinition" });
+vim.keymap.set('n', 'gu', function() vim.lsp.buf.references(); end, { desc = "Go to [u]sages" });
+vim.keymap.set('n', 'gr', function() vim.lsp.buf.rename() end, { desc = "[r]ename symbol" });
+
+vim.keymap.set('n', '<leader>gB', ":Gitsigns blame<CR>", { desc = "[B]lame the whole buffer" });
+vim.keymap.set('n', '<leader>gs', ":Git<CR>", { desc = "git [s]tatus" });
+
+vim.keymap.set('n', '<leader>ca', function()
+  vim.lsp.buf.code_action();
+end, { desc = "LSP [a]pply code action" });
+vim.keymap.set('n', '<leader>cd', function()
+  vim.diagnostic.open_float(nil, { focusable = false })
+end, { noremap = true, desc = "Show [d]iagnostics" })
+
+vim.keymap.set('n', '<leader>tm', function()
+  if vim.o.mouse == 'a' then
+    vim.o.mouse = ''
+    print("Mouse disabled")
+  else
+    vim.o.mouse = 'a'
+    print("Mouse enabled")
+  end
+end, { noremap = true, silent = true , desc = "toggle [m]ouse" })
 
 -- bootstrap lazy and all plugins
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
