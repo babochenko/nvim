@@ -17,31 +17,14 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 dofile(vim.g.base46_cache .. "defaults")
 dofile(vim.g.base46_cache .. "statusline")
 
--- Ranoyr pyvcobneq fhccbeg
 vim.o.clipboard = "unnamedplus"
 
--- Remap Ctrl-c to copy to the system clipboard
--- vim.api.nvim_set_keymap('v', '<leader>y', '"+y', { noremap = true, silent = true })
-
-vim.keymap.set('n', '<leader>gB', ":Gitsigns blame<CR>", { desc = "[B]lame the whole buffer" });
-vim.keymap.set('n', '<leader>gs', ":Git<CR>", { desc = "git [s]tatus" });
-
-vim.keymap.set('n', '<leader>ca', function()
-  vim.lsp.buf.code_action();
-end, { desc = "LSP [a]pply code action" });
-vim.keymap.set('n', '<leader>cd', function()
-  vim.diagnostic.open_float(nil, { focusable = false })
-end, { noremap = true, desc = "Show [d]iagnostics" })
-
-vim.keymap.set('n', '<leader>tm', function()
-  if vim.o.mouse == 'a' then
-    vim.o.mouse = ''
-    print("Mouse disabled")
-  else
-    vim.o.mouse = 'a'
-    print("Mouse enabled")
-  end
-end, { noremap = true, silent = true , desc = "toggle [m]ouse" })
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "sql",
+    callback = function()
+        vim.bo.commentstring = "-- %s"
+    end,
+})
 
 -- bootstrap lazy and all plugins
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
@@ -70,6 +53,42 @@ require("lazy").setup({
       require "options"
     end,
   },
+  {
+    "nvim-telescope/telescope.nvim",
+    dependencies = {
+      {
+          "nvim-telescope/telescope-live-grep-args.nvim",
+          version = "^1.0.0",
+      },
+    },
+    config = function()
+      local telescope = require("telescope")
+      telescope.setup({
+        extensions = {
+          live_grep_args = {
+            auto_quoting = false,
+          }
+        }
+      })
+      telescope.load_extension("live_grep_args")
+    end
+  },
+  {
+    'kristijanhusak/vim-dadbod-ui',
+    dependencies = {
+      { 'tpope/vim-dadbod', lazy = true },
+      { 'kristijanhusak/vim-dadbod-completion', ft = { 'sql', 'mysql', 'plsql' }, lazy = true },
+    },
+    cmd = {
+      'DBUI',
+      'DBUIToggle',
+      'DBUIAddConnection',
+      'DBUIFindBuffer',
+    },
+    init = function()
+      vim.g.db_ui_use_nerd_fonts = 1
+    end,
+  },
 
   { import = "plugins" },
 }, lazy_config)
@@ -84,4 +103,30 @@ local lsp = require('lspconfig')
 lsp.pyright.setup{}
 lsp.tsserver.setup{}
 lsp.clangd.setup{}
+
+vim.keymap.set('n', '<leader>gB', ":Gitsigns blame<CR>", { desc = "[B]lame the whole buffer" });
+vim.keymap.set('n', '<leader>gs', ":Git<CR>", { desc = "git [s]tatus" });
+vim.keymap.set('n', '<leader>db', ":DBUI<CR>", { desc = "open data[b]ase ui" });
+
+vim.keymap.set('n', '<leader>fg', function()
+  require("telescope").extensions.live_grep_args.live_grep_args();
+end, { desc = "live [g]rep with args" });
+
+vim.keymap.set('n', '<leader>ca', function()
+  vim.lsp.buf.code_action();
+end, { desc = "LSP [a]pply code action" });
+
+vim.keymap.set('n', '<leader>cd', function()
+  vim.diagnostic.open_float(nil, { focusable = false })
+end, { noremap = true, desc = "Show [d]iagnostics" })
+
+vim.keymap.set('n', '<leader>tm', function()
+  if vim.o.mouse == 'a' then
+    vim.o.mouse = ''
+    print("Mouse disabled")
+  else
+    vim.o.mouse = 'a'
+    print("Mouse enabled")
+  end
+end, { noremap = true, silent = true , desc = "toggle [m]ouse" })
 
