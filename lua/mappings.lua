@@ -17,6 +17,25 @@ do -- LSP
   end, { noremap = true, desc = "Show [d]iagnostics" })
 end
 
+function term(command)
+  vim.cmd('terminal')
+  vim.cmd('startinsert')
+  vim.fn.chansend(vim.b.terminal_job_id, command .. "\n")
+end
+
+function CloseCurrentBuffer()
+  local current_buf = vim.api.nvim_get_current_buf()
+
+  if vim.fn.bufnr('#') ~= -1 then
+    vim.cmd('buffer #')
+  else
+    vim.cmd('enew')
+  end
+
+  vim.cmd('bd! ' .. current_buf)
+end
+
+map('n', '<leader>w',  ':lua CloseCurrentBuffer()<CR>', { noremap = true, silent = true, desc = "close the terminal" });
 map('n', '<leader>gB', ":Gitsigns blame<CR>", { desc = "[B]lame the whole buffer" });
 map('n', '<leader>gs', ":Git<CR>", { desc = "git [s]tatus" });
 map('n', '<leader>db', ":DBUI<CR>", { desc = "open data[b]ase ui" });
@@ -44,7 +63,8 @@ map('n', '<leader>fr', function()
   end
 
   -- Open a terminal and run the command
-  vim.cmd("split | terminal " .. run_command .. " ; read")
+  -- vim.cmd("split | terminal " .. run_command .. " ; read")
+  term(run_command)
 end, { desc = "[r]un this file" });
 
 map('n', '<leader>fg', function()
