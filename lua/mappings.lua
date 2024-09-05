@@ -81,3 +81,13 @@ map('n', '<leader>tm', function()
   end
 end, { noremap = true, silent = true , desc = "toggle [m]ouse" })
 
+map('n', '<leader>rc', function()
+  vim.cmd('g/Connection refused/,+12d')
+  vim.cmd('g/Error occurred while fetching list of Sub/,+54d')
+  vim.cmd('g/Exception during processor/,+73d')
+  vim.cmd('g/heartbeat/d')
+  vim.cmd('g/Job/d')
+  vim.cmd('g/RSocketFactory/d')
+  vim.cmd('g/Thread.java:840/d')
+end, { noremap = true, silent = true , desc = "[r]evolut [c]leanup log file" })
+
