@@ -8,32 +8,33 @@ map('i', 'jk', '<ESC>')
 map('n', 'gd', vim.lsp.buf.definition, { desc = 'goto [d]efinition' });
 map('n', 'gu', vim.lsp.buf.references, { desc = 'goto [u]sages' });
 
+local Dia = vim.diagnostic
 map('n', 'cr', vim.lsp.buf.rename, { desc = '[r]ename symbol' });
-map('n', '<leader>cd', function() vim.diagnostic.open_float(nil, { focusable = false }) end, { desc = 'Show [d]iagnostics' })
-map('n', '<leader>cn', vim.diagnostic.goto_next, { desc = '[n]ext diagnostic' });
-map('n', '<leader>cp', vim.diagnostic.goto_prev, { desc = '[p]rev diagnostic' });
+map('n', '<leader>cd', function() Dia.open_float(nil, { focusable = false }) end, { desc = 'Show [d]iagnostics' })
+map('n', '<leader>cn', Dia.goto_next, { desc = '[n]ext diagnostic' });
+map('n', '<leader>cp', Dia.goto_prev, { desc = '[p]rev diagnostic' });
 
 local GS = require 'gitsigns'
-map('n', '<leader>gB', ':Gitsigns blame<CR>', { desc = 'git [B]lame the whole buffer' });
+map('n', '<leader>gB', GS.blame, { desc = 'git [B]lame the whole buffer' });
 map('n', '<leader>gs', ':Git<CR>', { desc = 'git [s]tatus' });
 map('n', '<leader>db', ':DBUI<CR>', { desc = 'open data[b]ase ui' });
 
+local Runs = {
+  ['lua'] = 'lua',
+  ['py'] = 'python3',
+  ['sh'] = 'bash',
+}
 map('n', '<leader>fr', function()
   local file_path = vim.fn.expand('%:p')
   local file_extension = vim.fn.expand('%:e')
 
-  local cmd
-  if file_extension == 'lua' then
-      cmd = 'lua ' .. file_path
-  elseif file_extension == 'py' then
-      cmd = 'python3 ' .. file_path
-  elseif file_extension == 'sh' then
-      cmd = 'bash ' .. file_path
-  else
+  local cmd = Runs[file_extension]
+  if cmd == nil then
       print('No command defined for this file type')
       return
   end
 
+  cmd = cmd .. ' ' .. file_path
   vim.cmd('terminal')
   vim.cmd('startinsert')
   vim.fn.chansend(vim.b.terminal_job_id, cmd .. '\n')
