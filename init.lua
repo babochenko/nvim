@@ -1,83 +1,26 @@
 vim.g.base46_cache = vim.fn.stdpath "data" .. "/nvchad/base46/"
 vim.g.mapleader = " "
 
-vim.opt.smoothscroll = true
+vim.defer_fn(function()
+  vim.opt.clipboard = "unnamedplus"
+  vim.opt.number = true
+  vim.opt.relativenumber = true
+  vim.opt.smoothscroll = true
+  vim.opt.timeoutlen = 200
+end, 0)
 
-vim.wo.number = true
-vim.wo.relativenumber = true
-
--- highlight on yank
-vim.api.nvim_create_autocmd('TextYankPost', {
-  desc = 'Highlight yanked text',
-  group = vim.api.nvim_create_augroup('yank-highlight', { clear = true }),
-  callback = function()
-    vim.highlight.on_yank()
-  end,
-})
-
--- load theme
-dofile(vim.g.base46_cache .. "defaults")
 dofile(vim.g.base46_cache .. "statusline")
 
-vim.o.clipboard = "unnamedplus"
-
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = "sql",
-    callback = function()
-        vim.bo.commentstring = "-- %s"
-    end,
+vim.api.nvim_create_autocmd('TextYankPost', {
+  callback = function() vim.highlight.on_yank() end,
 })
 
--- bootstrap lazy and all plugins
-local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "sql",
+  callback = function() vim.bo.commentstring = "-- %s" end,
+})
 
-if not vim.loop.fs_stat(lazypath) then
-  local repo = "https://github.com/folke/lazy.nvim.git"
-  vim.fn.system { "git", "clone", "--filter=blob:none", repo, "--branch=stable", lazypath }
-end
-
-vim.opt.rtp:prepend(lazypath)
-
-local lazy_config = require "configs.lazy"
-
--- load plugins
-require("lazy").setup({
-  {
-    "tpope/vim-fugitive",
-    lazy = false,
-  },
-  {
-    "NvChad/NvChad",
-    lazy = false,
-    branch = "v2.5",
-    import = "nvchad.plugins",
-    config = function()
-      require "options"
-    end,
-  },
-  {
-    "nvim-telescope/telescope.nvim"
-  },
-  {
-    'kristijanhusak/vim-dadbod-ui',
-    dependencies = {
-      { 'tpope/vim-dadbod', lazy = true },
-      { 'kristijanhusak/vim-dadbod-completion', ft = { 'sql', 'mysql', 'plsql' }, lazy = true },
-    },
-    cmd = {
-      'DBUI',
-      'DBUIToggle',
-      'DBUIAddConnection',
-      'DBUIFindBuffer',
-    },
-    init = function()
-      vim.g.db_ui_use_nerd_fonts = 1
-    end,
-  },
-
-  { import = "plugins" },
-}, lazy_config)
-
+require "plugins"
 require "nvchad.autocmds"
 
 vim.schedule(function()

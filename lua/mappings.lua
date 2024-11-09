@@ -5,16 +5,15 @@ map("n", ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>")
 
 -- LSP
-map('n', 'gd', function() vim.lsp.buf.definition(); end, { desc = "Go to [d]efinition" });
-map('n', 'gu', function() vim.lsp.buf.references(); end, { desc = "Go to [u]sages" });
+map('n', 'gd', vim.lsp.buf.definition, { desc = "goto [d]efinition" });
+map('n', 'gu', vim.lsp.buf.references, { desc = "goto [u]sages" });
 
-map('n', 'cr', function() vim.lsp.buf.rename() end, { desc = "[r]ename symbol" });
-map('n', '<leader>ca', function() vim.lsp.buf.code_action(); end, { desc = "LSP [a]pply code action" });
+map('n', 'cr', vim.lsp.buf.rename, { desc = "[r]ename symbol" });
 map('n', '<leader>cd', function() vim.diagnostic.open_float(nil, { focusable = false }) end, { desc = "Show [d]iagnostics" })
-map('n', '<leader>cn', function() vim.diagnostic.goto_next(); end, { desc = "LSP [n]ext diagnostic" });
-map('n', '<leader>cp', function() vim.diagnostic.goto_prev(); end, { desc = "LSP [p]rev diagnostic" });
+map('n', '<leader>cn', vim.diagnostic.goto_next, { desc = "[n]ext diagnostic" });
+map('n', '<leader>cp', vim.diagnostic.goto_prev, { desc = "[p]rev diagnostic" });
 
-map('n', '<leader>gB', ":Gitsigns blame<CR>", { desc = "[B]lame the whole buffer" });
+map('n', '<leader>gB', ":Gitsigns blame<CR>", { desc = "git [B]lame the whole buffer" });
 map('n', '<leader>gs', ":Git<CR>", { desc = "git [s]tatus" });
 map('n', '<leader>db', ":DBUI<CR>", { desc = "open data[b]ase ui" });
 
@@ -57,5 +56,5 @@ map('n', '<leader>rc', function()
   vim.cmd('g/Job/d')
   vim.cmd('g/RSocketFactory/d')
   vim.cmd('g/Thread.java:840/d')
-end, { silent = true, desc = "[r]evolut [c]leanup log file" })
+end, { silent = true, desc = "[c]leanup log file" })
 
