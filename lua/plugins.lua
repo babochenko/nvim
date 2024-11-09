@@ -60,6 +60,7 @@ function EnsureLazy()
 end
 
 EnsureLazy().setup({
+  { 'mfussenegger/nvim-jdtls' },
 
   { 'tpope/vim-fugitive', lazy = false, },
   { 'nvim-telescope/telescope.nvim' },
