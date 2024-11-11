@@ -34,7 +34,18 @@ local function go_to_test()
   end
 end
 
--- Map the function to a keybind
+local Java = require('jdtls')
+
+local function run_test()
+  Java.test_nearest_method()
+end
+
+local function run_file()
+  Java.test_class()
+end
+
+map("n", "<leader>rt", run_test, { desc = "Run nearest test" })
+map("n", "<leader>rf", run_file, { desc = "Run test class" })
 map("n", "<leader>ft", go_to_test, { desc = "Go to test file" })
 
 local Dia = vim.diagnostic
