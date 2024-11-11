@@ -8,29 +8,53 @@ map('i', 'jk', '<ESC>')
 map('n', 'gd', vim.lsp.buf.definition, { desc = 'goto [d]efinition' });
 map('n', 'gu', vim.lsp.buf.references, { desc = 'goto [u]sages' });
 
-local function go_to_test()
-  -- Get the current file name (without extension)
-  local current_file = vim.fn.expand("%:t:r") -- Gets "MyFile" or "MyFileTest"
-
-  -- Determine target file based on whether we are in a test or source file
-  local target_file
-  if current_file:match("Test$") then
-    -- If in a test file, go to the source file
-    target_file = current_file:gsub("Test$", "") .. ".java"
-  else
-    -- If in a source file, go to the test file
-    target_file = current_file .. "Test.java"
+local function find_words()
+  local node = require("nvim-tree.api").tree.get_node_under_cursor()
+  if not node or node.type ~= "directory" then
+    require("telescope.builtin").live_grep()
+    return
   end
 
-  -- Search for the target file in the project
-  local result = vim.fn.systemlist("find . -type f -name '" .. target_file .. "'")
+  local dir = vim.fn.fnamemodify(node.absolute_path, ":h")
+  require("telescope.builtin").live_grep({ cwd = dir })
+end
 
-  if #result > 0 then
-    -- Open the target file if found
-    vim.cmd("edit " .. result[1])
+local function find_test()
+  local current_file = vim.fn.expand("%:t:r") -- e.g., "MyFile" or "MyFileTest"
+  local target_files = {}
+
+  if current_file:match("Test$") or current_file:match("Spec$") then
+    -- From a test or spec file to the source file
+    local source_file = current_file:gsub("Test$", ""):gsub("Spec$", "") .. ".java"
+    target_files = vim.fn.systemlist("find . -type f -name '" .. source_file .. "'")
   else
-    -- Notify if the target file was not found
-    vim.notify("File not found: " .. target_file, vim.log.levels.WARN)
+    -- From a source file to the test or spec file
+    local test_file = current_file .. "Test.java"
+    local spec_file = current_file .. "Spec.java"
+
+    -- Search for both potential matches
+    local test_results = vim.fn.systemlist("find . -type f -name '" .. test_file .. "'")
+    local spec_results = vim.fn.systemlist("find . -type f -name '" .. spec_file .. "'")
+    for _, file in ipairs(test_results) do table.insert(target_files, file) end
+    for _, file in ipairs(spec_results) do table.insert(target_files, file) end
+  end
+
+  -- Handle results
+  if #target_files == 0 then
+    vim.notify("No matching files found!", vim.log.levels.WARN)
+  elseif #target_files == 1 then
+    -- Navigate to the only match
+    vim.cmd("edit " .. target_files[1])
+  else
+    -- Multiple matches, prompt user to choose
+    vim.ui.select(target_files, {
+      prompt = "Select a file to open:",
+      format_item = function(item)
+        return vim.fn.fnamemodify(item, ":.")
+      end,
+    }, function(choice)
+      if choice then vim.cmd("edit " .. choice) end
+    end)
   end
 end
 
@@ -44,9 +68,11 @@ local function run_file()
   Java.test_class()
 end
 
-map("n", "<leader>rt", run_test, { desc = "Run nearest test" })
-map("n", "<leader>rf", run_file, { desc = "Run test class" })
-map("n", "<leader>ft", go_to_test, { desc = "Go to test file" })
+map("n", "<leader>rt", run_test, { desc = "run test case" })
+map("n", "<leader>rf", run_file, { desc = "run test file" })
+map("n", "<leader>fw", find_words, { desc = "find words" })
+map("n", "<leader>ft", find_test, { desc = "find test file" })
+map("n", "<leader>fn", ':enew<CR>', { desc = "file new" })
 
 local Dia = vim.diagnostic
 local Tsc = require 'telescope.builtin'
