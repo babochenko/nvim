@@ -11,14 +11,32 @@ end, 0)
 
 dofile(vim.g.base46_cache .. 'statusline')
 
-vim.api.nvim_create_autocmd('TextYankPost', {
-  callback = function() vim.highlight.on_yank() end,
-})
+local function autocmd(name, opts)
+  vim.api.nvim_create_autocmd(name, opts)
+end
 
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'sql',
-  callback = function() vim.bo.commentstring = '-- %s' end,
-})
+local function set_tabstop(size)
+  vim.bo.tabstop = size
+  vim.bo.shiftwidth = size
+  vim.bo.softtabstop = size
+  vim.bo.expandtab = true
+end
+
+autocmd("FileType", { pattern = "java", callback = function()
+  set_tabstop(4)
+end })
+
+autocmd("FileType", { pattern = "*", callback = function()
+  set_tabstop(2)
+end })
+
+autocmd('FileType', { pattern = 'sql', callback = function()
+  vim.bo.commentstring = '-- %s'
+end })
+
+autocmd('TextYankPost', { callback = function()
+  vim.highlight.on_yank()
+end })
 
 require 'plugins'
 require 'nvchad.autocmds'
