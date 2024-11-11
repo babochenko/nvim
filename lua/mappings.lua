@@ -8,11 +8,42 @@ map('i', 'jk', '<ESC>')
 map('n', 'gd', vim.lsp.buf.definition, { desc = 'goto [d]efinition' });
 map('n', 'gu', vim.lsp.buf.references, { desc = 'goto [u]sages' });
 
+local function go_to_test()
+  -- Get the current file name (without extension)
+  local current_file = vim.fn.expand("%:t:r") -- Gets "MyFile" or "MyFileTest"
+
+  -- Determine target file based on whether we are in a test or source file
+  local target_file
+  if current_file:match("Test$") then
+    -- If in a test file, go to the source file
+    target_file = current_file:gsub("Test$", "") .. ".java"
+  else
+    -- If in a source file, go to the test file
+    target_file = current_file .. "Test.java"
+  end
+
+  -- Search for the target file in the project
+  local result = vim.fn.systemlist("find . -type f -name '" .. target_file .. "'")
+
+  if #result > 0 then
+    -- Open the target file if found
+    vim.cmd("edit " .. result[1])
+  else
+    -- Notify if the target file was not found
+    vim.notify("File not found: " .. target_file, vim.log.levels.WARN)
+  end
+end
+
+-- Map the function to a keybind
+map("n", "<leader>ft", go_to_test, { desc = "Go to test file" })
+
 local Dia = vim.diagnostic
+local Tsc = require 'telescope.builtin'
 map('n', 'cr', vim.lsp.buf.rename, { desc = '[r]ename symbol' });
 map('n', '<leader>cd', function() Dia.open_float(nil, { focusable = false }) end, { desc = 'Show [d]iagnostics' })
 map('n', '<leader>cn', Dia.goto_next, { desc = '[n]ext diagnostic' });
 map('n', '<leader>cp', Dia.goto_prev, { desc = '[p]rev diagnostic' });
+map('n', '<leader>fh', function() Tsc.oldfiles { only_cwd = false } end, { desc = 'files [h]istory' })
 
 local GS = require 'gitsigns'
 map('n', '<leader>gB', GS.blame, { desc = 'git [B]lame the whole buffer' });

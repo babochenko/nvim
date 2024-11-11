@@ -97,7 +97,7 @@ jdtls.start_or_attach {
         runtimes = {
           {
             name = "JavaSE-17",
-            path = home .. '/Users/denis.babochenko/.jenv/versions/17.0.6',
+            path = home .. '/.jenv/versions/17.0.6',
           }
         }
       }
