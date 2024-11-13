@@ -22,12 +22,12 @@ local function set_tabstop(size)
   vim.bo.expandtab = true
 end
 
-autocmd("FileType", { pattern = "java", callback = function()
-  set_tabstop(4)
-end })
-
 autocmd("FileType", { pattern = "*", callback = function()
   set_tabstop(2)
+end })
+
+autocmd("FileType", { pattern = "java", callback = function()
+  set_tabstop(4)
 end })
 
 autocmd('FileType', { pattern = 'sql', callback = function()

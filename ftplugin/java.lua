@@ -72,6 +72,17 @@ jdtls.start_or_attach {
         },
       },
       -- Specify any options for organizing imports
+
+      imports = {
+        order = {
+          "com",              -- Com imports
+          "org",              -- Org imports
+          "java",             -- Regular Java imports
+          "#",                -- Static imports (indicated by "#")
+        },
+        staticGroups = true, -- Place static imports last
+      },
+
       sources = {
         organizeImports = {
           starThreshold = 9999;

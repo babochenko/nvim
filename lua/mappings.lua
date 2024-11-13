@@ -77,9 +77,10 @@ map("n", "<leader>fn", ':enew<CR>', { desc = "file new" })
 local Dia = vim.diagnostic
 local Tsc = require 'telescope.builtin'
 map('n', 'cr', vim.lsp.buf.rename, { desc = '[r]ename symbol' });
-map('n', '<leader>cd', function() Dia.open_float(nil, { focusable = false }) end, { desc = 'Show [d]iagnostics' })
-map('n', '<leader>cn', Dia.goto_next, { desc = '[n]ext diagnostic' });
-map('n', '<leader>cp', Dia.goto_prev, { desc = '[p]rev diagnostic' });
+map('n', '<leader>cs', vim.lsp.buf.signature_help, { desc = 'code function [s]ignature' });
+map('n', '<leader>cd', function() Dia.open_float(nil, { focusable = false }) end, { desc = 'code show [d]iagnostics' })
+map('n', '<leader>cn', Dia.goto_next, { desc = 'code [n]ext diagnostic' });
+map('n', '<leader>cp', Dia.goto_prev, { desc = 'code [p]rev diagnostic' });
 map('n', '<leader>fh', function() Tsc.oldfiles { only_cwd = false } end, { desc = 'files [h]istory' })
 
 local GS = require 'gitsigns'
