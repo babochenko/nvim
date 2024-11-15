@@ -20,33 +20,38 @@ local function find_words()
 end
 
 local function find_test()
-  local current_file = vim.fn.expand("%:t:r") -- e.g., "MyFile" or "MyFileTest"
+  local full_path = vim.fn.expand("%:p") -- Full path of the current file
+
+  -- Replace "main" with "test" and "testFunctional"
+  local test_path = full_path:gsub("/main/", "/test/")
+  local test_functional_path = full_path:gsub("/main/", "/testFunctional/")
+
+  -- Extract the base name and test possible file paths
+  local file_name = vim.fn.fnamemodify(full_path, ":t:r") -- Base name without extension
+  local extensions = { ".java", ".groovy" }
   local target_files = {}
 
-  if current_file:match("Test$") or current_file:match("Spec$") then
-    -- From a test or spec file to the source file
-    local source_file = current_file:gsub("Test$", ""):gsub("Spec$", "") .. ".java"
-    target_files = vim.fn.systemlist("find . -type f -name '" .. source_file .. "'")
-  else
-    -- From a source file to the test or spec file
-    local test_file = current_file .. "Test.java"
-    local spec_file = current_file .. "Spec.java"
+  -- Check if files exist in the target paths
+  for _, ext in ipairs(extensions) do
+    local test_file = test_path:gsub("%.java$", ext)
+    local test_functional_file = test_functional_path:gsub("%.java$", ext)
 
-    -- Search for both potential matches
-    local test_results = vim.fn.systemlist("find . -type f -name '" .. test_file .. "'")
-    local spec_results = vim.fn.systemlist("find . -type f -name '" .. spec_file .. "'")
-    for _, file in ipairs(test_results) do table.insert(target_files, file) end
-    for _, file in ipairs(spec_results) do table.insert(target_files, file) end
+    if vim.loop.fs_stat(test_file) then
+      table.insert(target_files, test_file)
+    end
+    if vim.loop.fs_stat(test_functional_file) then
+      table.insert(target_files, test_functional_file)
+    end
   end
 
   -- Handle results
   if #target_files == 0 then
-    vim.notify("No matching files found!", vim.log.levels.WARN)
+    vim.notify("No matching test files found!", vim.log.levels.WARN)
   elseif #target_files == 1 then
-    -- Navigate to the only match
+    -- Open the single match
     vim.cmd("edit " .. target_files[1])
   else
-    -- Multiple matches, prompt user to choose
+    -- Prompt user to choose from multiple matches
     vim.ui.select(target_files, {
       prompt = "Select a file to open:",
       format_item = function(item)

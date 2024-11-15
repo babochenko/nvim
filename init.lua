@@ -41,6 +41,8 @@ end })
 require 'plugins'
 require 'nvchad.autocmds'
 
+-- vim.notify = require 'notify'
+
 vim.schedule(function()
   require 'mappings'
 end)
@@ -62,4 +64,21 @@ lsp.pyright.setup{
 
 -- lsp.tsserver.setup{}
 lsp.clangd.setup{}
+
+lsp.jdtls.setup {
+  settings = {
+    java = {
+      imports = {
+        order = {
+          "com",
+          "org",
+          "javax",
+          "java",             -- Regular imports
+          "#",                -- Static imports first
+        },
+        staticGroups = true,  -- Group static imports together
+      },
+    },
+  },
+}
 
