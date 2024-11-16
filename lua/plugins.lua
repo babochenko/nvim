@@ -113,6 +113,10 @@ EnsureLazy().setup({
   	},
   },
 
+  { 'yacineMTB/dingllm.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+  },
+
   -- These are some examples, uncomment them if you want to see them work!
   -- {
   --   'neovim/nvim-lspconfig',

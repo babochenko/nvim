@@ -79,6 +79,11 @@ map("n", "<leader>fw", find_words, { desc = "find words" })
 map("n", "<leader>ft", find_test, { desc = "find test file" })
 map("n", "<leader>fn", ':enew<CR>', { desc = "file new" })
 
+local LLM = require 'llm'
+
+map({ 'n', 'v' }, '<leader>l', LLM.run_completion, { desc = 'llm completion' })
+map({ 'n', 'v' }, '<leader>k', LLM.run_help, { desc = 'llm help' })
+
 local Dia = vim.diagnostic
 local Tsc = require 'telescope.builtin'
 map('n', 'cr', vim.lsp.buf.rename, { desc = '[r]ename symbol' });
