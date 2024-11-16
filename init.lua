@@ -11,15 +11,15 @@ end, 0)
 
 dofile(vim.g.base46_cache .. 'statusline')
 
-local function autocmd(name, opts)
-  vim.api.nvim_create_autocmd(name, opts)
-end
-
 local function set_tabstop(size)
   vim.bo.tabstop = size
   vim.bo.shiftwidth = size
   vim.bo.softtabstop = size
   vim.bo.expandtab = true
+end
+
+local function autocmd(name, opts)
+  vim.api.nvim_create_autocmd(name, opts)
 end
 
 autocmd("FileType", { pattern = "*", callback = function()
@@ -40,8 +40,6 @@ end })
 
 require 'plugins'
 require 'nvchad.autocmds'
-
--- vim.notify = require 'notify'
 
 vim.schedule(function()
   require 'mappings'
