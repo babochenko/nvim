@@ -7,6 +7,7 @@ local Runs = {
 }
 
 return {
+
   find_words = function()
     local node = require("nvim-tree.api").tree.get_node_under_cursor()
     if not node or node.type ~= "directory" then
@@ -17,7 +18,6 @@ return {
     local dir = vim.fn.fnamemodify(node.absolute_path, ":h")
     require("telescope.builtin").live_grep({ cwd = dir })
   end,
-
 
   find_test = function()
     local full_path = vim.fn.expand("%:p") -- Full path of the current file
@@ -95,6 +95,31 @@ return {
       vim.o.mouse = 'a'
       print('Mouse enabled')
     end
+  end,
+
+  open_system = function()
+    local file_path = vim.fn.expand("%:p") -- Get the full path of the current file
+    if file_path == "" then
+      print("No file is currently open.")
+      return
+    end
+
+    -- Command for macOS, Linux, or Windows
+    local command
+    if vim.fn.has("mac") == 1 then
+      command = "open " .. vim.fn.shellescape(file_path)
+    elseif vim.fn.has("unix") == 1 then
+      command = "xdg-open " .. vim.fn.shellescape(file_path)
+    elseif vim.fn.has("win32") == 1 then
+      command = "start " .. vim.fn.shellescape(file_path)
+    else
+      print("Unsupported system.")
+      return
+    end
+
+    -- Execute the command
+    vim.fn.system(command)
+    print("Opened file in system editor: " .. file_path)
   end,
 
 }

@@ -13,6 +13,7 @@ map('i', 'jk', '<ESC>')
 map('n', 'gd', vim.lsp.buf.definition, { desc = 'goto definition' });
 map('n', 'gu', vim.lsp.buf.references, { desc = 'goto usages' });
 
+map("n", "<leader>fo", M.open_system, { desc = 'open this file in system viewer' })
 map('n', '<leader>fr', M.run_file, { desc = 'run file' });
 map("n", "<leader>rt", M.test_func, { desc = "test this function" })
 map("n", "<leader>rf", M.test_file, { desc = "test this file" })
