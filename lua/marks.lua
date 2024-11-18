@@ -4,6 +4,7 @@ local finders = require('telescope.finders')
 local actions = require('telescope.actions')
 local action_state = require('telescope.actions.state')
 local conf = require('telescope.config').values
+local previewers = require('telescope.previewers')
 
 local marks_file = vim.fn.expand("~/.local/share/nvim/marks.json") -- File to save marks
 local global_marks = {} -- Stores all marks with file, line, and optional name
@@ -108,6 +109,43 @@ local function list_marks()
     })
   end
 
+  -- Create a custom previewer
+  local marks_previewer = previewers.new_buffer_previewer({
+    title = "File Preview",
+    get_buffer_by_name = function(_, entry)
+      return entry.value.file
+    end,
+    define_preview = function(self, entry)
+      -- Read the file content
+      local bufnr = self.state.bufnr
+      
+      -- Set filetype using bo instead of nvim_buf_set_option
+      vim.bo[bufnr].filetype = vim.filetype.match({ filename = entry.value.file }) or ""
+      
+      -- Load the file content
+      local lines = vim.fn.readfile(entry.value.file)
+      vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+      
+      -- Highlight the marked line
+      local line_nr = entry.value.line
+      local ns_id = vim.api.nvim_create_namespace('TelescopeMarkPreview')
+      vim.api.nvim_buf_add_highlight(bufnr, ns_id, "TelescopePreviewLine", line_nr - 1, 0, -1)
+      
+      -- Center the view on the marked line
+      vim.defer_fn(function()
+        self.state.preview_win = vim.fn.bufwinid(bufnr)
+        if self.state.preview_win ~= -1 then
+          local win_height = vim.api.nvim_win_get_height(self.state.preview_win)
+          local scroll_offset = math.floor(win_height / 2)
+          vim.api.nvim_win_set_cursor(self.state.preview_win, {line_nr, 0})
+          vim.api.nvim_win_call(self.state.preview_win, function()
+            vim.cmd('normal! zz')
+          end)
+        end
+      end, 10)
+    end
+  })
+
   pickers.new({}, {
     prompt_title = "Marks",
     finder = finders.new_table {
@@ -120,6 +158,7 @@ local function list_marks()
         }
       end
     },
+    previewer = marks_previewer,
     sorter = conf.generic_sorter({}),
     attach_mappings = function(prompt_bufnr, map)
       actions.select_default:replace(function()
