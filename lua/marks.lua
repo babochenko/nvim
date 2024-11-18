@@ -1,3 +1,5 @@
+-- inspired by https://github.com/chentoast/marks.nvim
+
 local marks_file = vim.fn.stdpath("data") .. "/marks.json" -- File to save marks
 local global_marks = {} -- Stores all marks with file, line, and optional name
 

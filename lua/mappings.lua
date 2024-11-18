@@ -3,7 +3,7 @@ local map = vim.keymap.set
 require 'nvchad.mappings'
 local M = require 'mappingsfunc'
 local DIA = vim.diagnostic
-local TSC = require 'telescope.builtin'
+local TSC = require 'telescopeconf'
 local LLM = require 'llm'
 local GS = require 'gitsigns'
 
@@ -29,8 +29,10 @@ map('n', '<leader>cs', vim.lsp.buf.signature_help, { desc = 'code function signa
 map('n', '<leader>cd', function() DIA.open_float(nil, { focusable = false }) end, { desc = 'code show diagnostics' })
 map('n', '<leader>cn', DIA.goto_next, { desc = 'code next diagnostic' });
 map('n', '<leader>cp', DIA.goto_prev, { desc = 'code prev diagnostic' });
-map('n', '<leader>fh', function() TSC.oldfiles { only_cwd = false } end, { desc = 'files history' })
+map('n', '<leader>fh', TSC.files_history, { desc = 'files history' })
 
+map('n', 'gu', TSC.goto_usages, { desc = 'goto usages' })
+map('n', 'gi', TSC.goto_implementations, { desc = 'goto implementations' })
 map('n', '<leader>gB', GS.blame, { desc = 'git Blame the whole buffer' });
 map('n', '<leader>gs', ':Git<CR>', { desc = 'git status' });
 map('n', '<leader>db', ':DBUI<CR>', { desc = 'open database ui' });
