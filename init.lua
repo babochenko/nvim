@@ -45,6 +45,16 @@ vim.schedule(function()
   require 'mappings'
 end)
 
+vim.lsp.handlers["window/showMessage"] = function(_, result, ctx)
+  local client = vim.lsp.get_client_by_id(ctx.client_id)
+  local message = result.message or ""
+  local trimmed_message = message
+  if #message > 80 then
+    trimmed_message = message:sub(1, 77) .. "..."
+  end
+  vim.notify(client.name .. ": " .. trimmed_message, vim.log.levels.INFO)
+end
+
 local lsp = require 'lspconfig'
 
 -- local venv_path = '/Developer/venv'
@@ -66,6 +76,14 @@ lsp.clangd.setup{}
 lsp.jdtls.setup {
   settings = {
     java = {
+      codeGeneration = {
+        toString = {
+          template = "${object.className} [${member.name()}=${member.value}, ]",
+          useFullyQualifiedNames = false, -- Use short names for fields
+          skipNullValues = false, -- Include null values in the output
+          listArrayContents = true, -- Print array contents if fields are arrays
+        },
+      },
       imports = {
         order = {
           "com",
