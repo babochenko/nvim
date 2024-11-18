@@ -1,17 +1,26 @@
 -- inspired by https://github.com/chentoast/marks.nvim
+local pickers = require('telescope.pickers')
+local finders = require('telescope.finders')
+local actions = require('telescope.actions')
+local action_state = require('telescope.actions.state')
+local conf = require('telescope.config').values
 
-local marks_file = vim.fn.stdpath("data") .. "/marks.json" -- File to save marks
+local marks_file = vim.fn.expand("~/.local/share/nvim/marks.json") -- File to save marks
 local global_marks = {} -- Stores all marks with file, line, and optional name
 
 local function save_marks()
   local json = vim.fn.json_encode(global_marks)
-  local file = io.open(marks_file, "w")
-  if file then
-    file:write(json)
-    file:close()
-    print("Marks saved!")
+  if json and #json > 0 then
+    local file = io.open(marks_file, "w")
+    if file then
+      file:write(json)
+      file:close()
+      print("Marks saved!")
+    else
+      print("Failed to save marks.")
+    end
   else
-    print("Failed to save marks.")
+    print("No marks to save.")
   end
 end
 
@@ -20,21 +29,43 @@ local function load_marks()
   if file then
     local json = file:read("*a")
     file:close()
-    global_marks = vim.fn.json_decode(json) or {}
-    print("Marks loaded!")
+    if json and #json > 0 then
+      global_marks = vim.fn.json_decode(json) or {}
+      print("Marks loaded!")
+    else
+      global_marks = {}
+      print("Marks file is empty.")
+    end
   else
     global_marks = {}
     print("No marks file found.")
   end
 end
 
-local function add_mark()
+load_marks() -- Ensure marks are loaded when the module is required
+
+local function toggle_mark()
   local file = vim.fn.expand("%:p") -- Get full path of the current file
   local line = vim.fn.line(".") -- Get the current line number
-  global_marks[#global_marks + 1] = { file = file, line = line, name = nil }
-  vim.fn.sign_place(0, "MarksGroup", "MarkSign", vim.fn.bufnr("%"), { lnum = line })
+  local mark_exists = false
+
+  for i, mark in ipairs(global_marks) do
+    if mark.file == file and mark.line == line then
+      table.remove(global_marks, i)
+      vim.fn.sign_unplace("MarksGroup", { buffer = vim.fn.bufnr("%"), id = 0 })
+      print("Mark removed from " .. file .. ":" .. line)
+      mark_exists = true
+      break
+    end
+  end
+
+  if not mark_exists then
+    global_marks[#global_marks + 1] = { file = file, line = line, name = nil }
+    vim.fn.sign_place(0, "MarksGroup", "MarkSign", vim.fn.bufnr("%"), { lnum = line })
+    print("Mark added at " .. file .. ":" .. line)
+  end
+
   save_marks() -- Save marks immediately
-  print("Mark added at " .. file .. ":" .. line)
 end
 
 local function name_mark()
@@ -42,10 +73,19 @@ local function name_mark()
   local line = vim.fn.line(".")
   for _, mark in ipairs(global_marks) do
     if mark.file == file and mark.line == line then
-      local name = vim.fn.input("Enter mark name: ")
-      mark.name = name
-      save_marks() -- Save marks immediately
-      print("Mark at " .. file .. ":" .. line .. " named '" .. name .. "'")
+      local current_name = mark.name or ""
+      local prompt = "Enter mark name"
+      if current_name ~= "" then
+        prompt = prompt .. " (current: '" .. current_name .. "')"
+      end
+      local name = vim.fn.input(prompt .. ": ")
+      if name ~= "" then
+        mark.name = name
+        save_marks() -- Save marks immediately
+        print("Mark at " .. file .. ":" .. line .. " named '" .. name .. "'")
+      else
+        print("Mark name not changed.")
+      end
       return
     end
   end
@@ -60,61 +100,62 @@ local function list_marks()
 
   local mark_list = {}
   for _, mark in ipairs(global_marks) do
-    -- Extract the filename from the full path
-    local filename = vim.fn.fnamemodify(mark.file, ":t")
-    local snippet = vim.fn.getbufline(vim.fn.bufnr(mark.file), mark.line)[1] or ""
-    table.insert(mark_list, string.format(
-      "%s:%d: %s [%s]",
-      filename, mark.line, snippet:sub(1, 50), mark.name or "Unnamed"
-    ))
-  end
-
-  print(table.concat(mark_list, "\n"))
-end
-
-local function jump_to_mark()
-  if #global_marks == 0 then
-    print("No marks set!")
-    return
-  end
-
-  local mark_list = {}
-  for _, mark in ipairs(global_marks) do
-    local snippet = vim.fn.getbufline(vim.fn.bufnr(mark.file), mark.line)[1] or ""
-    table.insert(mark_list, { 
-      file = mark.file,
-      line = mark.line,
-      text = string.format("%s:%d: %s [%s]", mark.file, mark.line, snippet:sub(1, 50), mark.name or "Unnamed")
+    local display_name = mark.name or string.format("%s:%d", vim.fn.fnamemodify(mark.file, ":t"), mark.line)
+    table.insert(mark_list, {
+      display = display_name,
+      value = mark,
+      ordinal = display_name,
     })
   end
 
-  vim.ui.select(mark_list, {
-    prompt = "Select a mark to jump to:",
-    format_item = function(item)
-      return item.text
+  pickers.new({}, {
+    prompt_title = "Marks",
+    finder = finders.new_table {
+      results = mark_list,
+      entry_maker = function(entry)
+        return {
+          value = entry.value,
+          display = entry.display,
+          ordinal = entry.ordinal,
+        }
+      end
+    },
+    sorter = conf.generic_sorter({}),
+    attach_mappings = function(prompt_bufnr, map)
+      actions.select_default:replace(function()
+        actions.close(prompt_bufnr)
+        local selection = action_state.get_selected_entry()
+        if selection then
+          vim.cmd("edit " .. selection.value.file)
+          vim.fn.cursor(selection.value.line, 0)
+          print("Jumped to " .. selection.value.file .. ":" .. selection.value.line)
+        end
+      end)
+      return true
     end,
-  }, function(choice)
-    if choice then
-      vim.cmd("edit " .. choice.file) -- Open the file
-      vim.cmd(choice.line) -- Jump to the line
-      print("Jumped to " .. choice.file .. ":" .. choice.line)
-    end
-  end)
+  }):find()
 end
 
 -- display a red "m" where the mark is
 vim.fn.sign_define("MarkSign", { text = "m", texthl = "Error", numhl = "" })
+local function place_marks()
+  for _, mark in ipairs(global_marks) do
+    if vim.fn.bufexists(mark.file) == 1 then
+      vim.fn.sign_place(0, '', 'MarkSign', mark.file, { lnum = mark.line, priority = 10 })
+    else
+      -- print("Warning: Buffer does not exist for file " .. mark.file)
+    end
+  end
+end
 
-vim.api.nvim_create_autocmd("VimEnter", {
-  callback = load_marks,
-})
+return {
+  save_marks = save_marks,
+  load_marks = load_marks,
+  toggle_mark = toggle_mark,
+  name_mark = name_mark,
+  list_marks = list_marks,
+  on_buf_read = place_marks,
 
-vim.api.nvim_create_autocmd("VimLeavePre", {
-  callback = save_marks,
-})
-
-vim.api.nvim_set_keymap("n", "<leader>m", ":lua add_mark()<CR>", { noremap = true, silent = true }) -- Add a mark
-vim.api.nvim_set_keymap("n", "<leader>n", ":lua name_mark()<CR>", { noremap = true, silent = true }) -- Name the mark
-vim.api.nvim_set_keymap("n", "<leader>l", ":lua list_marks()<CR>", { noremap = true, silent = true }) -- List marks
-vim.api.nvim_set_keymap("n", "<leader>j", ":lua jump_to_mark()<CR>", { noremap = true, silent = true }) -- Jump to a mark
+  global_marks = global_marks,
+}
 

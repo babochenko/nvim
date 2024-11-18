@@ -43,6 +43,11 @@ require 'nvchad.autocmds'
 
 vim.schedule(function()
   require 'mappings'
+
+  local MARKS = require 'marks'
+  MARKS.load_marks()
+  autocmd("VimLeavePre", { callback = MARKS.save_marks, })
+  autocmd("BufReadPost", { callback = MARKS.on_buf_read, })
 end)
 
 vim.lsp.handlers["window/showMessage"] = function(_, result, ctx)
