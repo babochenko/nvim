@@ -99,14 +99,22 @@ local function list_marks()
     return
   end
 
+  local project_root = vim.fn.getcwd() -- Get the current working directory (project root)
   local mark_list = {}
   for _, mark in ipairs(global_marks) do
-    local display_name = mark.name or string.format("%s:%d", vim.fn.fnamemodify(mark.file, ":t"), mark.line)
-    table.insert(mark_list, {
-      display = display_name,
-      value = mark,
-      ordinal = display_name,
-    })
+    if vim.startswith(mark.file, project_root) then -- Check if the mark is within the project root
+      local display_name = mark.name or string.format("%s:%d", vim.fn.fnamemodify(mark.file, ":t"), mark.line)
+      table.insert(mark_list, {
+        display = display_name,
+        value = mark,
+        ordinal = display_name,
+      })
+    end
+  end
+
+  if #mark_list == 0 then
+    print("No marks set in the current project!")
+    return
   end
 
   -- Create a custom previewer
