@@ -31,7 +31,7 @@ return {
   goto_implementations = function() TSC.lsp_implementations(conf("LSP impls")) end,
 
   files_history = function()
-    TSC.oldfiles { only_cwd = false }
+    TSC.oldfiles { only_cwd = true }
   end,
 
 }
