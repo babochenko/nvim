@@ -47,6 +47,8 @@ jdtls.start_or_attach {
     debounce_text_changes = 80,
   },
 
+  -- filetypes = { 'java', 'groovy' },
+
   settings = {
     java = {
       format = {
