@@ -25,8 +25,11 @@ local function conf(prompt)
 end
 
 return {
-
-  goto_usages = function() TSC.lsp_references(conf("LSP Usages")) end,
+  goto_usages = function()
+    TSC.lsp_references(conf("LSP Usages"), {
+      include_declaration = false
+    })
+  end,
 
   goto_implementations = function() TSC.lsp_implementations(conf("LSP impls")) end,
 
