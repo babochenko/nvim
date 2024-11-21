@@ -75,11 +75,10 @@ local function name_mark()
   for _, mark in ipairs(global_marks) do
     if mark.file == file and mark.line == line then
       local current_name = mark.name or ""
-      local prompt = "Enter mark name"
-      if current_name ~= "" then
-        prompt = prompt .. " (current: '" .. current_name .. "')"
-      end
-      local name = vim.fn.input(prompt .. ": ")
+      local name = vim.fn.input({
+        prompt = "Enter mark name: ",
+        default = current_name,
+      })
       if name ~= "" then
         mark.name = name
         save_marks() -- Save marks immediately
