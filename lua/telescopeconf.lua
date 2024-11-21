@@ -155,34 +155,38 @@ local function usages()
   })
 end
 
+local function goto_usages()
+  local params = vim.lsp.util.make_position_params()
+  vim.lsp.buf_request(0, 'textDocument/references', params, function(err, result)
+    if err or not result then
+      usages()
+      return
+    end
+    
+    -- Filter out declaration
+    local refs = vim.tbl_filter(function(ref)
+      local is_decl = ref.isDeclaration or false
+      return not is_decl
+    end, result)
+
+    if #refs == 0 then
+      vim.notify("No usages found")
+
+    elseif #refs == 1 then
+      -- Jump directly if only one usage
+      local ref = refs[1]
+      vim.cmd(string.format('edit %s', vim.uri_to_fname(ref.uri)))
+      vim.api.nvim_win_set_cursor(0, {ref.range.start.line + 1, ref.range.start.character})
+    else
+      -- Show telescope picker for multiple results
+      usages()
+    end
+  end)
+end
+
 return {
   goto_usages = function()
-    local params = vim.lsp.util.make_position_params()
-    vim.lsp.buf_request(0, 'textDocument/references', params, function(err, result)
-      if err or not result then
-        usages()
-        return
-      end
-      
-      -- Filter out declaration
-      local refs = vim.tbl_filter(function(ref)
-        local is_decl = ref.isDeclaration or false
-        return not is_decl
-      end, result)
-
-      if #refs == 0 then
-        vim.notify("No usages found")
-
-      elseif #refs == 1 then
-        -- Jump directly if only one usage
-        local ref = refs[1]
-        vim.cmd(string.format('edit %s', vim.uri_to_fname(ref.uri)))
-        vim.api.nvim_win_set_cursor(0, {ref.range.start.line + 1, ref.range.start.character})
-      else
-        -- Show telescope picker for multiple results
-        usages()
-      end
-    end)
+     TSC.lsp_references(conf("LSP Usages"), { include_declaration = false })
   end,
 
   goto_implementations = function() TSC.lsp_implementations(conf("LSP impls")) end,
