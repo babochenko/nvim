@@ -149,11 +149,20 @@ local function find_files()
   })
 end
 
+local function usages()
+  TSC.lsp_references(conf("LSP Usages"), {
+    include_declaration = false
+  })
+end
+
 return {
   goto_usages = function()
     local params = vim.lsp.util.make_position_params()
     vim.lsp.buf_request(0, 'textDocument/references', params, function(err, result)
-      if err or not result then return end
+      if err or not result then
+        usages()
+        return
+      end
       
       -- Filter out declaration
       local refs = vim.tbl_filter(function(ref)
@@ -163,6 +172,7 @@ return {
 
       if #refs == 0 then
         vim.notify("No usages found")
+
       elseif #refs == 1 then
         -- Jump directly if only one usage
         local ref = refs[1]
@@ -170,9 +180,7 @@ return {
         vim.api.nvim_win_set_cursor(0, {ref.range.start.line + 1, ref.range.start.character})
       else
         -- Show telescope picker for multiple results
-        TSC.lsp_references(conf("LSP Usages"), {
-          include_declaration = false
-        })
+        usages()
       end
     end)
   end,
