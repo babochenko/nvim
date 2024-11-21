@@ -52,9 +52,14 @@ local function toggle_mark()
 
   for i, mark in ipairs(global_marks) do
     if mark.file == file and mark.line == line then
-      table.remove(global_marks, i)
-      vim.fn.sign_unplace("MarksGroup", { buffer = vim.fn.bufnr("%"), id = 0 })
-      print("Mark removed from " .. file .. ":" .. line)
+      local confirm = vim.fn.input("Remove mark? (y/n): ")
+      if confirm:lower() == "y" or confirm:lower() == "yes" then
+        table.remove(global_marks, i)
+        vim.fn.sign_unplace("MarksGroup", { buffer = vim.fn.bufnr("%"), id = 0 })
+        print("Mark removed from " .. file .. ":" .. line)
+      else
+        print("Mark removal cancelled")
+      end
       mark_exists = true
       break
     end
