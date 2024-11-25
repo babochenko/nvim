@@ -67,6 +67,7 @@ end
 jdtls.start_or_attach {
   on_attach = on_attach,
   root_dir = root_dir,
+  workspace_folder = workspace_folder,
 
   flags = {
     debounce_text_changes = 80,
