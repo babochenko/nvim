@@ -45,6 +45,6 @@ map('n', '<leader>tm', M.toggle_mouse, { silent = true, desc = 'toggle mouse' })
 map("n", "<leader>mm", MARK.toggle_mark, { desc = 'mark toggle' }) -- Add a mark
 map("n", "<leader>mn", MARK.name_mark, { desc = 'mark name' }) -- Name the mark
 map("n", "<leader>fm", function() MARK.list_marks(false) end, { desc = 'find marks in current project' }) -- List marks
-map("n", "<leader>fm", function() MARK.list_marks(true) end, { desc = 'find all marks' }) -- List marks
+map("n", "<leader>fM", function() MARK.list_marks(true) end, { desc = 'find all marks' }) -- List marks
 -- map("n", "<leader>j", MARK., { noremap = true, silent = true }) -- Jump to a mark
 
