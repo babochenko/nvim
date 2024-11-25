@@ -97,7 +97,7 @@ local function name_mark()
   print("No mark found on this line!")
 end
 
-local function list_marks()
+local function list_marks(all_marks)
   if #global_marks == 0 then
     print("No marks set!")
     return
@@ -106,7 +106,7 @@ local function list_marks()
   local project_root = vim.fn.getcwd() -- Get the current working directory (project root)
   local mark_list = {}
   for _, mark in ipairs(global_marks) do
-    if vim.startswith(mark.file, project_root) then -- Check if the mark is within the project root
+    if all_marks or vim.startswith(mark.file, project_root) then -- Check if showing all marks or if mark is within project root
       local display_name = mark.name or string.format("%s:%d", vim.fn.fnamemodify(mark.file, ":t"), mark.line)
       table.insert(mark_list, {
         display = display_name,
@@ -117,7 +117,7 @@ local function list_marks()
   end
 
   if #mark_list == 0 then
-    print("No marks set in the current project!")
+    print(all_marks and "No marks set!" or "No marks set in the current project!")
     return
   end
 
