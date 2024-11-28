@@ -103,3 +103,5 @@ lsp.jdtls.setup {
   },
 }
 
+vim.lsp.handlers["$/progress"] = function() end
+
