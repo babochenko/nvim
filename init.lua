@@ -93,18 +93,32 @@ lsp.jdtls.setup {
   },
 }
 
-local function showMessage(err, method, result, client_id, bufnr, config)
-  local success, result = pcall(function()
-    if type(result) == "string" then
-      result = result:sub(1, 70) .. (result:len() > 70 and "…" or "")
-    elseif type(result.message) == "string" then
-      result.message = result.message:sub(1, 70) .. (result.message:len() > 70 and "…" or "")
-    end
-    vim.lsp.handlers[method](err, method, result, client_id, bufnr, config)
-  end)
-end
+-- local function showMessage(err, method, result, client_id, bufnr, config)
+--   local success, result = pcall(function()
+--     -- Skip messages from Java language server
+--     local client = vim.lsp.get_client_by_id(client_id)
+--     if client and client.name == "jdtls" then
+--       return
+--     end
 
--- Override the LSP handlers for specific message types
-vim.lsp.handlers["window/showMessage"] = showMessage
-vim.lsp.handlers["textDocument/publishDiagnostics"] = showMessage
+--     if type(result) == "string" then
+--       result = result:sub(1, 70) .. (result:len() > 70 and "…" or "")
+--     elseif type(result.message) == "string" then
+--       result.message = result.message:sub(1, 70) .. (result.message:len() > 70 and "…" or "")
+--     end
+--     vim.lsp.handlers[method](err, method, result, client_id, bufnr, config)
+--   end)
+-- end
 
+-- -- Override the LSP handlers for specific message types
+-- vim.lsp.handlers["window/showMessage"] = showMessage
+-- vim.lsp.handlers["textDocument/publishDiagnostics"] = showMessage
+
+vim.diagnostic.config({
+  virtual_text = false,  -- Disable inline virtual text
+  signs = true,          -- Keep gutter signs
+  underline = true,      -- Keep underline
+  update_in_insert = false, -- Disable updates in insert mode
+  severity_sort = true,  -- Sort by severity
+  float = { border = "rounded" }, -- Customize floating windows
+})
