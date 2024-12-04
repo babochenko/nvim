@@ -95,13 +95,10 @@ lsp.jdtls.setup {
 
 local function showMessage(err, method, result, client_id, bufnr, config)
   local success, result = pcall(function()
-    local width = vim.api.nvim_win_get_width(0) -- Get the current window width
-    local max_length = math.max(width - 10, 10) -- Allow some padding for aesthetics
-
     if type(result) == "string" then
-      result = result:sub(1, max_length) .. (result:len() > max_length and "…" or "")
+      result = result:sub(1, 70) .. (result:len() > 70 and "…" or "")
     elseif type(result.message) == "string" then
-      result.message = result.message:sub(1, max_length) .. (result.message:len() > max_length and "…" or "")
+      result.message = result.message:sub(1, 70) .. (result.message:len() > 70 and "…" or "")
     end
     vim.lsp.handlers[method](err, method, result, client_id, bufnr, config)
   end)
