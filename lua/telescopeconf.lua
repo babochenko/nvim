@@ -32,7 +32,9 @@ local function find_files_default()
     layout_config = {
       preview_width = 0 -- Disable preview pane
     },
-    path_display = function(_, path)
+
+    entry_maker = function(entry)
+      local path = entry.path or entry.filename or entry.value or entry
       local filename = vim.fn.fnamemodify(path, ":t")
       local dir = vim.fn.fnamemodify(path, ":h")
       
@@ -43,8 +45,14 @@ local function find_files_default()
       dir = (dir == '.' and '')
         or (#dir <= 30 and dir)
         or string.format("%s...%s", string.sub(dir, 1, 20), string.sub(dir, -20))
-      return string.format("%s  %s", padded_filename, dir)
-    end
+
+      return {
+        value = path,
+        display = string.format("%s  %s", padded_filename, dir),
+        ordinal = filename,
+        path = path,
+      }
+    end,
   })
 end
 
