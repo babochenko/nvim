@@ -40,8 +40,8 @@ local function find_files_default()
       local padded_filename = filename .. string.rep(" ", 30 - #filename)
       
       -- Handle path length
-      dir = #dir <= 30
-        and dir
+      dir = (dir == '.' and '')
+        or (#dir <= 30 and dir)
         or string.format("%s...%s", string.sub(dir, 1, 20), string.sub(dir, -20))
       return string.format("%s  %s", padded_filename, dir)
     end
