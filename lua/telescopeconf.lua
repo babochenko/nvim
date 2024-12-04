@@ -37,14 +37,13 @@ local function find_files_default()
       local path = entry.path or entry.filename or entry.value or entry
       local filename = vim.fn.fnamemodify(path, ":t")
       local dir = vim.fn.fnamemodify(path, ":h")
-      
-      -- Pad filename to 30 chars with spaces
-      local padded_filename = filename .. string.rep(" ", 30 - #filename)
-      
+
       -- Handle path length
       dir = (dir == '.' and '')
         or (#dir <= 30 and dir)
         or string.format("%s...%s", string.sub(dir, 1, 20), string.sub(dir, -20))
+
+      local padded_filename = filename .. string.rep(" ", 30 - #filename)
 
       return {
         value = path,
