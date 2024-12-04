@@ -24,6 +24,30 @@ local function conf(prompt)
   }
 end
 
+local function find_files_default()
+  local ok, telescope = pcall(require, "telescope.builtin")
+  if not ok then return end
+
+  telescope.find_files({
+    layout_config = {
+      preview_width = 0 -- Disable preview pane
+    },
+    path_display = function(_, path)
+      local filename = vim.fn.fnamemodify(path, ":t")
+      local dir = vim.fn.fnamemodify(path, ":h")
+      
+      -- Pad filename to 30 chars with spaces
+      local padded_filename = filename .. string.rep(" ", 30 - #filename)
+      
+      -- Handle path length
+      dir = #dir <= 30
+        and dir
+        or string.format("%s...%s", string.sub(dir, 1, 20), string.sub(dir, -20))
+      return string.format("%s  %s", padded_filename, dir)
+    end
+  })
+end
+
 local function find_files()
   local function get_input_parts(input)
     local parts = {}
@@ -192,6 +216,7 @@ return {
   goto_implementations = function() TSC.lsp_implementations(conf("LSP impls")) end,
 
   find_files = find_files,
+  find_files_default = find_files_default,
 
   files_history = function()
     TSC.oldfiles { only_cwd = true }

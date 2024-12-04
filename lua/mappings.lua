@@ -14,7 +14,7 @@ map('i', 'jk', '<ESC>')
 map('n', 'gd', vim.lsp.buf.definition, { desc = 'goto definition' });
 map('n', 'gu', vim.lsp.buf.references, { desc = 'goto usages' });
 
--- map('n', '<leader>ff', TSC.find_files, { desc = 'find files' });
+map('n', '<leader>ff', TSC.find_files_default, { desc = 'find files' });
 map("n", "<leader>X", M.close_other_buffers, { desc = 'buffer close all but current' })
 map("n", "<leader>fo", M.open_system, { desc = 'open this file in system viewer' })
 map('n', '<leader>fr', M.run_file, { desc = 'run file' });
