@@ -122,5 +122,21 @@ return {
     print("Opened file in system editor: " .. file_path)
   end,
 
+  close_other_buffers = function()
+    local current_buf = vim.api.nvim_get_current_buf()
+
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      if vim.api.nvim_buf_is_loaded(buf) and buf ~= current_buf then
+        local success, err = pcall(function()
+          vim.api.nvim_buf_delete(buf, {force = true})
+        end)
+
+        if not success then
+          print("Error closing buffer " .. buf .. ": " .. tostring(err))
+        end
+      end
+    end
+  end,
+
 }
 

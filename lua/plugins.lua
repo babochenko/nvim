@@ -64,7 +64,7 @@ EnsureLazy().setup({
 
   { 'tpope/vim-fugitive', lazy = false, },
   { 'nvim-telescope/telescope.nvim' },
-  { 'rcarriga/nvim-notify' }, -- just to stop prompting me to press ENTER on notifications
+  -- { 'rcarriga/nvim-notify' }, -- just to stop prompting me to press ENTER on notifications
 
   { 'NvChad/NvChad', lazy = false,
     branch = 'v2.5',

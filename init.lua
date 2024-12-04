@@ -50,16 +50,6 @@ vim.schedule(function()
   autocmd("BufReadPost", { callback = MARKS.on_buf_read, })
 end)
 
-vim.lsp.handlers["window/showMessage"] = function(_, result, ctx)
-  local client = vim.lsp.get_client_by_id(ctx.client_id)
-  local message = result.message or ""
-  local trimmed_message = message
-  if #message > 80 then
-    trimmed_message = message:sub(1, 77) .. "..."
-  end
-  vim.notify(client.name .. ": " .. trimmed_message, vim.log.levels.INFO)
-end
-
 local lsp = require 'lspconfig'
 
 -- local venv_path = '/Developer/venv'
@@ -103,5 +93,21 @@ lsp.jdtls.setup {
   },
 }
 
-vim.lsp.handlers["$/progress"] = function() end
+local function showMessage(err, method, result, client_id, bufnr, config)
+  local success, result = pcall(function()
+    local width = vim.api.nvim_win_get_width(0) -- Get the current window width
+    local max_length = math.max(width - 10, 10) -- Allow some padding for aesthetics
+
+    if type(result) == "string" then
+      result = result:sub(1, max_length) .. (result:len() > max_length and "…" or "")
+    elseif type(result.message) == "string" then
+      result.message = result.message:sub(1, max_length) .. (result.message:len() > max_length and "…" or "")
+    end
+    vim.lsp.handlers[method](err, method, result, client_id, bufnr, config)
+  end)
+end
+
+-- Override the LSP handlers for specific message types
+vim.lsp.handlers["window/showMessage"] = showMessage
+vim.lsp.handlers["textDocument/publishDiagnostics"] = showMessage
 
