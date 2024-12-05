@@ -11,9 +11,6 @@ local MARK = require 'marks'
 map('n', ';', ':', { desc = 'CMD enter command mode' })
 map('i', 'jk', '<ESC>')
 
-map('n', 'gd', vim.lsp.buf.definition, { desc = 'goto definition' });
-map('n', 'gu', vim.lsp.buf.references, { desc = 'goto usages' });
-
 map('n', '<leader>ff', TSC.find_files_default, { desc = 'find files' });
 map("n", "<leader>X", M.close_other_buffers, { desc = 'buffer close all but current' })
 map("n", "<leader>fo", M.open_system, { desc = 'open this file in system viewer' })
@@ -35,6 +32,7 @@ map('n', '<leader>cn', DIA.goto_next, { desc = 'code next diagnostic' });
 map('n', '<leader>cp', DIA.goto_prev, { desc = 'code prev diagnostic' });
 map('n', '<leader>fh', TSC.files_history, { desc = 'files history' })
 
+-- map('n', 'gd', TSC.goto_definitions, { desc = 'goto definitions' })
 map('n', 'gu', TSC.goto_usages, { desc = 'goto usages' })
 map('n', 'gi', TSC.goto_implementations, { desc = 'goto implementations' })
 map('n', '<leader>gB', GS.blame, { desc = 'git Blame the whole buffer' });
