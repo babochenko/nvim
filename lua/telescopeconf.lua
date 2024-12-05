@@ -24,37 +24,6 @@ local function conf(prompt)
   }
 end
 
-local function find_files_default()
-  local ok, telescope = pcall(require, "telescope.builtin")
-  if not ok then return end
-
-  telescope.find_files({
-    layout_config = {
-      preview_width = 0 -- Disable preview pane
-    },
-
-    entry_maker = function(entry)
-      local path = entry.path or entry.filename or entry.value or entry
-      local filename = vim.fn.fnamemodify(path, ":t")
-      local dir = vim.fn.fnamemodify(path, ":h")
-
-      -- Handle path length
-      dir = (dir == '.' and '')
-        or (#dir <= 30 and dir)
-        or string.format("%s...%s", string.sub(dir, 1, 20), string.sub(dir, -20))
-
-      local padded_filename = filename .. string.rep(" ", 30 - #filename)
-
-      return {
-        value = path,
-        display = string.format("%s  %s", padded_filename, dir),
-        ordinal = filename,
-        path = path,
-      }
-    end,
-  })
-end
-
 local function find_files()
   local function get_input_parts(input)
     local parts = {}
@@ -215,6 +184,26 @@ local function goto_usages()
   end)
 end
 
+local function global_entry_maker(entry)
+  local path = entry.path or entry.filename or entry.value or entry
+  local filename = vim.fn.fnamemodify(path, ":t")
+  local dir = vim.fn.fnamemodify(path, ":h")
+
+  -- Handle path length
+  dir = (dir == '.' and '')
+    or (#dir <= 30 and dir)
+    or string.format("%s...%s", string.sub(dir, 1, 20), string.sub(dir, -20))
+
+  local padded_filename = filename .. string.rep(" ", 30 - #filename)
+
+  return {
+    value = path,
+    display = string.format("%s  %s", padded_filename, dir),
+    ordinal = filename,
+    path = path,
+  }
+end
+
 return {
   goto_usages = function()
      TSC.lsp_references(conf("LSP Usages"), { include_declaration = false })
@@ -223,7 +212,15 @@ return {
   goto_implementations = function() TSC.lsp_implementations(conf("LSP impls")) end,
 
   find_files = find_files,
-  find_files_default = find_files_default,
+
+  find_files_default = function()
+    TSC.find_files({
+      layout_config = {
+        preview_width = 0 -- Disable preview pane
+      },
+      entry_maker = global_entry_maker,
+    })
+  end,
 
   files_history = function()
     TSC.oldfiles { only_cwd = true }
