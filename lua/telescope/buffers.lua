@@ -4,8 +4,9 @@
 -- <leader>fb shows open buffers, with a custom name if exists
 -- useful for naming terminals
 --
-local Telescope = require("telescope.builtin")
+local Find = require "telescope/find"
 
+local Telescope = require("telescope.builtin")
 local strings = require "plenary.strings"
 local utils = require "telescope.utils"
 local make_entry = require('telescope.make_entry')
@@ -50,6 +51,7 @@ local do_display = function(name, opts)
 
     icon, hl_group = utils.get_devicons(entry.filename, false)
 
+    local bufname = " (" .. display_bufname .. ":" .. entry.lnum .. ")"
     local displayer = entry_display.create {
       separator = " ",
       items = {
@@ -57,14 +59,16 @@ local do_display = function(name, opts)
         { width = 4 },
         { width = icon_width },
         { remaining = true },
+        { width = #bufname },
       },
     }
 
     return displayer {
       { entry.bufnr, "TelescopeResultsNumber" },
-      { entry.indicator, "TelescopeResultsComment" },
+      { entry.indicator, Find.HL_COMMENT },
       { icon, hl_group },
-      { name .. " (" .. display_bufname .. ":" .. entry.lnum .. ")" },
+      { name },
+      { bufname, Find.HL_COMMENT },
     }
   end
 end

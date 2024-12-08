@@ -6,8 +6,10 @@ local make_entry = require('telescope.make_entry')
 local utils = require "telescope.utils"
 local NvimTree = require("nvim-tree.api")
 
-vim.api.nvim_set_hl(0, "TelescopeResultsComment", { fg = "#808080", italic = true })
-vim.api.nvim_set_hl(0, "TelescopeTest", { fg = "green" })
+local HL_COMMENT = "TelescopeResultsComment"
+local HL_TEST = "TelescopeTest"
+vim.api.nvim_set_hl(0, HL_COMMENT, { fg = "#808080", italic = true })
+vim.api.nvim_set_hl(0, HL_TEST, { fg = "green" })
 
 local function conf(prompt)
   return {
@@ -65,7 +67,7 @@ local display_modified_path = function(entry)
     style = merge_styles(style, hl_group, #icon + 1, #icon + 1, true)
   end
 
-  style = merge_styles(style, "TelescopeResultsComment", #icon + namelen + 1, pathlen)
+  style = merge_styles(style, HL_COMMENT, #icon + namelen + 1, pathlen)
 
   return display, style
 end
@@ -87,6 +89,8 @@ end
 
 return {
 
+  HL_COMMENT = HL_COMMENT,
+
   words = function()
     local opt = vertical("Find Words")
 
@@ -99,6 +103,7 @@ return {
   end,
 
   usages = function()
+    local opt = vertical("Find Usages")
     TSC.lsp_references(conf("LSP Usages"), {
       include_declaration = false,
       entry_maker = function(entry)
@@ -106,8 +111,8 @@ return {
         entry.display = display_modified_path
         return entry
       end,
-      layout_config = vertical.layout_config,
-      layout_strategy = vertical.layout_strategy,
+      layout_config = opt.layout_config,
+      layout_strategy = opt.layout_strategy,
     })
   end,
 
