@@ -41,9 +41,16 @@ local function modify_path(path)
   -- Handle path length
   dir = (dir == '.' and '' or dir) -- Handle '.' as the current directory
   dir = dir:gsub('/src/main/java', '/...') -- Replace the specific part of the path
+  dir = dir:gsub('/src/test/java', '/...') -- Replace the specific part of the path
+  dir = dir:gsub('/src/testFunctional/java', '/...') -- Replace the specific part of the path
+  dir = dir:gsub('/src/functionalTest/java', '/...') -- Replace the specific part of the path
+
+  dir = dir:gsub('/src/test/groovy', '/...') -- Replace the specific part of the path
+  dir = dir:gsub('/src/testFunctional/groovy', '/...') -- Replace the specific part of the path
+  dir = dir:gsub('/src/functionalTest/groovy', '/...') -- Replace the specific part of the path
 
   local name = filename .. string.rep(" ", 20 - #filename) .. "  "
-  return string.format("%s%s", name, dir), #name, #dir
+  return string.format("%s%s", name, dir), #filename, #name, #dir
 
 end
 
@@ -77,12 +84,16 @@ end
 local display_modified_path = function(entry)
   local hl_group, icon
   local _display, style = utils.transform_path({}, entry.value)
-  local display, namelen, pathlen = modify_path(_display)
+  local display, filenamelen, namelen, pathlen = modify_path(_display)
 
   display, hl_group, icon = utils.transform_devicons(entry.value, display)
 
   if hl_group then
     style = merge_styles(style, hl_group, #icon + 1, #icon + 1, true)
+  end
+
+  if string.find(display, "Test") or string.find(display, "Spec") then
+    style = merge_styles(style, HL_TEST, #icon + 1, filenamelen)
   end
 
   style = merge_styles(style, HL_COMMENT, #icon + namelen + 1, pathlen)
