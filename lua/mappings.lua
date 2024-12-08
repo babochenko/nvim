@@ -1,6 +1,6 @@
 local map = vim.keymap.set
 
--- require 'nvchad.mappings'
+require 'nvchad.mappings'
 local DIA = vim.diagnostic
 local LLM = require 'llm'
 local GS = require 'gitsigns'
