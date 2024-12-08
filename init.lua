@@ -58,3 +58,18 @@ vim.diagnostic.config({
   severity_sort = true,  -- Sort by severity
   float = { border = "rounded" }, -- Customize floating windows
 })
+
+require('telescope').setup {
+  defaults = {
+    layout_config = {
+      -- Optional layout settings
+    },
+    borderchars = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' }, -- Customize border style
+    win_options = {
+      winblend = 10, -- Add transparency if desired
+    },
+    border = true, -- Enable the border
+  }
+}
+vim.api.nvim_set_hl(0, "TelescopeBorder", { fg = "#124348", bg = "#1c1f26" })
+
