@@ -179,7 +179,9 @@ local vertical = {
   layout_config = {
     vertical = {
       width = 0.8,
-      preview_height = 0.5
+      preview_height = 0.5,
+      prompt_position = "top",
+      mirror = true
     }
   }
 }
