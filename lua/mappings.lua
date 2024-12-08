@@ -4,6 +4,7 @@ require 'nvchad.mappings'
 local M = require 'mappingsfunc'
 local DIA = vim.diagnostic
 local TSC = require 'telescopeconf'
+local Telescope = require("telescope.builtin")
 local LLM = require 'llm'
 local GS = require 'gitsigns'
 local MARK = require 'marks'
@@ -13,6 +14,11 @@ map('i', 'jk', '<ESC>')
 
 map('n', '<leader>ff', TSC.find_files_default, { desc = 'find files' });
 map("n", "<leader>X", M.close_other_buffers, { desc = 'buffer close all but current' })
+map('n', 'gd', vim.lsp.buf.definition, { desc = 'goto definition' });
+map('n', 'gu', vim.lsp.buf.references, { desc = 'goto usages' });
+
+map("n", "<leader>b", function() Telescope.buffers() end, { desc = 'show all buffers' })
+-- map('n', '<leader>ff', TSC.find_files, { desc = 'find files' });
 map("n", "<leader>fo", M.open_system, { desc = 'open this file in system viewer' })
 map('n', '<leader>fr', M.run_file, { desc = 'run file' });
 map("n", "<leader>rt", M.test_func, { desc = "test this function" })
