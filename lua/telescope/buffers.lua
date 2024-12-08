@@ -52,7 +52,7 @@ return {
         entry = make_entry.gen_from_buffer(opts)(entry)
 
         local ok, name = pcall(vim.api.nvim_buf_get_var, entry.bufnr, "buf_custom_name")
-        if ok then
+        if ok and name ~= "" then
           entry.display = do_display(name, opts)
         end
 
@@ -73,12 +73,15 @@ return {
       default = prev_name or "",
     })
 
-    if name == "" then
-      print("Can't set an empty name for a buffer")
-    elseif name == prev_name then
+    if name == prev_name then
       print("Buffer name didn't change")
     else
       vim.api.nvim_buf_set_var(0, "buf_custom_name", name)
+      if name == "" then
+        print("Removed buffer name")
+      else
+        print("Set buffer name to " .. name)
+      end
     end
   end,
 

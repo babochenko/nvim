@@ -29,6 +29,8 @@ local function global_entry_maker(entry)
   local path = entry.path or entry.filename or entry.value or entry
   local filename = vim.fn.fnamemodify(path, ":t")
   local dir = vim.fn.fnamemodify(path, ":h")
+  dir = vim.fn.fnamemodify(dir, ":~:.")
+
   local icon, icon_hl = devicons.get_icon_by_filetype(vim.fn.fnamemodify(filename, ":e"), { default = true })
 
   -- Handle path length
@@ -37,7 +39,7 @@ local function global_entry_maker(entry)
     or string.format("%s...%s", string.sub(dir, 1, 20), string.sub(dir, -20))
 
   local display_icon = icon and (icon .. " ") or ""
-  local padded_filename = filename .. string.rep(" ", 30 - #filename)
+  local padded_filename = filename .. string.rep(" ", 20 - #filename)
 
   return {
     value = path,
