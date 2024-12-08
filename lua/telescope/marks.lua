@@ -1,10 +1,10 @@
--- inspired by https://github.com/chentoast/marks.nvim
-local pickers = require('telescope.pickers')
+-- inspired by https://github.com/chentoast/marks.nvi pickers = require('telescope.pickers')marks
 local finders = require('telescope.finders')
 local actions = require('telescope.actions')
 local action_state = require('telescope.actions.state')
 local conf = require('telescope.config').values
 local previewers = require('telescope.previewers')
+local pickers = require "telescope.pickers"
 
 local marks_file = vim.fn.expand("~/.local/share/nvim/marks.json") -- File to save marks
 local global_marks = {} -- Stores all marks with file, line, and optional name

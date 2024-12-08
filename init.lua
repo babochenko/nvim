@@ -44,7 +44,7 @@ require 'nvchad.autocmds'
 vim.schedule(function()
   require 'mappings'
 
-  local MARKS = require 'marks'
+  local MARKS = require 'telescope/marks'
   MARKS.load_marks()
   autocmd("VimLeavePre", { callback = MARKS.save_marks, })
   autocmd("BufReadPost", { callback = MARKS.on_buf_read, })

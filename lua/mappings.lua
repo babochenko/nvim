@@ -3,10 +3,12 @@ local map = vim.keymap.set
 require 'nvchad.mappings'
 local M = require 'mappingsfunc'
 local DIA = vim.diagnostic
-local TSC = require 'telescopeconf'
 local LLM = require 'llm'
 local GS = require 'gitsigns'
-local MARK = require 'marks'
+
+local TSC = require 'telescope/conf'
+local BUF = require 'telescope/buffers'
+local MARK = require 'telescope/marks'
 
 map('n', ';', ':', { desc = 'CMD enter command mode' })
 map('i', 'jk', '<ESC>')
@@ -16,9 +18,9 @@ map("n", "<leader>X", M.close_other_buffers, { desc = 'buffer close all but curr
 map('n', 'gd', vim.lsp.buf.definition, { desc = 'goto definition' });
 map('n', 'gu', vim.lsp.buf.references, { desc = 'goto usages' });
 
-map("n", "<leader>bn", M.buffer_rename, { desc = 'buffer rename ' })
-map("n", "<leader>fb", M.buffers_find, { desc = 'buffers find' })
--- map('n', '<leader>ff', TSC.find_files, { desc = 'find files' });
+map("n", "<leader>bn", BUF.rename, { desc = 'buffer rename ' })
+map("n", "<leader>fb", BUF.find_all, { desc = 'buffers find' })
+
 map("n", "<leader>fo", M.open_system, { desc = 'open this file in system viewer' })
 map('n', '<leader>fr', M.run_file, { desc = 'run file' });
 map("n", "<leader>rt", M.test_func, { desc = "test this function" })
