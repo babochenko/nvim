@@ -45,14 +45,33 @@ local function modify_path(path)
 
   local name = filename .. string.rep(" ", 20 - #filename) .. "  "
   return string.format("%s%s", name, dir), #name, #dir
+
 end
+
+local function add_offset(offset, obj)
+  return { obj[1] + offset, obj[2] + offset }
+end
+
+local do_merge_styles = function(style1, style2, offset)
+  if not style2 then
+    return style1
+  end
+
+  for _, item in ipairs(style2) do
+    item[1] = add_offset(offset, item[1])
+    table.insert(style1, item)
+  end
+
+  return style1
+end
+
 
 local function merge_styles(base, hl_group, start, size, after)
   local new = { { { 0, size }, hl_group } }
   if not after then
-    return utils.merge_styles(base, new, start)
+    return do_merge_styles(base, new, start)
   else
-    return utils.merge_styles(new, base, start)
+    return do_merge_styles(new, base, start)
   end
 end
 
