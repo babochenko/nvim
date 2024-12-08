@@ -4,6 +4,7 @@ local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local make_entry = require('telescope.make_entry')
 local utils = require "telescope.utils"
+local NvimTree = require("nvim-tree.api")
 
 vim.api.nvim_set_hl(0, "TelescopeResultsComment", { fg = "#808080", italic = true })
 vim.api.nvim_set_hl(0, "TelescopeTest", { fg = "green" })
@@ -69,36 +70,32 @@ local display_modified_path = function(entry)
   return display, style
 end
 
-local vertical = {
-  layout_strategy = "vertical",
-  layout_config = {
-    vertical = {
-      width = 0.8,
-      preview_height = 0.5,
-      prompt_position = "top",
-      mirror = true
+local function vertical(prompt)
+  return {
+    prompt_title = prompt,
+    layout_strategy = "vertical",
+    layout_config = {
+      vertical = {
+        width = 0.8,
+        preview_height = 0.5,
+        prompt_position = "top",
+        mirror = true
+      }
     }
   }
-}
+end
 
 return {
 
   words = function()
-    local node = require("nvim-tree.api").tree.get_node_under_cursor()
-    if not node or node.type ~= "directory" then
-      TSC.live_grep({
-        layout_config = vertical.layout_config,
-        layout_strategy = vertical.layout_strategy,
-      })
-      return
+    local opt = vertical("Find Words")
+
+    local node = NvimTree.tree.get_node_under_cursor()
+    if node and node.type == "directory" then
+      opt.cwd = vim.fn.fnamemodify(node.absolute_path, ":h")
     end
 
-    local dir = vim.fn.fnamemodify(node.absolute_path, ":h")
-    TSC.live_grep({
-      cwd = dir,
-      layout_config = vertical.layout_config,
-      layout_strategy = vertical.layout_strategy,
-    })
+    TSC.live_grep(opt)
   end,
 
   usages = function()
@@ -119,6 +116,7 @@ return {
   end,
 
   files = function()
+    local opts = vertical("Find Files")
 
     TSC.find_files({
       layout_config = {
@@ -129,12 +127,14 @@ return {
         entry.display = display_modified_path
         return entry
       end,
-      layout_config = vertical.layout_config,
-      layout_strategy = vertical.layout_strategy,
+      layout_config = opts.layout_config,
+      layout_strategy = opts.layout_strategy,
     })
   end,
 
   files_history = function()
+    local opts = vertical("Old Files")
+
     TSC.oldfiles({
       only_cwd = true,
       entry_maker = function(entry)
@@ -142,8 +142,8 @@ return {
         entry.display = display_modified_path
         return entry
       end,
-      layout_config = vertical.layout_config,
-      layout_strategy = vertical.layout_strategy,
+      layout_config = opts.layout_config,
+      layout_strategy = opts.layout_strategy,
     })
   end,
 
