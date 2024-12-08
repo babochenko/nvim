@@ -158,8 +158,13 @@ local function list_marks(all_marks)
     end
   })
 
+  local title = "Marks"
+  if all_marks then
+    title = "All Marks"
+  end
+
   pickers.new({}, {
-    prompt_title = "Marks",
+    prompt_title = title,
     finder = finders.new_table {
       results = mark_list,
       entry_maker = function(entry)
@@ -199,12 +204,14 @@ local function place_marks()
   end
 end
 
+-- TODO add preview, like in find-words
 return {
   save_marks = save_marks,
   load_marks = load_marks,
   toggle_mark = toggle_mark,
   name_mark = name_mark,
-  list_marks = list_marks,
+  list_marks = function() list_marks(false) end,
+  list_all_marks = function() list_marks(true) end,
   on_buf_read = place_marks,
 
   global_marks = global_marks,
