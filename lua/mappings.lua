@@ -2,9 +2,9 @@ local map = vim.keymap.set
 
 require 'nvchad.mappings'
 local DIA = vim.diagnostic
-local LLM = require 'llm'
 local GS = require 'gitsigns'
 
+local LLM = require 'ext/llm'
 local Find = require 'ext/find'
 local Buf = require 'ext/buffers'
 local Code = require 'ext/code'
