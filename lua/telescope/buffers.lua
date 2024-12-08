@@ -15,6 +15,31 @@ local bufnrs = vim.tbl_filter(function(bufnr)
   return 1 == vim.fn.buflisted(bufnr)
 end, vim.api.nvim_list_bufs())
 
+local function setup()
+  -- supposed to show the custom buffer name at the top, but doesn't work
+  vim.cmd("set tabline=%!v:lua.CustomTabline()")
+
+  function CustomTabline()
+      local s = ""
+      for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+          if vim.api.nvim_buf_is_loaded(bufnr) then
+              -- Get the buffer's filename or custom name
+              local bufname = vim.api.nvim_buf_get_name(bufnr)
+              local ok, custom_name = pcall(vim.api.nvim_buf_get_var, bufnr, "buf_custom_name")
+              local display_name = ok and custom_name or (bufname ~= "" and vim.fn.fnamemodify(bufname, ":t") or "[No Name]")
+
+              -- Highlight the active buffer
+              if bufnr == vim.api.nvim_get_current_buf() then
+                  s = s .. "%#TabLineSel# " .. display_name .. " %#TabLine#"
+              else
+                  s = s .. "%#TabLine# " .. display_name .. " "
+              end
+          end
+      end
+      return s
+  end
+end
+
 local do_display = function(name, opts)
   return function(entry)
     -- bufnr_width + modes + icon + 3 spaces + : + lnum
