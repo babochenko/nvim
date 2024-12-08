@@ -4,7 +4,6 @@ require 'nvchad.mappings'
 local M = require 'mappingsfunc'
 local DIA = vim.diagnostic
 local TSC = require 'telescopeconf'
-local Telescope = require("telescope.builtin")
 local LLM = require 'llm'
 local GS = require 'gitsigns'
 local MARK = require 'marks'
@@ -17,7 +16,8 @@ map("n", "<leader>X", M.close_other_buffers, { desc = 'buffer close all but curr
 map('n', 'gd', vim.lsp.buf.definition, { desc = 'goto definition' });
 map('n', 'gu', vim.lsp.buf.references, { desc = 'goto usages' });
 
-map("n", "<leader>b", function() Telescope.buffers() end, { desc = 'show all buffers' })
+map("n", "<leader>bn", M.buffer_rename, { desc = 'buffer rename ' })
+map("n", "<leader>fb", M.buffers_find, { desc = 'buffers find' })
 -- map('n', '<leader>ff', TSC.find_files, { desc = 'find files' });
 map("n", "<leader>fo", M.open_system, { desc = 'open this file in system viewer' })
 map('n', '<leader>fr', M.run_file, { desc = 'run file' });
@@ -26,7 +26,9 @@ map("n", "<leader>rf", M.test_file, { desc = "test this file" })
 
 map("n", "<leader>fw", M.find_words, { desc = "find words" })
 map("n", "<leader>ft", M.find_test, { desc = "find test file" })
-map("n", "<leader>fn", ':enew<CR>', { desc = "file new" })
+
+map("n", "<leader>nf", ':enew<CR>', { desc = "new file" })
+map("n", "<leader>nt", ':term<CR>', { desc = "new terminal" })
 
 map({ 'n', 'v' }, '<leader>k', LLM.run_completion, { desc = 'llm completion' })
 map({ 'n', 'v' }, '<leader>l', LLM.run_help, { desc = 'llm help' })
