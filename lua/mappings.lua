@@ -6,7 +6,7 @@ local DIA = vim.diagnostic
 local LLM = require 'llm'
 local GS = require 'gitsigns'
 
-local TSC = require 'telescope/conf'
+local TSC = require 'telescope/files'
 local BUF = require 'telescope/buffers'
 local MARK = require 'telescope/marks'
 

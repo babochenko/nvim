@@ -71,5 +71,5 @@ require('telescope').setup {
     border = true, -- Enable the border
   }
 }
-vim.api.nvim_set_hl(0, "TelescopeBorder", { fg = "#595954", bg = "#1c1f26" })
+vim.api.nvim_set_hl(0, "TelescopeBorder", { fg = "#657088", bg = "#1c1f26" })
 
