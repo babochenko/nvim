@@ -39,7 +39,8 @@ local function modify_path(path)
   dir = vim.fn.fnamemodify(dir, ":~:.")
 
   -- Handle path length
-  dir = (dir == '.' and '') or dir
+  dir = (dir == '.' and '' or dir) -- Handle '.' as the current directory
+  dir = dir:gsub('/src/main/java', '/...') -- Replace the specific part of the path
 
   local name = filename .. string.rep(" ", 20 - #filename) .. "  "
   return string.format("%s%s", name, dir), #name, #dir
