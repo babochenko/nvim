@@ -1,3 +1,9 @@
+-- buffers.lua
+--
+-- adds custom names to buffers
+-- <leader>fb shows open buffers, with a custom name if exists
+-- useful for naming terminals
+--
 local Telescope = require("telescope.builtin")
 
 local strings = require "plenary.strings"
