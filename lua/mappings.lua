@@ -6,14 +6,14 @@ local DIA = vim.diagnostic
 local LLM = require 'llm'
 local GS = require 'gitsigns'
 
-local TSC = require 'telescope/files'
+local Find = require 'telescope/find'
 local BUF = require 'telescope/buffers'
 local MARK = require 'telescope/marks'
 
 map('n', ';', ':', { desc = 'CMD enter command mode' })
 map('i', 'jk', '<ESC>')
 
-map('n', '<leader>ff', TSC.find_files_default, { desc = 'find files' });
+map('n', '<leader>ff', Find.files, { desc = 'find files' });
 map("n", "<leader>X", M.close_other_buffers, { desc = 'buffer close all but current' })
 map('n', 'gd', vim.lsp.buf.definition, { desc = 'goto definition' });
 map('n', 'gu', vim.lsp.buf.references, { desc = 'goto usages' });
@@ -26,7 +26,7 @@ map('n', '<leader>fr', M.run_file, { desc = 'run file' });
 map("n", "<leader>rt", M.test_func, { desc = "test this function" })
 map("n", "<leader>rf", M.test_file, { desc = "test this file" })
 
-map("n", "<leader>fw", M.find_words, { desc = "find words" })
+map("n", "<leader>fw", Find.words, { desc = "find words" })
 map("n", "<leader>ft", M.find_test, { desc = "find test file" })
 
 map("n", "<leader>nf", ':enew<CR>', { desc = "new file" })
@@ -40,11 +40,11 @@ map('n', '<leader>cs', vim.lsp.buf.signature_help, { desc = 'code function signa
 map('n', '<leader>cd', function() DIA.open_float(nil, { focusable = false }) end, { desc = 'code show diagnostics' })
 map('n', '<leader>cn', DIA.goto_next, { desc = 'code next diagnostic' });
 map('n', '<leader>cp', DIA.goto_prev, { desc = 'code prev diagnostic' });
-map('n', '<leader>fh', TSC.files_history, { desc = 'files history' })
+map('n', '<leader>fh', Find.files_history, { desc = 'files history' })
 
--- map('n', 'gd', TSC.goto_definitions, { desc = 'goto definitions' })
-map('n', 'gu', TSC.goto_usages, { desc = 'goto usages' })
-map('n', 'gi', TSC.goto_implementations, { desc = 'goto implementations' })
+-- map('n', 'gd', Find.goto_definitions, { desc = 'goto definitions' })
+map('n', 'gu', Find.usages, { desc = 'goto usages' })
+map('n', 'gi', Find.impls, { desc = 'goto implementations' })
 map('n', '<leader>gB', GS.blame, { desc = 'git Blame the whole buffer' });
 map('n', '<leader>gs', ':Git<CR>', { desc = 'git status' });
 map('n', '<leader>db', ':DBUI<CR>', { desc = 'open database ui' });

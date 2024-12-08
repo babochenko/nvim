@@ -7,16 +7,6 @@ local Runs = {
 }
 
 return {
-  find_words = function()
-    local node = require("nvim-tree.api").tree.get_node_under_cursor()
-    if not node or node.type ~= "directory" then
-      require("telescope.builtin").live_grep()
-      return
-    end
-
-    local dir = vim.fn.fnamemodify(node.absolute_path, ":h")
-    require("telescope.builtin").live_grep({ cwd = dir })
-  end,
 
   find_test = function()
     local full_path = vim.fn.expand("%:p") -- Full path of the current file

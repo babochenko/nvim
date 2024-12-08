@@ -2,7 +2,6 @@ local TSC = require("telescope.builtin")
 
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
-local devicons = require("nvim-web-devicons")
 local make_entry = require('telescope.make_entry')
 local utils = require "telescope.utils"
 
@@ -84,7 +83,25 @@ local vertical = {
 
 return {
 
-  goto_usages = function()
+  words = function()
+    local node = require("nvim-tree.api").tree.get_node_under_cursor()
+    if not node or node.type ~= "directory" then
+      TSC.live_grep({
+        layout_config = vertical.layout_config,
+        layout_strategy = vertical.layout_strategy,
+      })
+      return
+    end
+
+    local dir = vim.fn.fnamemodify(node.absolute_path, ":h")
+    TSC.live_grep({
+      cwd = dir,
+      layout_config = vertical.layout_config,
+      layout_strategy = vertical.layout_strategy,
+    })
+  end,
+
+  usages = function()
     TSC.lsp_references(conf("LSP Usages"), {
       include_declaration = false,
       entry_maker = function(entry)
@@ -97,11 +114,11 @@ return {
     })
   end,
 
-  goto_implementations = function()
+  impls = function()
     TSC.lsp_implementations(conf("LSP impls"))
   end,
 
-  find_files_default = function()
+  files = function()
 
     TSC.find_files({
       layout_config = {
