@@ -39,9 +39,7 @@ local function modify_path(path)
   dir = vim.fn.fnamemodify(dir, ":~:.")
 
   -- Handle path length
-  dir = (dir == '.' and '')
-    or (#dir <= 30 and dir)
-    or string.format("%s...%s", string.sub(dir, 1, 20), string.sub(dir, -20))
+  dir = (dir == '.' and '') or dir
 
   local name = filename .. string.rep(" ", 20 - #filename) .. "  "
   return string.format("%s%s", name, dir), #name, #dir
