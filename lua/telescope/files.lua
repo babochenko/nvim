@@ -6,6 +6,9 @@ local devicons = require("nvim-web-devicons")
 local make_entry = require('telescope.make_entry')
 local utils = require "telescope.utils"
 
+vim.api.nvim_set_hl(0, "TelescopeResultsComment", { fg = "#808080", italic = true })
+vim.api.nvim_set_hl(0, "TelescopeTest", { fg = "green" })
+
 local function conf(prompt)
   return {
     show_line = false,      -- Show line preview
@@ -19,7 +22,7 @@ local function conf(prompt)
       map('i', '<CR>', function(prompt_bufnr)
         local entry = action_state.get_selected_entry()
         if entry and entry.filename and (entry.filename:match("Test") or entry.filename:match("Spec")) then
-          vim.api.nvim_set_hl(0, "TelescopeSelection", { fg = "green" })
+          -- highlight as a test
         end
         actions.select_default(prompt_bufnr)
       end)
@@ -27,8 +30,6 @@ local function conf(prompt)
     end,
   }
 end
-
-vim.api.nvim_set_hl(0, "TelescopeResultsComment", { fg = "#808080", italic = true })
 
 local function modify_path(path)
   local filename = vim.fn.fnamemodify(path, ":t")
@@ -44,21 +45,27 @@ local function modify_path(path)
   return string.format("%s%s", name, dir), #name, #dir
 end
 
+local function merge_styles(base, hl_group, start, size, after)
+  local new = { { { 0, size }, hl_group } }
+  if not after then
+    return utils.merge_styles(base, new, start)
+  else
+    return utils.merge_styles(new, base, start)
+  end
+end
+
 local display_modified_path = function(entry)
   local hl_group, icon
   local _display, style = utils.transform_path({}, entry.value)
   local display, namelen, pathlen = modify_path(_display)
 
-  display, hl_group, icon = utils.transform_devicons(entry.value, display, false)
+  display, hl_group, icon = utils.transform_devicons(entry.value, display)
 
   if hl_group then
-    local icon_style = { { { 0, #icon + 1 }, hl_group } }
-    style = utils.merge_styles(icon_style, style, #icon + 1)
+    style = merge_styles(style, hl_group, #icon + 1, #icon + 1, true)
   end
 
-  local path_start = #icon + namelen + 1
-  local subpath_style = { { { 0, pathlen }, "TelescopeResultsComment" } }
-  style = utils.merge_styles(style, subpath_style, path_start)
+  style = merge_styles(style, "TelescopeResultsComment", #icon + namelen + 1, pathlen)
 
   return display, style
 end
