@@ -1,7 +1,10 @@
 local TSC = require("telescope.builtin")
+
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local devicons = require("nvim-web-devicons")
+local make_entry = require('telescope.make_entry')
+local utils = require "telescope.utils"
 
 local function conf(prompt)
   return {
@@ -25,31 +28,36 @@ local function conf(prompt)
   }
 end
 
-local function global_entry_maker(entry)
-  local path = entry.path or entry.filename or entry.value or entry
+local function modify_path(path)
   local filename = vim.fn.fnamemodify(path, ":t")
   local dir = vim.fn.fnamemodify(path, ":h")
   dir = vim.fn.fnamemodify(dir, ":~:.")
-
-  local icon, icon_hl = devicons.get_icon_by_filetype(vim.fn.fnamemodify(filename, ":e"), { default = true })
 
   -- Handle path length
   dir = (dir == '.' and '')
     or (#dir <= 30 and dir)
     or string.format("%s...%s", string.sub(dir, 1, 20), string.sub(dir, -20))
 
-  local display_icon = icon and (icon .. " ") or ""
-  local padded_filename = filename .. string.rep(" ", 20 - #filename)
-
-  return {
-    value = path,
-    display = string.format("%s%s  %s", display_icon, padded_filename, dir),
-    ordinal = filename,
-    path = path,
-    icon = icon,
-    icon_hl = icon_hl,
-  }
+  local name = filename .. string.rep(" ", 20 - #filename)
+  return string.format("%s  %s", name, dir)
 end
+
+local display_modified_path = function(entry)
+  local hl_group, icon
+  local display, path_style = utils.transform_path({}, entry.value)
+  display = modify_path(display)
+
+  display, hl_group, icon = utils.transform_devicons(entry.value, display, false)
+
+  if hl_group then
+    local style = { { { 0, #icon + 1 }, hl_group } }
+    style = utils.merge_styles(style, path_style, #icon + 1)
+    return display, style
+  else
+    return display, path_style
+  end
+end
+
 
 local vertical = {
   layout_strategy = "vertical",
@@ -68,7 +76,11 @@ return {
   goto_usages = function()
     TSC.lsp_references(conf("LSP Usages"), {
       include_declaration = false,
-      entry_maker = global_entry_maker,
+      entry_maker = function(entry)
+        entry = make_entry.gen_from_file({})(entry)
+        entry.display = display_modified_path
+        return entry
+      end,
       layout_config = vertical.layout_config,
       layout_strategy = vertical.layout_strategy,
     })
@@ -79,11 +91,16 @@ return {
   end,
 
   find_files_default = function()
+
     TSC.find_files({
       layout_config = {
         preview_width = 0 -- Disable preview pane
       },
-      entry_maker = global_entry_maker,
+      entry_maker = function(entry)
+        entry = make_entry.gen_from_file({})(entry)
+        entry.display = display_modified_path
+        return entry
+      end,
       layout_config = vertical.layout_config,
       layout_strategy = vertical.layout_strategy,
     })
@@ -92,7 +109,11 @@ return {
   files_history = function()
     TSC.oldfiles({
       only_cwd = true,
-      entry_maker = global_entry_maker,
+      entry_maker = function(entry)
+        entry = make_entry.gen_from_file({})(entry)
+        entry.display = display_modified_path
+        return entry
+      end,
       layout_config = vertical.layout_config,
       layout_strategy = vertical.layout_strategy,
     })
