@@ -63,6 +63,14 @@ EnsureLazy().setup({
   { 'mfussenegger/nvim-jdtls' },
 
   { 'tpope/vim-fugitive', lazy = false, },
+  {
+    "rbong/vim-flog",
+    lazy = true,
+    cmd = { "Flog", "Flogsplit", "Floggit" },
+    dependencies = {
+      "tpope/vim-fugitive",
+    },
+  },
   { 'nvim-telescope/telescope.nvim' },
   -- { 'rcarriga/nvim-notify' }, -- just to stop prompting me to press ENTER on notifications
 

@@ -27,6 +27,7 @@ local general_helpers = {
   map('n', '<leader>tm', Sys.toggle_mouse, { silent = true, desc = 'toggle mouse' }),
   map('n', ';', ':', { desc = 'command mode' }),
   map('n', '<Esc>', '<cmd>noh<CR>', { desc = 'general clear highlights' }),
+  map('n', '<leader>db', ':DBUI<CR>', { desc = 'open database ui' }),
 }
 
 local buffers = {
@@ -95,8 +96,8 @@ local llm = {
 local git = {
   map('n', '<leader>gB', GS.blame, { desc = 'git Blame the whole buffer' }),
   map('n', '<leader>gs', ':Git<CR>', { desc = 'git status' }),
-  map('n', '<leader>db', ':DBUI<CR>', { desc = 'open database ui' }),
   map("n", "<leader>gh", "<cmd>Telescope git_commits<CR>", { desc = "git history" }),
+  map("n", "<leader>gg", "<cmd>Flog<CR>", { desc = "git graph" }),
 }
 
 local marks = {
