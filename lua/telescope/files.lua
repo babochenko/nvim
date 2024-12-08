@@ -28,6 +28,8 @@ local function conf(prompt)
   }
 end
 
+vim.api.nvim_set_hl(0, "TelescopeResultsComment", { fg = "#808080", italic = true })
+
 local function modify_path(path)
   local filename = vim.fn.fnamemodify(path, ":t")
   local dir = vim.fn.fnamemodify(path, ":h")
@@ -38,26 +40,28 @@ local function modify_path(path)
     or (#dir <= 30 and dir)
     or string.format("%s...%s", string.sub(dir, 1, 20), string.sub(dir, -20))
 
-  local name = filename .. string.rep(" ", 20 - #filename)
-  return string.format("%s  %s", name, dir)
+  local name = filename .. string.rep(" ", 20 - #filename) .. "  "
+  return string.format("%s%s", name, dir), #name, #dir
 end
 
 local display_modified_path = function(entry)
   local hl_group, icon
-  local display, path_style = utils.transform_path({}, entry.value)
-  display = modify_path(display)
+  local _display, style = utils.transform_path({}, entry.value)
+  local display, namelen, pathlen = modify_path(_display)
 
   display, hl_group, icon = utils.transform_devicons(entry.value, display, false)
 
   if hl_group then
-    local style = { { { 0, #icon + 1 }, hl_group } }
-    style = utils.merge_styles(style, path_style, #icon + 1)
-    return display, style
-  else
-    return display, path_style
+    local icon_style = { { { 0, #icon + 1 }, hl_group } }
+    style = utils.merge_styles(icon_style, style, #icon + 1)
   end
-end
 
+  local path_start = #icon + namelen + 1
+  local subpath_style = { { { 0, pathlen }, "TelescopeResultsComment" } }
+  style = utils.merge_styles(style, subpath_style, path_start)
+
+  return display, style
+end
 
 local vertical = {
   layout_strategy = "vertical",
