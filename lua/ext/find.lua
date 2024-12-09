@@ -11,28 +11,6 @@ local HL_TEST = "TelescopeTest"
 vim.api.nvim_set_hl(0, HL_COMMENT, { fg = "#808080", italic = true })
 vim.api.nvim_set_hl(0, HL_TEST, { fg = "green" })
 
-local function conf(prompt)
-  return {
-    show_line = false,      -- Show line preview
-    layout_strategy = "horizontal", -- Horizontal layout
-    layout_config = {
-      preview_width = 0.6, -- Preview window width
-    },
-    path_display = { "tail" },
-    prompt_title = prompt,
-    attach_mappings = function(_, map)
-      map('i', '<CR>', function(prompt_bufnr)
-        local entry = action_state.get_selected_entry()
-        if entry and entry.filename and (entry.filename:match("Test") or entry.filename:match("Spec")) then
-          -- highlight as a test
-        end
-        actions.select_default(prompt_bufnr)
-      end)
-      return true
-    end,
-  }
-end
-
 local function modify_path(path)
   local filename = vim.fn.fnamemodify(path, ":t")
   local dir = vim.fn.fnamemodify(path, ":h")
@@ -103,6 +81,9 @@ end
 
 local function vertical(prompt)
   return {
+    show_line = false,
+    path_display = { "tail" },
+
     prompt_title = prompt,
     layout_strategy = "vertical",
     layout_config = {
@@ -133,37 +114,24 @@ return {
 
   usages = function()
     local opt = vertical("Find Usages")
-    TSC.lsp_references(conf("LSP Usages"), {
-      include_declaration = false,
-      entry_maker = function(entry)
-        entry = make_entry.gen_from_file({})(entry)
-        entry.display = display_modified_path
-        return entry
-      end,
-      layout_config = opt.layout_config,
-      layout_strategy = opt.layout_strategy,
-    })
+    opt.include_declaration = false
+
+    TSC.lsp_references(opt)
   end,
 
   impls = function()
-    TSC.lsp_implementations(conf("LSP impls"))
+    TSC.lsp_implementations(vertical("Find Implementations"))
   end,
 
   files = function()
     local opts = vertical("Find Files")
+    opts.entry_maker = function(entry)
+      entry = make_entry.gen_from_file({})(entry)
+      entry.display = display_modified_path
+      return entry
+    end
 
-    TSC.find_files({
-      layout_config = {
-        preview_width = 0 -- Disable preview pane
-      },
-      entry_maker = function(entry)
-        entry = make_entry.gen_from_file({})(entry)
-        entry.display = display_modified_path
-        return entry
-      end,
-      layout_config = opts.layout_config,
-      layout_strategy = opts.layout_strategy,
-    })
+    TSC.find_files(opts)
   end,
 
   files_history = function()

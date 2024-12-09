@@ -61,9 +61,6 @@ vim.diagnostic.config({
 
 require('telescope').setup {
   defaults = {
-    layout_config = {
-      -- Optional layout settings
-    },
     borderchars = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' }, -- Customize border style
     win_options = {
       winblend = 10, -- Add transparency if desired
