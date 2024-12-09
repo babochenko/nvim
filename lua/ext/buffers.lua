@@ -34,7 +34,7 @@ local do_display = function(name, opts)
         { width = opts.bufnr_width },
         { width = 4 },
         { width = icon_width },
-        { remaining = true },
+        { width = #name },
         { width = #bufname },
       },
     }
@@ -43,7 +43,7 @@ local do_display = function(name, opts)
       { entry.bufnr, "TelescopeResultsNumber" },
       { entry.indicator, Find.HL_COMMENT },
       { icon, hl_group },
-      { name },
+      { name, Find.HL_NAMED_BUFFER },
       { bufname, Find.HL_COMMENT },
     }
   end

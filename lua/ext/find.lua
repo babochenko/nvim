@@ -6,10 +6,14 @@ local make_entry = require('telescope.make_entry')
 local utils = require "telescope.utils"
 local NvimTree = require("nvim-tree.api")
 
-local HL_COMMENT = "TelescopeResultsComment"
-local HL_TEST = "TelescopeTest"
-vim.api.nvim_set_hl(0, HL_COMMENT, { fg = "#808080", italic = true })
-vim.api.nvim_set_hl(0, HL_TEST, { fg = "green" })
+local function hlgroup(name, opts)
+  vim.api.nvim_set_hl(0, name, opts)
+  return name
+end
+
+local HL_COMMENT = hlgroup("TelescopeResultsComment", { fg = "#808080", italic = true })
+local HL_NAMED_BUFFER = hlgroup("TelescopeNamedBuffer", { underline = true })
+local HL_TEST = hlgroup("TelescopeTest", { fg = "green" })
 
 local function modify_path(path)
   local filename = vim.fn.fnamemodify(path, ":t")
@@ -100,6 +104,7 @@ end
 return {
 
   HL_COMMENT = HL_COMMENT,
+  HL_NAMED_BUFFER = HL_NAMED_BUFFER,
 
   words = function()
     local opt = vertical("Find Words")
