@@ -16,6 +16,8 @@ local entry_display = require "telescope.pickers.entry_display"
 local bufnrs = vim.tbl_filter(function(bufnr)
   return 1 == vim.fn.buflisted(bufnr)
 end, vim.api.nvim_list_bufs())
+local max_bufnr = math.max(unpack(bufnrs))
+local bufnr_width = #tostring(max_bufnr)
 
 local do_display_name = function(name, opts)
   return function(entry)
@@ -58,8 +60,6 @@ local do_display_name = function(name, opts)
 end
 
 local function make_custom_name_entry(entry)
-  local max_bufnr = math.max(unpack(bufnrs))
-  local bufnr_width = #tostring(max_bufnr)
   local opts = { bufnr_width = bufnr_width }
 
   entry = make_entry.gen_from_buffer(opts)(entry)
@@ -67,6 +67,8 @@ local function make_custom_name_entry(entry)
   local ok, name = pcall(vim.api.nvim_buf_get_var, entry.bufnr, "buf_custom_name")
   if ok and name ~= "" then
     entry.display = do_display_name(name, opts)
+    -- Add ordinal with custom name for searching
+    entry.ordinal = name .. " " .. entry.ordinal
   else
     entry.display = do_display_name(nil, opts)
   end
@@ -75,9 +77,9 @@ end
 
 return {
   find_all = function()
-    local opt = Find.vertical("Open Buffers")
-    opt.entry_maker = make_custom_name_entry
-    Telescope.buffers(opt)
+    Telescope.buffers(Find.vertical_layout("Open Buffers", {
+      entry_maker = make_custom_name_entry,
+    }))
   end,
 
   rename = function()

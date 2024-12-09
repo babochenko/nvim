@@ -83,8 +83,15 @@ local display_modified_path = function(entry)
   return display, style
 end
 
-local function vertical(prompt)
-  return {
+function merge(t1, t2)
+  -- Copy all fields from t2 into t1
+  for k, v in pairs(t2) do
+    t1[k] = v
+  end
+end
+
+local function vertical_layout(prompt, other)
+  local opts = {
     show_line = false,
     path_display = { "tail" },
     prompt_title = prompt,
@@ -99,16 +106,20 @@ local function vertical(prompt)
       }
     }
   }
+  if other then
+    merge(opts, other)
+  end
+  return opts
 end
 
 return {
 
   HL_COMMENT = HL_COMMENT,
   HL_NAMED_BUFFER = HL_NAMED_BUFFER,
-  vertical = vertical,
+  vertical_layout = vertical_layout,
 
   words = function()
-    local opt = vertical("Find Words")
+    local opt = vertical_layout("Find Words")
 
     local node = NvimTree.tree.get_node_under_cursor()
     if node and node.type == "directory" then
@@ -119,40 +130,34 @@ return {
   end,
 
   usages = function()
-    local opt = vertical("Find Usages")
-    opt.include_declaration = false
-
-    TSC.lsp_references(opt)
+    TSC.lsp_references(vertical_layout("Find Usages", {
+      include_declaration = false
+    }))
   end,
 
   impls = function()
-    TSC.lsp_implementations(vertical("Find Implementations"))
+    TSC.lsp_implementations(vertical_layout("Find Implementations"))
   end,
 
   files = function()
-    local opts = vertical("Find Files")
-    opts.entry_maker = function(entry)
-      entry = make_entry.gen_from_file({})(entry)
-      entry.display = display_modified_path
-      return entry
-    end
-
-    TSC.find_files(opts)
+    TSC.find_files(vertical_layout("Find Files", {
+      entry_maker = function(entry)
+        entry = make_entry.gen_from_file({})(entry)
+        entry.display = display_modified_path
+        return entry
+      end
+    }))
   end,
 
   files_history = function()
-    local opts = vertical("Old Files")
-
-    TSC.oldfiles({
+    TSC.oldfiles(vertical_layout("Old Files", {
       only_cwd = true,
       entry_maker = function(entry)
         entry = make_entry.gen_from_file({})(entry)
         entry.display = display_modified_path
         return entry
       end,
-      layout_config = opts.layout_config,
-      layout_strategy = opts.layout_strategy,
-    })
+    }))
   end,
 
   testfile = function()

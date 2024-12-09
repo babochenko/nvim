@@ -194,6 +194,7 @@ end
 
 -- display a red "m" where the mark is
 vim.fn.sign_define("MarkSign", { text = "m", texthl = "Error", numhl = "" })
+
 local function place_marks()
   for _, mark in ipairs(global_marks) do
     if vim.fn.bufexists(mark.file) == 1 then
