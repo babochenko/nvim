@@ -17,41 +17,7 @@ local bufnrs = vim.tbl_filter(function(bufnr)
   return 1 == vim.fn.buflisted(bufnr)
 end, vim.api.nvim_list_bufs())
 
-local do_display_regular_name = function(opts)
-  return function(entry)
-    local filename = entry.filename
-
-    local icon, _ = utils.get_devicons("fname", false)
-    local icon_width = strings.strdisplaywidth(icon)
-    opts.__prefix = opts.bufnr_width + 4 + icon_width + 3 + 1 + #tostring(entry.lnum)
-    local bufname, path_style = utils.transform_path(opts, entry.filename)
-
-    icon, hl_group = utils.get_devicons(entry.filename, false)
-
-    local name = vim.fn.fnamemodify(filename, ":t") .. ":" .. entry.lnum
-    local path = vim.fn.fnamemodify(filename, ":h")
-    local displayer = entry_display.create {
-      separator = " ",
-      items = {
-        { width = opts.bufnr_width },
-        { width = 4 },
-        { width = icon_width },
-        { width = #name },
-        { width = #path },
-      },
-    }
-
-    return displayer {
-      { entry.bufnr, "TelescopeResultsNumber" },
-      { entry.indicator, Find.HL_COMMENT },
-      { icon, hl_group },
-      { name },
-      { path, Find.HL_COMMENT },
-    }
-  end
-end
-
-local do_display_custom_name = function(name, opts)
+local do_display_name = function(name, opts)
   return function(entry)
     local icon, _ = utils.get_devicons("fname", false)
     local icon_width = strings.strdisplaywidth(icon)
@@ -60,15 +26,24 @@ local do_display_custom_name = function(name, opts)
 
     icon, hl_group = utils.get_devicons(entry.filename, false)
 
-    local bufname = " (" .. display_bufname .. ":" .. entry.lnum .. ")"
+    local filename, filepath, filestyle
+    if name then
+      filename = name
+      filepath = " (" .. display_bufname .. ":" .. entry.lnum .. ")"
+      filestyle = { filename, Find.HL_NAMED_BUFFER }
+    else
+      filename = vim.fn.fnamemodify(entry.filename, ":t") .. ":" .. entry.lnum
+      filepath = vim.fn.fnamemodify(entry.filename, ":h")
+      filestyle = { filename }
+    end
     local displayer = entry_display.create {
       separator = " ",
       items = {
         { width = opts.bufnr_width },
         { width = 4 },
         { width = icon_width },
-        { width = #name },
-        { width = #bufname },
+        { width = #filename },
+        { width = #filepath },
       },
     }
 
@@ -76,8 +51,8 @@ local do_display_custom_name = function(name, opts)
       { entry.bufnr, "TelescopeResultsNumber" },
       { entry.indicator, Find.HL_COMMENT },
       { icon, hl_group },
-      { name, Find.HL_NAMED_BUFFER },
-      { bufname, Find.HL_COMMENT },
+      filestyle,
+      { filepath, Find.HL_COMMENT },
     }
   end
 end
@@ -95,9 +70,9 @@ return {
 
       local ok, name = pcall(vim.api.nvim_buf_get_var, entry.bufnr, "buf_custom_name")
       if ok and name ~= "" then
-        entry.display = do_display_custom_name(name, opts)
+        entry.display = do_display_name(name, opts)
       else
-        entry.display = do_display_regular_name(opts)
+        entry.display = do_display_name(nil, opts)
       end
 
       return entry
