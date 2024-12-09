@@ -28,6 +28,7 @@ local general_helpers = {
   map('n', ';', ':', { desc = 'command mode' }),
   map('n', '<Esc>', '<cmd>noh<CR>', { desc = 'general clear highlights' }),
   map('n', '<leader>db', ':DBUI<CR>', { desc = 'open database ui' }),
+  map('n', '<leader>fp', '<cmd>echo expand("%:p")<CR>' , { desc = 'show file path' }),
 }
 
 local buffers = {
