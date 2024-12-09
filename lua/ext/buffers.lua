@@ -17,9 +17,42 @@ local bufnrs = vim.tbl_filter(function(bufnr)
   return 1 == vim.fn.buflisted(bufnr)
 end, vim.api.nvim_list_bufs())
 
-local do_display = function(name, opts)
+local do_display_regular_name = function(opts)
   return function(entry)
-    -- bufnr_width + modes + icon + 3 spaces + : + lnum
+    local filename = entry.filename
+
+    local icon, _ = utils.get_devicons("fname", false)
+    local icon_width = strings.strdisplaywidth(icon)
+    opts.__prefix = opts.bufnr_width + 4 + icon_width + 3 + 1 + #tostring(entry.lnum)
+    local bufname, path_style = utils.transform_path(opts, entry.filename)
+
+    icon, hl_group = utils.get_devicons(entry.filename, false)
+
+    local name = vim.fn.fnamemodify(filename, ":t") .. ":" .. entry.lnum
+    local path = vim.fn.fnamemodify(filename, ":h")
+    local displayer = entry_display.create {
+      separator = " ",
+      items = {
+        { width = opts.bufnr_width },
+        { width = 4 },
+        { width = icon_width },
+        { width = #name },
+        { width = #path },
+      },
+    }
+
+    return displayer {
+      { entry.bufnr, "TelescopeResultsNumber" },
+      { entry.indicator, Find.HL_COMMENT },
+      { icon, hl_group },
+      { name },
+      { path, Find.HL_COMMENT },
+    }
+  end
+end
+
+local do_display_custom_name = function(name, opts)
+  return function(entry)
     local icon, _ = utils.get_devicons("fname", false)
     local icon_width = strings.strdisplaywidth(icon)
     opts.__prefix = opts.bufnr_width + 4 + icon_width + 3 + 1 + #tostring(entry.lnum)
@@ -54,22 +87,23 @@ return {
     local max_bufnr = math.max(unpack(bufnrs))
     local bufnr_width = #tostring(max_bufnr)
 
-    Telescope.buffers({
-      entry_maker = function(entry)
-        local opts = {
-          bufnr_width = bufnr_width
-        }
+    local opt = Find.vertical("Open Buffers")
+    opt.entry_maker = function(entry)
+      local opts = { bufnr_width = bufnr_width }
 
-        entry = make_entry.gen_from_buffer(opts)(entry)
+      entry = make_entry.gen_from_buffer(opts)(entry)
 
-        local ok, name = pcall(vim.api.nvim_buf_get_var, entry.bufnr, "buf_custom_name")
-        if ok and name ~= "" then
-          entry.display = do_display(name, opts)
-        end
-
-        return entry
+      local ok, name = pcall(vim.api.nvim_buf_get_var, entry.bufnr, "buf_custom_name")
+      if ok and name ~= "" then
+        entry.display = do_display_custom_name(name, opts)
+      else
+        entry.display = do_display_regular_name(opts)
       end
-    })
+
+      return entry
+    end
+
+    Telescope.buffers(opt)
   end,
 
   rename = function()

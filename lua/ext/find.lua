@@ -105,6 +105,7 @@ return {
 
   HL_COMMENT = HL_COMMENT,
   HL_NAMED_BUFFER = HL_NAMED_BUFFER,
+  vertical = vertical,
 
   words = function()
     local opt = vertical("Find Words")
