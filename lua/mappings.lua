@@ -38,7 +38,9 @@ local buffers = {
     map("n", "<leader>tv", function() TERM.new { pos = "vsp" } end, { desc = "terminal new v" }),
   },
   modify = {
-    map('n', '<leader>bn', Buf.rename, { desc = 'buffer rename' }),
+    map('n', '<leader>bb', Buf.rename, { desc = 'buffer rename' }),
+    map('n', '<leader>bn', Buf.move_right, { desc = 'buffer move right' }),
+    map('n', '<leader>bp', Buf.move_left, { desc = 'buffer move left' }),
     map('n', '<leader>fb', Buf.find_all, { desc = 'find buffers' }),
     map('n', '<leader>X', Buf.close_other_buffers, { desc = 'buffer close all but current' }),
   },
