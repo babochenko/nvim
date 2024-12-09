@@ -15,7 +15,7 @@ local HL_COMMENT = hlgroup("TelescopeResultsComment", { fg = "#808080", italic =
 local HL_NAMED_BUFFER = hlgroup("TelescopeNamedBuffer", { underline = true })
 local HL_TEST = hlgroup("TelescopeTest", { fg = "green" })
 
-local function modify_path(path)
+local function split_path(path)
   local filename = vim.fn.fnamemodify(path, ":t")
   local dir = vim.fn.fnamemodify(path, ":h")
   dir = vim.fn.fnamemodify(dir, ":~:.")
@@ -31,9 +31,7 @@ local function modify_path(path)
   dir = dir:gsub('/src/testFunctional/groovy', '/...') -- Replace the specific part of the path
   dir = dir:gsub('/src/functionalTest/groovy', '/...') -- Replace the specific part of the path
 
-  local name = filename .. string.rep(" ", 20 - #filename) .. "  "
-  return string.format("%s%s", name, dir), #filename, #name, #dir
-
+  return filename, dir
 end
 
 local function add_offset(offset, obj)
@@ -66,7 +64,10 @@ end
 local display_modified_path = function(entry)
   local hl_group, icon
   local _display, style = utils.transform_path({}, entry.value)
-  local display, filenamelen, namelen, pathlen = modify_path(_display)
+  local filename, dir = split_path(_display)
+
+  local name = filename .. string.rep(" ", 20 - #filename) .. "  "
+  local display, filenamelen, namelen, pathlen = string.format("%s%s", name, dir), #filename, #name, #dir
 
   display, hl_group, icon = utils.transform_devicons(entry.value, display)
 
@@ -117,6 +118,8 @@ return {
   HL_COMMENT = HL_COMMENT,
   HL_NAMED_BUFFER = HL_NAMED_BUFFER,
   vertical_layout = vertical_layout,
+
+  split_path = split_path,
 
   words = function()
     local opt = vertical_layout("Find Words")

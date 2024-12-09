@@ -25,17 +25,18 @@ local do_display_name = function(name, opts)
     local icon_width = strings.strdisplaywidth(icon)
     opts.__prefix = opts.bufnr_width + 4 + icon_width + 3 + 1 + #tostring(entry.lnum)
     local display_bufname, path_style = utils.transform_path(opts, entry.filename)
+    local _, path = Find.split_path(entry.filename)
 
     icon, hl_group = utils.get_devicons(entry.filename, false)
 
     local filename, filepath, filestyle
     if name then
       filename = name
-      filepath = " (" .. display_bufname .. ":" .. entry.lnum .. ")"
+      filepath = " (" .. path .. ":" .. entry.lnum .. ")"
       filestyle = { filename, Find.HL_NAMED_BUFFER }
     else
       filename = vim.fn.fnamemodify(entry.filename, ":t") .. ":" .. entry.lnum
-      filepath = vim.fn.fnamemodify(entry.filename, ":h")
+      filepath = path
       filestyle = { filename }
     end
     local displayer = entry_display.create {
