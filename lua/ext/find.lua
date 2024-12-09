@@ -83,13 +83,13 @@ local function vertical(prompt)
   return {
     show_line = false,
     path_display = { "tail" },
-
     prompt_title = prompt,
-    layout_strategy = "vertical",
+    layout_strategy = 'vertical',
     layout_config = {
+      preview_cutoff = 0, -- Ensures previews are not disabled for narrow windows
+      preview_height = 0.5,
       vertical = {
         width = 0.8,
-        preview_height = 0.5,
         prompt_position = "top",
         mirror = true
       }

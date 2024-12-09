@@ -61,12 +61,14 @@ vim.diagnostic.config({
 
 require('telescope').setup {
   defaults = {
+    previewer = true, -- Globally enable the previewer
     borderchars = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' }, -- Customize border style
     win_options = {
       winblend = 10, -- Add transparency if desired
     },
     border = true, -- Enable the border
-  }
+  },
 }
+
 vim.api.nvim_set_hl(0, "TelescopeBorder", { fg = "#657088", bg = "#1c1f26" })
 
