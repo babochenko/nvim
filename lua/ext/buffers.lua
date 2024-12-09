@@ -57,27 +57,26 @@ local do_display_name = function(name, opts)
   end
 end
 
+local function make_custom_name_entry(entry)
+  local max_bufnr = math.max(unpack(bufnrs))
+  local bufnr_width = #tostring(max_bufnr)
+  local opts = { bufnr_width = bufnr_width }
+
+  entry = make_entry.gen_from_buffer(opts)(entry)
+
+  local ok, name = pcall(vim.api.nvim_buf_get_var, entry.bufnr, "buf_custom_name")
+  if ok and name ~= "" then
+    entry.display = do_display_name(name, opts)
+  else
+    entry.display = do_display_name(nil, opts)
+  end
+  return entry
+end
+
 return {
   find_all = function()
-    local max_bufnr = math.max(unpack(bufnrs))
-    local bufnr_width = #tostring(max_bufnr)
-
     local opt = Find.vertical("Open Buffers")
-    opt.entry_maker = function(entry)
-      local opts = { bufnr_width = bufnr_width }
-
-      entry = make_entry.gen_from_buffer(opts)(entry)
-
-      local ok, name = pcall(vim.api.nvim_buf_get_var, entry.bufnr, "buf_custom_name")
-      if ok and name ~= "" then
-        entry.display = do_display_name(name, opts)
-      else
-        entry.display = do_display_name(nil, opts)
-      end
-
-      return entry
-    end
-
+    opt.entry_maker = make_custom_name_entry
     Telescope.buffers(opt)
   end,
 
