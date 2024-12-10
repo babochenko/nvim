@@ -73,8 +73,7 @@ jdtls.start_or_attach {
     debounce_text_changes = 80,
   },
 
-  -- filetypes = { 'java', 'groovy' },
-
+  filetypes = { "java", "groovy" },
   settings = {
     java = {
       format = {
@@ -120,7 +119,10 @@ jdtls.start_or_attach {
       -- How code generation should act
       codeGeneration = {
         toString = {
-          template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}"
+          template = "${object.className}{${member.name()}=${member.value}, }",
+          useFullyQualifiedNames = false,
+          skipNullValues = false,
+          listArrayContents = true,
         },
         hashCodeEquals = {
           useJava7Objects = true,
