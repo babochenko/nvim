@@ -1,5 +1,1 @@
-return {
-  ui = {
-    theme = "aquarium",
-  },
-}
+return {}
