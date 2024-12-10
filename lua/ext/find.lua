@@ -134,7 +134,12 @@ return {
 
   usages = function()
     TSC.lsp_references(vertical_layout("Find Usages", {
-      include_declaration = false
+      include_declaration = false,
+      -- entry_maker = function(entry)
+      --   entry = make_entry.gen_from_quickfix({})(entry)
+      --   entry.display = display_modified_path
+      --   return entry
+      -- end,
     }))
   end,
 

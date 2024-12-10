@@ -75,9 +75,11 @@ local hl_group = function(group, opts)
 end
 
 local neutral = "#abb2bf"
+local border = "#657088"
 local keyword = "#61afef"
+local constant = "#c678dd"
 
-hl_group("TelescopeBorder", { fg = "#657088", bg = "#1c1f26" })
+hl_group("TelescopeBorder", { fg = border, bg = "#1c1f26" })
 hl_group("@module", { fg = neutral })
 hl_group("@property", { fg = neutral })
 hl_group("@variable", { fg = neutral })
@@ -88,4 +90,8 @@ hl_group("@keyword", { fg = keyword })
 hl_group("@lsp.type.modifier.java", { link = "@keyword" })
 hl_group("@keyword.return", { link = "@keyword" })
 hl_group("@keyword.operator", { fg = neutral })
+hl_group("@constant", { fg = constant })
+
+hl_group("@punctuation.bracket.java", { fg = neutral })
+hl_group("@punctuation.delimiter.java", { fg = border })
 
