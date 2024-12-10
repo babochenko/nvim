@@ -97,7 +97,8 @@ local llm = {
 }
 
 local git = {
-  map('n', '<leader>gB', GS.blame, { desc = 'git Blame the whole buffer' }),
+  map('n', '<leader>gB', GS.blame, { desc = 'git blame' }),
+  map('n', '<leader>gb', GS.blame_line, { desc = 'git blame line' }),
   map('n', '<leader>gs', ':Git<CR>', { desc = 'git status' }),
   map("n", "<leader>gh", "<cmd>Telescope git_commits<CR>", { desc = "git history" }),
   map("n", "<leader>gg", "<cmd>Flog<CR>", { desc = "git graph" }),
