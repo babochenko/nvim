@@ -118,6 +118,8 @@ return {
 
         if not success then
           print("Error closing buffer " .. buf .. ": " .. tostring(err))
+        else
+          vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(":", true, false, true) .. vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
         end
       end
     end
