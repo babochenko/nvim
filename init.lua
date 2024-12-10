@@ -70,5 +70,22 @@ require('telescope').setup {
   },
 }
 
-vim.api.nvim_set_hl(0, "TelescopeBorder", { fg = "#657088", bg = "#1c1f26" })
+local hl_group = function(group, opts)
+  vim.api.nvim_set_hl(0, group, opts)
+end
+
+local neutral = "#abb2bf"
+local keyword = "#61afef"
+
+hl_group("TelescopeBorder", { fg = "#657088", bg = "#1c1f26" })
+hl_group("@module", { fg = neutral })
+hl_group("@property", { fg = neutral })
+hl_group("@variable", { fg = neutral })
+hl_group("@variable.member", { fg = neutral })
+hl_group("@variable.parameter", { fg = neutral })
+
+hl_group("@keyword", { fg = keyword })
+hl_group("@lsp.type.modifier.java", { link = "@keyword" })
+hl_group("@keyword.return", { link = "@keyword" })
+hl_group("@keyword.operator", { fg = neutral })
 
