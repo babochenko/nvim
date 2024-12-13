@@ -177,7 +177,6 @@ local function list_marks(all_marks)
       local ordinal = mark.name .. ' ' .. file .. ' ' .. dir
 
       table.insert(mark_list, {
-        -- display = function() display_mark(display_name, file, dir) end,
         display = function() return display_mark(mark_name, file, dir) end,
         value = mark,
         ordinal = ordinal,
