@@ -190,13 +190,13 @@ local function list_marks(all_marks)
     if all_marks or vim.startswith(mark.file, project_root) then -- Check if showing all marks or if mark is within project root
       local file, dir = Find.split_path(mark.file)
       local mark_name = mark.name or string.format("%s:%d", vim.fn.fnamemodify(mark.file, ":t"), mark.line)
-      local ordinal = mark.name .. ' ' .. file .. ' ' .. dir
+      local ordinal = mark_name .. ' ' .. file .. ' ' .. dir
 
       table.insert(mark_list, {
         -- display = function() display_mark(display_name, file, dir) end,
         display = function() return display_mark(mark_name, file, dir) end,
         value = mark,
-        ordinal = ordinal,
+        ordinal = mark.file,
       })
     end
   end
