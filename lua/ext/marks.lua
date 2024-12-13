@@ -196,7 +196,7 @@ local function list_marks(all_marks)
         -- display = function() display_mark(display_name, file, dir) end,
         display = function() return display_mark(mark_name, file, dir) end,
         value = mark,
-        ordinal = mark.file,
+        ordinal = ordinal,
       })
     end
   end
