@@ -1,21 +1,37 @@
 -- inspired by https://github.com/chentoast/marks.nvi pickers = require('telescope.pickers')marks
-local finders = require('telescope.finders')
-local actions = require('telescope.actions')
-local action_state = require('telescope.actions.state')
-local conf = require('telescope.config').values
-local previewers = require('telescope.previewers')
-local pickers = require "telescope.pickers"
-local entry_display = require "telescope.pickers.entry_display"
+local actions = require 'telescope.actions'
+
+local TSC = (function ()
+  local finders = require 'telescope.finders'
+  local action_state = require 'telescope.actions.state'
+  local previewers = require 'telescope.previewers'
+  local pickers = require "telescope.pickers"
+  local entry_display = require "telescope.pickers.entry_display"
+  local conf = require('telescope.config').values
+  local utils = require "telescope.utils"
 local strings = require "plenary.strings"
-local utils = require "telescope.utils"
+
+  return {
+    make_table = finders.new_table,
+    make_previewer = previewers.new_buffer_previewer,
+    make_picker = pickers.new,
+    make_displayer = entry_display.create,
+    make_sorter = conf.generic_sorter,
+
+    get_selected_entry = action_state.get_selected_entry,
+    get_icon = function(file)
+      local icon, hlgroup = utils.get_devicons(file, false)
+      local width = strings.strdisplaywidth(icon)
+      return icon, hlgroup, width
+    end,
+  }
+end)()
 
 local Find = require 'ext/find'
 
 local marks_file = vim.fn.expand("~/.local/share/nvim/marks.json") -- File to save marks
 local global_marks = {} -- Stores all marks with file, line, and optional name
 
-local icon, _ = utils.get_devicons("fname", false)
-local icon_width = strings.strdisplaywidth(icon)
 
 local function save_marks()
   local json = vim.fn.json_encode(global_marks)
@@ -80,7 +96,7 @@ local function toggle_mark()
   save_marks() -- Save marks immediately
 end
 
-local marks_previewer = previewers.new_buffer_previewer({
+local marks_previewer = TSC.make_previewer({
   title = "File Preview",
   get_buffer_by_name = function(_, entry)
     return entry.value.file
@@ -138,9 +154,9 @@ local function name_mark()
 end
 
 local function display_mark(name, file, path)
-  local icon, hl_group = utils.get_devicons(file, false)
+  local icon, hl_group, icon_width = TSC.get_icon(file)
 
-  local displayer = entry_display.create {
+  local displayer = TSC.make_displayer {
     separator = " ",
     items = {
       { width = icon_width },
@@ -177,6 +193,7 @@ local function list_marks(all_marks)
       local ordinal = mark.name .. ' ' .. file .. ' ' .. dir
 
       table.insert(mark_list, {
+        -- display = function() display_mark(display_name, file, dir) end,
         display = function() return display_mark(mark_name, file, dir) end,
         value = mark,
         ordinal = ordinal,
@@ -194,8 +211,8 @@ local function list_marks(all_marks)
     title = "All Marks"
   end
 
-  pickers.new({}, Find.vertical_layout(title, {
-    finder = finders.new_table {
+  TSC.make_picker({}, Find.vertical_layout(title, {
+    finder = TSC.make_table {
       results = mark_list,
       entry_maker = function(entry)
         return {
@@ -206,11 +223,11 @@ local function list_marks(all_marks)
       end
     },
     previewer = marks_previewer,
-    sorter = conf.generic_sorter({}),
+    sorter = TSC.make_sorter({}),
     attach_mappings = function(prompt_bufnr)
       actions.select_default:replace(function()
         actions.close(prompt_bufnr)
-        local selection = action_state.get_selected_entry()
+        local selection = TSC.get_selected_entry()
         if selection then
           vim.cmd("edit " .. selection.value.file)
           vim.fn.cursor(selection.value.line, 0)
