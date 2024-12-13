@@ -5,6 +5,9 @@ local action_state = require('telescope.actions.state')
 local conf = require('telescope.config').values
 local previewers = require('telescope.previewers')
 local pickers = require "telescope.pickers"
+local entry_display = require "telescope.pickers.entry_display"
+
+local Find = require 'ext/find'
 
 local marks_file = vim.fn.expand("~/.local/share/nvim/marks.json") -- File to save marks
 local global_marks = {} -- Stores all marks with file, line, and optional name
@@ -43,8 +46,6 @@ local function load_marks()
   end
 end
 
-load_marks() -- Ensure marks are loaded when the module is required
-
 local function toggle_mark()
   local file = vim.fn.expand("%:p") -- Get full path of the current file
   local line = vim.fn.line(".") -- Get the current line number
@@ -74,6 +75,40 @@ local function toggle_mark()
   save_marks() -- Save marks immediately
 end
 
+local marks_previewer = previewers.new_buffer_previewer({
+  title = "File Preview",
+  get_buffer_by_name = function(_, entry)
+    return entry.value.file
+  end,
+  define_preview = function(self, entry)
+    -- Read the file content
+    local bufnr = self.state.bufnr
+
+    -- Set filetype using bo instead of nvim_buf_set_option
+    vim.bo[bufnr].filetype = vim.filetype.match({ filename = entry.value.file }) or ""
+
+    -- Load the file content
+    local lines = vim.fn.readfile(entry.value.file)
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+
+    -- Highlight the marked line
+    local line_nr = entry.value.line
+    local ns_id = vim.api.nvim_create_namespace('TelescopeMarkPreview')
+    vim.api.nvim_buf_add_highlight(bufnr, ns_id, "TelescopePreviewLine", line_nr - 1, 0, -1)
+
+    -- Center the view on the marked line
+    vim.defer_fn(function()
+      self.state.preview_win = vim.fn.bufwinid(bufnr)
+      if self.state.preview_win ~= -1 then
+        vim.api.nvim_win_set_cursor(self.state.preview_win, {line_nr, 0})
+        vim.api.nvim_win_call(self.state.preview_win, function()
+          vim.cmd('normal! zz')
+        end)
+      end
+    end, 10)
+  end
+})
+
 local function name_mark()
   local file = vim.fn.expand("%:p")
   local line = vim.fn.line(".")
@@ -97,6 +132,27 @@ local function name_mark()
   print("No mark found on this line!")
 end
 
+local function display_mark(name, file, path)
+  local displayer = entry_display.create {
+    separator = " ",
+    items = {
+      { width = #name },
+      { width = 1 },
+      { width = #file },
+      { width = 1 },
+      { width = #path },
+    },
+  }
+
+  return displayer {
+    { name, Find.HL_NAMED_BUFFER },
+    { ' ' },
+    { file, Find.HL_GREY },
+    { ' ' },
+    { path, Find.HL_COMMENT },
+  }
+end
+
 local function list_marks(all_marks)
   if #global_marks == 0 then
     print("No marks set!")
@@ -107,11 +163,15 @@ local function list_marks(all_marks)
   local mark_list = {}
   for _, mark in ipairs(global_marks) do
     if all_marks or vim.startswith(mark.file, project_root) then -- Check if showing all marks or if mark is within project root
-      local display_name = mark.name or string.format("%s:%d", vim.fn.fnamemodify(mark.file, ":t"), mark.line)
+      local file, dir = Find.split_path(mark.file)
+      local mark_name = mark.name or string.format("%s:%d", vim.fn.fnamemodify(mark.file, ":t"), mark.line)
+      local ordinal = mark.name .. ' ' .. file .. ' ' .. dir
+
       table.insert(mark_list, {
-        display = display_name,
+        -- display = function() display_mark(display_name, file, dir) end,
+        display = function() return display_mark(mark_name, file, dir) end,
         value = mark,
-        ordinal = display_name,
+        ordinal = ordinal,
       })
     end
   end
@@ -121,50 +181,12 @@ local function list_marks(all_marks)
     return
   end
 
-  -- Create a custom previewer
-  local marks_previewer = previewers.new_buffer_previewer({
-    title = "File Preview",
-    get_buffer_by_name = function(_, entry)
-      return entry.value.file
-    end,
-    define_preview = function(self, entry)
-      -- Read the file content
-      local bufnr = self.state.bufnr
-      
-      -- Set filetype using bo instead of nvim_buf_set_option
-      vim.bo[bufnr].filetype = vim.filetype.match({ filename = entry.value.file }) or ""
-      
-      -- Load the file content
-      local lines = vim.fn.readfile(entry.value.file)
-      vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-      
-      -- Highlight the marked line
-      local line_nr = entry.value.line
-      local ns_id = vim.api.nvim_create_namespace('TelescopeMarkPreview')
-      vim.api.nvim_buf_add_highlight(bufnr, ns_id, "TelescopePreviewLine", line_nr - 1, 0, -1)
-      
-      -- Center the view on the marked line
-      vim.defer_fn(function()
-        self.state.preview_win = vim.fn.bufwinid(bufnr)
-        if self.state.preview_win ~= -1 then
-          local win_height = vim.api.nvim_win_get_height(self.state.preview_win)
-          local scroll_offset = math.floor(win_height / 2)
-          vim.api.nvim_win_set_cursor(self.state.preview_win, {line_nr, 0})
-          vim.api.nvim_win_call(self.state.preview_win, function()
-            vim.cmd('normal! zz')
-          end)
-        end
-      end, 10)
-    end
-  })
-
   local title = "Marks"
   if all_marks then
     title = "All Marks"
   end
 
-  pickers.new({}, {
-    prompt_title = title,
+  pickers.new({}, Find.vertical_layout(title, {
     finder = finders.new_table {
       results = mark_list,
       entry_maker = function(entry)
@@ -177,7 +199,7 @@ local function list_marks(all_marks)
     },
     previewer = marks_previewer,
     sorter = conf.generic_sorter({}),
-    attach_mappings = function(prompt_bufnr, map)
+    attach_mappings = function(prompt_bufnr)
       actions.select_default:replace(function()
         actions.close(prompt_bufnr)
         local selection = action_state.get_selected_entry()
@@ -189,11 +211,8 @@ local function list_marks(all_marks)
       end)
       return true
     end,
-  }):find()
+  })):find()
 end
-
--- display a red "m" where the mark is
-vim.fn.sign_define("MarkSign", { text = "m", texthl = "Error", numhl = "" })
 
 local function place_marks()
   for _, mark in ipairs(global_marks) do
@@ -205,7 +224,11 @@ local function place_marks()
   end
 end
 
--- TODO add preview, like in find-words
+-- display a red "m" where the mark is
+vim.fn.sign_define("MarkSign", { text = "m", texthl = "Error", numhl = "" })
+
+load_marks() -- Ensure marks are loaded when the module is required
+
 return {
   save_marks = save_marks,
   load_marks = load_marks,

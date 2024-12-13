@@ -17,7 +17,7 @@ lsp.pyright.setup{
   -- }
 }
 
--- lsp.tsserver.setup{}
+lsp.tsserver.setup{}
 lsp.clangd.setup{}
 
 -- JDTLS configuration for Java and Groovy

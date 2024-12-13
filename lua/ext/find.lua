@@ -1,7 +1,5 @@
 local TSC = require("telescope.builtin")
 
-local actions = require("telescope.actions")
-local action_state = require("telescope.actions.state")
 local make_entry = require('telescope.make_entry')
 local utils = require "telescope.utils"
 local NvimTree = require("nvim-tree.api")
@@ -11,6 +9,7 @@ local function hlgroup(name, opts)
   return name
 end
 
+local HL_GREY = hlgroup("TelescopeGrey", { fg = "#808080" })
 local HL_COMMENT = hlgroup("TelescopeResultsComment", { fg = "#808080", italic = true })
 local HL_NAMED_BUFFER = hlgroup("TelescopeNamedBuffer", { underline = true })
 local HL_TEST = hlgroup("TelescopeTest", { fg = "green" })
@@ -50,7 +49,6 @@ local do_merge_styles = function(style1, style2, offset)
 
   return style1
 end
-
 
 local function merge_styles(base, hl_group, start, size, after)
   local new = { { { 0, size }, hl_group } }
@@ -116,6 +114,7 @@ end
 return {
 
   HL_COMMENT = HL_COMMENT,
+  HL_GREY = HL_GREY,
   HL_NAMED_BUFFER = HL_NAMED_BUFFER,
   vertical_layout = vertical_layout,
 
