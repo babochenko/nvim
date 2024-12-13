@@ -6,11 +6,16 @@ local conf = require('telescope.config').values
 local previewers = require('telescope.previewers')
 local pickers = require "telescope.pickers"
 local entry_display = require "telescope.pickers.entry_display"
+local strings = require "plenary.strings"
+local utils = require "telescope.utils"
 
 local Find = require 'ext/find'
 
 local marks_file = vim.fn.expand("~/.local/share/nvim/marks.json") -- File to save marks
 local global_marks = {} -- Stores all marks with file, line, and optional name
+
+local icon, _ = utils.get_devicons("fname", false)
+local icon_width = strings.strdisplaywidth(icon)
 
 local function save_marks()
   local json = vim.fn.json_encode(global_marks)
@@ -133,9 +138,12 @@ local function name_mark()
 end
 
 local function display_mark(name, file, path)
+  local icon, hl_group = utils.get_devicons(file, false)
+
   local displayer = entry_display.create {
     separator = " ",
     items = {
+      { width = icon_width },
       { width = #name },
       { width = 1 },
       { width = #file },
@@ -145,6 +153,7 @@ local function display_mark(name, file, path)
   }
 
   return displayer {
+    { icon, hl_group },
     { name, Find.HL_NAMED_BUFFER },
     { ' ' },
     { file, Find.HL_GREY },
