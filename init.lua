@@ -93,8 +93,8 @@ hl_group("@keyword.operator", { fg = neutral })
 hl_group("@constant", { fg = constant })
 hl_group("@lsp.mod.static.java", { fg = constant })
 
-hl_group("@punctuation.bracket.java", { fg = neutral })
-hl_group("@punctuation.delimiter.java", { fg = border })
+hl_group("@punctuation.bracket", { fg = neutral })
+hl_group("@punctuation.delimiter", { fg = border })
 
 local lsp = require 'lspconfig'
 
