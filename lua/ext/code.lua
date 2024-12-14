@@ -3,7 +3,7 @@ local Java = require('jdtls')
 local Runs = {
   ['lua'] = 'lua',
   ['py'] = 'python3',
-  ['java'] = 'java',
+  ['java'] = 'java --enable-preview',
   ['sh'] = 'bash',
 }
 
