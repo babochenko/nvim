@@ -9,31 +9,6 @@ function map(rhs, lhs, opt, desc)
   vim.keymap.set("n", rhs, lhs, opt)
 end
 
--- local organize_imports = function()
---   local params = {
---     command = 'java.action.organizeImports',
---     arguments = {
---       {
---         settings = {
---           java = {
---             "cleanup.organize_imports" = true,
---             "cleanup.sort_members" = true,
---             "editor.importorder" = {
---               "java",
---               "javax",
---               "org",
---               "com",
---               "#",  -- Static imports will be placed last
---             },
---             "editor.staticImportsOrder" = "bottom",  -- Ensure static imports are always at the bottom
---           }
---         }
---       }
---     }
---   }
---   vim.lsp.buf.execute_command(params)
--- end
-
 local on_attach = function(client, bufnr)
   -- Regular Neovim LSP client keymappings
   local opt = { noremap=true, silent=true, buffer=bufnr }
@@ -137,8 +112,8 @@ jdtls.start_or_attach {
       configuration = {
         runtimes = {
           {
-            name = "JavaSE-17",
-            path = home .. '/.jenv/versions/17.0.6',
+            name = "java",
+            path = vim.fn.getenv "JAVA_VERSION",
           }
         }
       }

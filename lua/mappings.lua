@@ -22,6 +22,10 @@ local Sys = require 'ext/system'
 --   vim.cmd("WhichKey " .. vim.fn.input "WhichKey: ")
 -- end, { desc = "whichkey query lookup" })
 
+local nvim_defaults = {
+  map('n', '<leader>vl', function() vim.cmd("edit ~/.local/state/nvim/lsp.log") end, { desc = 'open LSP logs' }),
+}
+
 local general_helpers = {
   map('n', '<leader>fo', Sys.open_system, { desc = 'open this file in system viewer' }),
   map('n', '<leader>tm', Sys.toggle_mouse, { silent = true, desc = 'toggle mouse' }),
