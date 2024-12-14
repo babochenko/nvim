@@ -96,3 +96,20 @@ hl_group("@lsp.mod.static.java", { fg = constant })
 hl_group("@punctuation.bracket.java", { fg = neutral })
 hl_group("@punctuation.delimiter.java", { fg = border })
 
+local lsp = require 'lspconfig'
+
+local venv_path = vim.fn.expand '~/Developer/venv'
+lsp.pyright.setup{
+  settings = {
+    python = {
+      pythonPath = vim.fn.isdirectory(venv_path) and (venv_path .. '/bin/python') or vim.fn.exepath('python'),
+      analysis = {
+        useLibraryCodeForTypes = true,
+      }
+    }
+  }
+}
+
+lsp.ts_ls.setup{}
+lsp.clangd.setup{}
+
