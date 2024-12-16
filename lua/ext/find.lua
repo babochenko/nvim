@@ -113,7 +113,13 @@ end
 
 
 local find_words = function(literal)
-  local opt = vertical_layout("Find Words")
+  local text
+  if literal then
+    text = "Find Words"
+  else
+    text = "Grep Words (regex)"
+  end
+  local opt = vertical_layout(text)
 
   local node = NvimTree.tree.get_node_under_cursor()
   if node and node.type == "directory" then
