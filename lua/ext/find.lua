@@ -111,6 +111,24 @@ local function vertical_layout(prompt, other)
   return opts
 end
 
+
+local find_words = function(literal)
+  local opt = vertical_layout("Find Words")
+
+  local node = NvimTree.tree.get_node_under_cursor()
+  if node and node.type == "directory" then
+    opt.cwd = vim.fn.fnamemodify(node.absolute_path, ":h")
+  end
+
+  if literal then
+    opt.additional_args = function()
+      return { "--fixed-strings" }
+    end
+  end
+
+  TSC.live_grep(opt)
+end
+
 return {
 
   HL_COMMENT = HL_COMMENT,
@@ -121,14 +139,11 @@ return {
   split_path = split_path,
 
   words = function()
-    local opt = vertical_layout("Find Words")
+    find_words(false)
+  end,
 
-    local node = NvimTree.tree.get_node_under_cursor()
-    if node and node.type == "directory" then
-      opt.cwd = vim.fn.fnamemodify(node.absolute_path, ":h")
-    end
-
-    TSC.live_grep(opt)
+  words_literal = function()
+    find_words(true)
   end,
 
   usages = function()
