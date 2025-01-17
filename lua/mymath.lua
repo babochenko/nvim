@@ -17,7 +17,23 @@ local function _num_write(func)
   vim.fn.setline(start_pos[2], vim.fn.getline(start_pos[2]):sub(1, start_pos[3] - 1) .. result .. vim.fn.getline(end_pos[2]):sub(end_pos[3] + 1))
 end
 
+function _G.add(factor)
+  return _num_write(function(num) return num + factor end)
+end
+
+function _G.sub(factor)
+  return _num_write(function(num) return num - factor end)
+end
+
 function _G.mul(factor)
   return _num_write(function(num) return num * factor end)
+end
+
+function _G.div(factor)
+  return _num_write(function(num) return num / factor end)
+end
+
+function _G.pow(factor)
+  return _num_write(function(num) return num ^ factor end)
 end
 
