@@ -38,6 +38,7 @@ autocmd('TextYankPost', { callback = function()
   vim.highlight.on_yank()
 end })
 
+require 'mymath'
 require 'plugins'
 require 'nvchad.autocmds'
 
