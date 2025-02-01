@@ -11,133 +11,14 @@ end, 0)
 
 dofile(vim.g.base46_cache .. 'statusline')
 
-local function set_tabstop(size)
-  vim.bo.tabstop = size
-  vim.bo.shiftwidth = size
-  vim.bo.softtabstop = size
-  vim.bo.expandtab = true
-end
-
-local function autocmd(name, opts)
-  vim.api.nvim_create_autocmd(name, opts)
-end
-
-autocmd("FileType", { pattern = "*", callback = function()
-  set_tabstop(2)
-end })
-
-autocmd("FileType", { pattern = { "java", "groovy" }, callback = function()
-  set_tabstop(4)
-end })
-
-autocmd('FileType', { pattern = 'sql', callback = function()
-  vim.bo.commentstring = '-- %s'
-end })
-
-autocmd('TextYankPost', { callback = function()
-  vim.highlight.on_yank()
-end })
-
-require 'mymath'
 require 'plugins'
-require 'nvchad.autocmds'
+require 'autocmd'
+require 'ui'
+require 'ext/mymath'
 
 vim.schedule(function()
   require 'mappings'
-
-  local MARKS = require 'ext/marks'
-  MARKS.load_marks()
-  autocmd("VimLeavePre", { callback = MARKS.save_marks, })
-  autocmd("BufReadPost", { callback = MARKS.on_buf_read, })
 end)
-
-vim.diagnostic.config({
-  virtual_text = false,  -- Disable inline virtual text
-  signs = true,          -- Keep gutter signs
-  underline = true,      -- Keep underline
-  update_in_insert = false, -- Disable updates in insert mode
-  severity_sort = true,  -- Sort by severity
-  float = { border = "rounded" }, -- Customize floating windows
-})
-
-require('telescope').setup {
-  defaults = {
-    previewer = true, -- Globally enable the previewer
-    borderchars = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' }, -- Customize border style
-    win_options = {
-      winblend = 10, -- Add transparency if desired
-    },
-    border = true, -- Enable the border
-  },
-}
-
-require('lualine').setup {
-  options = {
-    icons_enabled = true,
-    theme = 'base16',
-    component_separators = { left = '', right = ''},
-    section_separators = { left = '', right = ''},
-    disabled_filetypes = {
-      statusline = {},
-      winbar = {},
-    },
-    ignore_focus = {},
-    always_divide_middle = true,
-    always_show_tabline = true,
-    globalstatus = false,
-    refresh = {
-      statusline = 100,
-      tabline = 100,
-      winbar = 100,
-    }
-  },
-  sections = {
-    lualine_a = {'mode'},
-    lualine_b = {'branch', 'diff', 'diagnostics'},
-    lualine_c = {'filename'},
-    lualine_x = {'encoding', 'fileformat', 'filetype'},
-    lualine_y = {'progress'},
-    lualine_z = {'location'}
-  },
-  inactive_sections = {
-    lualine_a = {},
-    lualine_b = {},
-    lualine_c = {'filename'},
-    lualine_x = {'location'},
-    lualine_y = {},
-    lualine_z = {}
-  },
-  tabline = {},
-  winbar = {},
-  inactive_winbar = {},
-  extensions = {}
-}
-
-local hl_group = function(group, opts)
-  vim.api.nvim_set_hl(0, group, opts)
-end
-
-local neutral = "#abb2bf"
-local border = "#657088"
-local keyword = "#61afef"
-local constant = "#c678dd"
-
-hl_group("TelescopeBorder", { fg = border, bg = "#1c1f26" })
-hl_group("@module", { fg = neutral })
-hl_group("@property", { fg = neutral })
-hl_group("@variable", { fg = neutral })
-hl_group("@variable.member", { fg = neutral })
-hl_group("@variable.parameter", { fg = neutral })
-
-hl_group("@keyword", { fg = keyword })
-hl_group("@lsp.type.modifier.java", { link = "@keyword" })
-hl_group("@keyword.return", { link = "@keyword" })
-hl_group("@keyword.operator", { fg = neutral })
-hl_group("@constant", { fg = constant })
-hl_group("@lsp.mod.static.java", { fg = constant })
-
-hl_group("@punctuation.bracket", { fg = neutral })
-hl_group("@punctuation.delimiter", { fg = border })
 
 local lsp = require 'lspconfig'
 
