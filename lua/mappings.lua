@@ -12,16 +12,6 @@ local Code = require 'ext/code'
 local Mark = require 'ext/marks'
 local Sys = require 'ext/system'
 
--- map("n", "<leader>th", function()
---   require("nvchad.themes").open()
--- end, { desc = "telescope nvchad themes" })
---
--- map("n", "<leader>wK", "<cmd>WhichKey <CR>", { desc = "whichkey all keymaps" })
---
--- map("n", "<leader>wk", function()
---   vim.cmd("WhichKey " .. vim.fn.input "WhichKey: ")
--- end, { desc = "whichkey query lookup" })
-
 local nvim_defaults = {
   map('n', '<leader>vl', function() vim.cmd("edit ~/.local/state/nvim/lsp.log") end, { desc = 'open LSP logs' }),
 }
