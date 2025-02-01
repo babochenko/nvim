@@ -1,20 +1,22 @@
 local function _num()
-  local start_pos = vim.fn.getpos("'<")
-  local end_pos = vim.fn.getpos("'>")
-  local lines = vim.fn.getline(start_pos[2], end_pos[2])
-  local selected_text = table.concat(lines, "\n"):sub(start_pos[3], end_pos[3])
-  return tonumber(selected_text), start_pos, end_pos
+  local l = vim.fn.getpos("'<")
+  local r = vim.fn.getpos("'>")
+  local lines = vim.fn.getline(l[2], r[2])
+  local selected_text = table.concat(lines, "\n"):sub(l[3], r[3])
+  return tonumber(selected_text), l, r
 end
 
 local function _num_write(func)
-  local number, start_pos, end_pos = _num()
+  local number, l, r = _num()
   if not number then
     vim.api.nvim_err_writeln("No valid number selected.")
     return
   end
 
   local result = func(number)
-  vim.fn.setline(start_pos[2], vim.fn.getline(start_pos[2]):sub(1, start_pos[3] - 1) .. result .. vim.fn.getline(end_pos[2]):sub(end_pos[3] + 1))
+  local head = vim.fn.getline(l[2]):sub(1, l[3] - 1)
+  local tail = vim.fn.getline(r[2]):sub(r[3] + 1)
+  vim.fn.setline(l[2], head .. result .. tail)
 end
 
 local function make_cmd(name, func)
@@ -40,23 +42,18 @@ for name, func in pairs(MyMath) do
   make_cmd(name, func)
 end
 
-function _G.add(factor)
-  return _num_write(function(num) return num + factor end)
-end
-
-function _G.sub(factor)
-  return _num_write(function(num) return num - factor end)
-end
-
-function _G.mul(factor)
-  return _num_write(function(num) return num * factor end)
-end
-
-function _G.div(factor)
-  return _num_write(function(num) return num / factor end)
-end
-
-function _G.pow(factor)
-  return _num_write(function(num) return num ^ factor end)
-end
+make_cmd('Eval', function()
+  local expr = vim.fn.expand('<cword>')
+  if expr:match('^[0-9%+%-%*/()%%^]*$') then
+    local safe_expr = expr:gsub("%^", "**")
+    local result = load("return " .. safe_expr)
+    if result then
+      print("Result: " .. result())
+    else
+      print("Invalid expression!")
+    end
+  else
+    print("Invalid expression!")
+  end
+end)
 
