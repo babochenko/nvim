@@ -27,6 +27,8 @@ autocmd('FileType', { pattern = 'NvimTree', callback = function()
   vim.keymap.set('n', ',', TREE.node.open.edit, { buffer = true, noremap = true, silent = true })
 end })
 
+autocmd('FileType', { pattern = { 'yml', 'yaml' }, command = 'syntax off' })
+
 autocmd('TextYankPost', { callback = function()
   vim.highlight.on_yank()
 end })
