@@ -111,7 +111,6 @@ local function vertical_layout(prompt, other)
   return opts
 end
 
-
 local find_words = function(literal)
   local text
   if literal then
@@ -119,7 +118,20 @@ local find_words = function(literal)
   else
     text = "Grep Words (regex)"
   end
-  local opt = vertical_layout(text)
+  local opt = vertical_layout(text, {
+    path_display = function(_, path)
+      local filename = vim.fn.fnamemodify(path, ":t")
+      filename = filename .. string.rep(" ", 20 - #filename) .. "  "
+  
+      local filepath = vim.fn.fnamemodify(path, ":~:.")
+      filepath = filepath:match("(.*/)") or filepath -- Remove everything after the last "/"
+  
+      local display, filenamelen, pathlen = string.format("%s%s", filename, filepath), #filename, #filepath
+      local style = merge_styles({}, HL_COMMENT, filenamelen + 1, pathlen)
+  
+      return display, style
+    end
+  })
 
   local node = NvimTree.tree.get_node_under_cursor()
   if node and node.type == "directory" then
