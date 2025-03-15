@@ -37,7 +37,7 @@ local function _num_write(func)
   vim.fn.setline(l[2], head .. result .. tail)
 end
 
-local function make_cmd(name, func)
+local function make_cmd1(name, func)
   vim.api.nvim_create_user_command(name, function(opts)
     local factor = tonumber(opts.args)
     if factor then
@@ -48,7 +48,7 @@ local function make_cmd(name, func)
   end, { nargs = 1, range = true })
 end
 
-local function make_cmd_noargs(name, func)
+local function make_cmd0(name, func)
   vim.api.nvim_create_user_command(name, func, { nargs = 0, range = true })
 end
 
@@ -61,10 +61,10 @@ local MyMath = {
 }
 
 for name, func in pairs(MyMath) do
-  make_cmd(name, func)
+  make_cmd1(name, func)
 end
 
-make_cmd_noargs('Eval', function()
+make_cmd0('Eval', function()
   local expr = _visual()
   if expr:match('^[0-9%+%-%*/()%%^]*$') then
     local safe_expr = expr:gsub("%^", "**")
