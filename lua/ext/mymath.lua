@@ -1,3 +1,21 @@
+local function _visual()
+  local l = vim.fn.getpos("'<")
+  local r = vim.fn.getpos("'>")
+  local lline, lcol = l[2], l[3]
+  local rline, rcol = r[2], r[3]
+
+  local lines = vim.api.nvim_buf_get_lines(0, lline - 1, rline, false)
+  if #lines == 0 then
+    return ""
+  elseif #lines == 1 then
+    return string.sub(lines[1], lcol, rcol)
+  else
+    lines[1] = string.sub(lines[1], lcol)
+    lines[#lines] = string.sub(lines[#lines], 1, rcol)
+    return table.concat(lines, "\n")
+  end
+end
+
 local function _num()
   local l = vim.fn.getpos("'<")
   local r = vim.fn.getpos("'>")
@@ -30,6 +48,10 @@ local function make_cmd(name, func)
   end, { nargs = 1, range = true })
 end
 
+local function make_cmd_noargs(name, func)
+  vim.api.nvim_create_user_command(name, func, { nargs = 0, range = true })
+end
+
 local MyMath = {
   Add = function(factor) _num_write(function(num) return num + factor end) end,
   Sub = function(factor) _num_write(function(num) return num - factor end) end,
@@ -42,8 +64,8 @@ for name, func in pairs(MyMath) do
   make_cmd(name, func)
 end
 
-make_cmd('Eval', function()
-  local expr = vim.fn.expand('<cword>')
+make_cmd_noargs('Eval', function()
+  local expr = _visual()
   if expr:match('^[0-9%+%-%*/()%%^]*$') then
     local safe_expr = expr:gsub("%^", "**")
     local result = load("return " .. safe_expr)
