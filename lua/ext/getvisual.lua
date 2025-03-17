@@ -26,6 +26,30 @@ local function get_visual_selection()
     return table.concat(lines, "\n")
 end
 
+local function _visual_line(lines, l1, lcol, rcol)
+  local res = {}
+  local liter = l1
+  for i, v in ipairs(lines) do
+    res[i] = {v, liter, -1, #v-1}
+    liter = liter+1
+  end
+
+  res[1][1] = string.sub(lines[1], lcol)
+  res[1][3] = lcol
+  res[#lines][1] = string.sub(lines[#lines], 1, rcol)
+  res[#lines][4] = rcol
+  return res
+end
+
+local function _visual_block(l1, l2, lcol, rcol)
+  local res = {}
+  for row = l1, l2 do
+    local line = vim.api.nvim_buf_get_lines(0, row, row + 1, false)[1] or ""
+    local text = line:sub(lcol+1, rcol+1)
+    table.insert(res, text)
+  end
+  return res
+end
 
 local function _visual()
   local l = vim.fn.getpos("'<")
@@ -34,23 +58,18 @@ local function _visual()
   local l2, rcol = r[2], r[3]
 
   local lines = vim.api.nvim_buf_get_lines(0, l1-1, l2, false)
-  local res = {}
   if #lines == 1 then
-    res = {{string.sub(lines[1], lcol, rcol), l1, lcol, rcol}}
+    return {{string.sub(lines[1], lcol, rcol), l1, lcol, rcol}}
   else
-    local liter = l1
-    for i, v in ipairs(lines) do
-      res[i] = {v, liter, -1, #v-1}
-      liter = liter+1
+    local mode = vim.fn.visualmode()
+    if mode == "v" or mode == "V" then
+      return _visual_line(lines, l1, lcol, rcol)
+    elseif mode == "\22" then -- Block mode ("\22" is Ctrl+V)
+      return _visual_block(l1, l2, lcol, rcol)
+    else
+      return {}
     end
-
-    res[1][1] = string.sub(lines[1], lcol)
-    res[1][3] = lcol
-    res[#lines][1] = string.sub(lines[#lines], 1, rcol)
-    res[#lines][4] = rcol
   end
-
-  return res
 end
 
 return {
