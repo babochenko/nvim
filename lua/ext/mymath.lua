@@ -1,18 +1,18 @@
 local function _visual()
   local l = vim.fn.getpos("'<")
   local r = vim.fn.getpos("'>")
-  local lline, lcol = l[2], l[3]
-  local rline, rcol = r[2], r[3]
+  local l1, lcol = l[2], l[3]
+  local l2, rcol = r[2], r[3]
 
-  local lines = vim.api.nvim_buf_get_lines(0, lline - 1, rline, false)
+  local lines = vim.api.nvim_buf_get_lines(0, l1-1, l2, false)
   if #lines == 0 then
-    return ""
+    return {}
   elseif #lines == 1 then
-    return string.sub(lines[1], lcol, rcol)
+    return {string.sub(lines[1], lcol, rcol)}
   else
     lines[1] = string.sub(lines[1], lcol)
     lines[#lines] = string.sub(lines[#lines], 1, rcol)
-    return table.concat(lines, "\n")
+    return table
   end
 end
 
@@ -24,6 +24,12 @@ local function _num()
   return tonumber(selected_text), l, r
 end
 
+local function _writeln(line, l, r, value)
+  local head = vim.fn.getline(line):sub(1, l-1)
+  local tail = vim.fn.getline(line):sub(r+1)
+  vim.fn.setline(line, head .. value .. tail)
+end
+
 local function _num_write(func)
   local number, l, r = _num()
   if not number then
@@ -31,10 +37,7 @@ local function _num_write(func)
     return
   end
 
-  local result = func(number)
-  local head = vim.fn.getline(l[2]):sub(1, l[3] - 1)
-  local tail = vim.fn.getline(r[2]):sub(r[3] + 1)
-  vim.fn.setline(l[2], head .. result .. tail)
+  _writeln(l[2], l[3], r[3], func(number))
 end
 
 local function make_cmd1(name, func)
@@ -65,7 +68,10 @@ for name, func in pairs(MyMath) do
 end
 
 make_cmd0('Eval', function()
-  local expr = _visual()
+  local v = _visual()
+  if v == nil then return end
+
+  local expr = v[1]
   if expr:match('^[0-9%+%-%*/()%% ^]*$') then
     local safe_expr = expr:gsub("%^", "**")
     local result = load("return " .. safe_expr)
