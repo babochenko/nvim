@@ -66,16 +66,16 @@ end
 
 make_cmd0('Eval', function()
   local expr = _visual()
-  if expr:match('^[0-9%+%-%*/()%%^]*$') then
+  if expr:match('^[0-9%+%-%*/()%% ^]*$') then
     local safe_expr = expr:gsub("%^", "**")
     local result = load("return " .. safe_expr)
     if result then
       print("Result: " .. result())
     else
-      print("Invalid expression!")
+      print("Invalid expression: " .. safe_expr)
     end
   else
-    print("Invalid expression!")
+    print("Invalid expression: " .. expr)
   end
 end)
 
