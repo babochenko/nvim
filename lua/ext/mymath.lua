@@ -5,23 +5,23 @@ local function _visual()
   local l2, rcol = r[2], r[3]
 
   local lines = vim.api.nvim_buf_get_lines(0, l1-1, l2, false)
-  if #lines == 0 then
-    return {}
-  elseif #lines == 1 then
-    return {string.sub(lines[1], lcol, rcol)}
+  local res = {}
+  if #lines == 1 then
+    res = {{string.sub(lines[1], lcol, rcol), l1, lcol, rcol}}
   else
-    lines[1] = string.sub(lines[1], lcol)
-    lines[#lines] = string.sub(lines[#lines], 1, rcol)
-    return table
-  end
-end
+    local liter = l1
+    for i, v in ipairs(lines) do
+      res[i] = {v, liter, -1, #v-1}
+      liter = liter+1
+    end
 
-local function _num()
-  local l = vim.fn.getpos("'<")
-  local r = vim.fn.getpos("'>")
-  local lines = vim.fn.getline(l[2], r[2])
-  local selected_text = table.concat(lines, "\n"):sub(l[3], r[3])
-  return tonumber(selected_text), l, r
+    res[1][1] = string.sub(lines[1], lcol)
+    res[1][3] = lcol
+    res[#lines][1] = string.sub(lines[#lines], 1, rcol)
+    res[#lines][4] = rcol
+  end
+
+  return res
 end
 
 local function _writeln(line, l, r, value)
@@ -31,13 +31,19 @@ local function _writeln(line, l, r, value)
 end
 
 local function _num_write(func)
-  local number, l, r = _num()
-  if not number then
-    vim.api.nvim_err_writeln("No valid number selected.")
-    return
-  end
+  local v = _visual()
+  if v == nil then return end
 
-  _writeln(l[2], l[3], r[3], func(number))
+  for _, v in ipairs(v) do
+    local _num, line, l, r = v[1], v[2], v[3], v[4]
+    local number = tonumber(_num)
+    if not number then
+      vim.api.nvim_err_writeln("No valid number selected: " .. _num)
+      return
+    end
+
+    _writeln(line, l, r, func(number))
+  end
 end
 
 local function make_cmd1(name, func)
@@ -67,11 +73,7 @@ for name, func in pairs(MyMath) do
   make_cmd1(name, func)
 end
 
-make_cmd0('Eval', function()
-  local v = _visual()
-  if v == nil then return end
-
-  local expr = v[1]
+local function _eval(expr, l, r)
   if expr:match('^[0-9%+%-%*/()%% ^]*$') then
     local safe_expr = expr:gsub("%^", "**")
     local result = load("return " .. safe_expr)
@@ -82,6 +84,16 @@ make_cmd0('Eval', function()
     end
   else
     print("Invalid expression: " .. expr)
+  end
+end
+
+make_cmd0('Eval', function()
+  local v = _visual()
+  if v == nil then return end
+
+  for _, v in ipairs(v) do
+    local expr, l, r = v[1], v[3], v[4]
+    _eval(expr, l, r)
   end
 end)
 
