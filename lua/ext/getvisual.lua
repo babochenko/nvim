@@ -1,10 +1,10 @@
 local function _lines_objs(l1, l2, lcol, rcol)
   local res = {}
   for row = l1, l2 do
-    local line = vim.api.nvim_buf_get_lines(0, row, row + 1, false)[1] or ""
-    local text = line:sub(lcol+1, rcol+1)
+    local line = vim.fn.getline(row)
+    line = line:sub(lcol, rcol)
     table.insert(res, {
-      text=text,
+      text=line,
       line=row,
       lcol=lcol,
       rcol=rcol,
@@ -14,7 +14,7 @@ local function _lines_objs(l1, l2, lcol, rcol)
 end
 
 local function _visual_line(l1, lcol, rcol)
-  return _lines_objs(l1-1, l1, lcol, rcol)
+  return _lines_objs(l1, l1, lcol, rcol)
 end
 
 local function _visual_block(l1, l2, lcol, rcol)
@@ -22,13 +22,7 @@ local function _visual_block(l1, l2, lcol, rcol)
 end
 
 local function _visual_lines(l1, l2, lcol, rcol)
-  local res = _lines_objs(l1, l2, -1, -1)
-
-  res[1].text = string.sub(res[1].text, lcol)
-  res[1].lcol = lcol
-  res[#res].text = string.sub(res[#res].text, 1, rcol)
-  res[#res].rcol = rcol
-  return res
+  return _lines_objs(l1, l2, 0, -1)
 end
 
 local function _visual()

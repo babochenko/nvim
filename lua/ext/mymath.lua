@@ -1,24 +1,24 @@
 local _visual = require('ext/getvisual').getvisual
+local _print = require('ext/myprint')._print
 
-local function _writeln(line, l, r, value)
-  local head = vim.fn.getline(line):sub(1, l-1)
-  local tail = vim.fn.getline(line):sub(r+1)
-  vim.fn.setline(line, head .. value .. tail)
+local function _writeln(line, value)
+  local head = vim.fn.getline(line.line):sub(1, line.lcol-1)
+  local tail = vim.fn.getline(line.line):sub(line.rcol+1)
+  vim.fn.setline(line.line, head .. value .. tail)
 end
 
 local function _num_write(func)
-  local v = _visual()
-  if v == nil then return end
+  local vis = _visual()
+  if vis == nil then return end
 
-  for _, v in ipairs(v) do
-    local _num, line, l, r = v.text, v.line, v.lcol, v.rcol
-    local number = tonumber(_num)
+  for _, line in ipairs(vis) do
+    local number = tonumber(line.text)
     if not number then
-      vim.api.nvim_err_writeln("No valid number selected: " .. _num)
+      vim.api.nvim_err_writeln("No valid number selected: " .. line.text)
       return
     end
 
-    _writeln(line, l, r, func(number))
+    _writeln(line, func(number))
   end
 end
 
@@ -49,7 +49,8 @@ for name, func in pairs(MyMath) do
   make_cmd1(name, func)
 end
 
-local function _eval(expr, l, r)
+local function _eval(line)
+  local expr = line.text
   if expr:gsub("%s", ""):match('^[0-9%+%-%*/()%%^]*$') then
     local safe_expr = expr:gsub("%^", "**")
     local result = load("return " .. safe_expr)
@@ -64,12 +65,11 @@ local function _eval(expr, l, r)
 end
 
 make_cmd0('Eval', function()
-  local v = _visual()
-  if v == nil then return end
+  local vis = _visual()
+  if vis == nil then return end
 
-  for _, v in ipairs(v) do
-    local expr, l, r = v.text, v.lcol, v.rcol
-    _eval(expr, l, r)
+  for _, line in ipairs(vis) do
+    _eval(line)
   end
 end)
 
