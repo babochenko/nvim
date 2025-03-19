@@ -11,7 +11,7 @@ local function _num_write(func)
   if v == nil then return end
 
   for _, v in ipairs(v) do
-    local _num, line, l, r = v[1], v[2], v[3], v[4]
+    local _num, line, l, r = v.text, v.line, v.lcol, v.rcol
     local number = tonumber(_num)
     if not number then
       vim.api.nvim_err_writeln("No valid number selected: " .. _num)
@@ -68,7 +68,7 @@ make_cmd0('Eval', function()
   if v == nil then return end
 
   for _, v in ipairs(v) do
-    local expr, l, r = v[1], v[3], v[4]
+    local expr, l, r = v.text, v.lcol, v.rcol
     _eval(expr, l, r)
   end
 end)
