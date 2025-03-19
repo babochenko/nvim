@@ -1,7 +1,3 @@
-local function _lines(from, to)
-  return vim.api.nvim_buf_get_lines(0, from, to, false)
-end
-
 local function _lines_objs(l1, l2, lcol, rcol)
   local res = {}
   for row = l1, l2 do
@@ -18,13 +14,11 @@ local function _lines_objs(l1, l2, lcol, rcol)
 end
 
 local function _visual_line(l1, lcol, rcol)
-  local lines = _lines(l1-1, l1)
-  return {{
-    text=string.sub(lines[1], lcol, rcol),
-    line=l1,
-    lcol=lcol,
-    rcol=rcol,
-  }}
+  return _lines_objs(l1-1, l1, lcol, rcol)
+end
+
+local function _visual_block(l1, l2, lcol, rcol)
+  return _lines_objs(l1, l2, lcol, rcol)
 end
 
 local function _visual_lines(l1, l2, lcol, rcol)
@@ -35,10 +29,6 @@ local function _visual_lines(l1, l2, lcol, rcol)
   res[#res].text = string.sub(res[#res].text, 1, rcol)
   res[#res].rcol = rcol
   return res
-end
-
-local function _visual_block(l1, l2, lcol, rcol)
-  return _lines_objs(l1, l2, lcol, rcol)
 end
 
 local function _visual()
