@@ -1,36 +1,8 @@
----@return table<string, number, number, number>
-local function _visual_line(l1, lcol, rcol)
-  local lines = vim.api.nvim_buf_get_lines(0, l1-1, l1, false)
-  return {{
-    text=string.sub(lines[1], lcol, rcol),
-    line=l1,
-    lcol=lcol,
-    rcol=rcol,
-  }}
+local function _lines(from, to)
+  return vim.api.nvim_buf_get_lines(0, from, to, false)
 end
 
-local function _visual_lines(l1, l2, lcol, rcol)
-  local res = {}
-  local liter = l1
-  local lines = vim.api.nvim_buf_get_lines(0, l1-1, l2, false)
-  for i, v in ipairs(lines) do
-    res[i] = {
-      text=v,
-      line=liter,
-      lcol=-1,
-      rcol=#v-1,
-    }
-    liter = liter+1
-  end
-
-  res[1].text = string.sub(lines[1], lcol)
-  res[1].lcol = lcol
-  res[#lines].text = string.sub(lines[#lines], 1, rcol)
-  res[#lines].rcol = rcol
-  return res
-end
-
-local function _visual_block(l1, l2, lcol, rcol)
+local function _lines_objs(l1, l2, lcol, rcol)
   local res = {}
   for row = l1, l2 do
     local line = vim.api.nvim_buf_get_lines(0, row, row + 1, false)[1] or ""
@@ -43,6 +15,30 @@ local function _visual_block(l1, l2, lcol, rcol)
     })
   end
   return res
+end
+
+local function _visual_line(l1, lcol, rcol)
+  local lines = _lines(l1-1, l1)
+  return {{
+    text=string.sub(lines[1], lcol, rcol),
+    line=l1,
+    lcol=lcol,
+    rcol=rcol,
+  }}
+end
+
+local function _visual_lines(l1, l2, lcol, rcol)
+  local res = _lines_objs(l1, l2, -1, -1)
+
+  res[1].text = string.sub(res[1].text, lcol)
+  res[1].lcol = lcol
+  res[#res].text = string.sub(res[#res].text, 1, rcol)
+  res[#res].rcol = rcol
+  return res
+end
+
+local function _visual_block(l1, l2, lcol, rcol)
+  return _lines_objs(l1, l2, lcol, rcol)
 end
 
 local function _visual()
