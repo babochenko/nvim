@@ -1,5 +1,6 @@
 vim.g.base46_cache = vim.fn.stdpath 'data' .. '/nvchad/base46/'
 vim.g.mapleader = ' '
+vim.opt.fixendofline = false
 
 vim.defer_fn(function()
   vim.opt.clipboard = 'unnamedplus'
