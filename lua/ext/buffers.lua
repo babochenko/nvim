@@ -82,6 +82,7 @@ return {
     }))
   end,
 
+  -- should just call `file ${}`
   rename = function()
     local prev_name = ""
     local ok, custom_name = pcall(vim.api.nvim_buf_get_var, 0, "buf_custom_name")
