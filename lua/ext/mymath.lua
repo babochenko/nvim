@@ -51,7 +51,7 @@ end
 
 local function _eval(line)
   local expr = line.text
-  if expr:gsub("%s", ""):match('^[0-9%+%-%*/()%%^]*$') then
+  if expr:gsub("%s", ""):match('^[.,0-9%+%-%*/()%%^]*$') then
     local safe_expr = expr:gsub("%^", "**")
     local result = load("return " .. safe_expr)
     if result then
@@ -61,6 +61,24 @@ local function _eval(line)
     end
   else
     print("Invalid expression: " .. expr)
+  end
+end
+
+function _G.EvalAndInsert()
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  local line = vim.api.nvim_get_current_line()
+
+  if line:sub(col - 1, col + 1) == " = " then
+    local expr = vim.trim(line:sub(1, col - 2))
+    local ok, result = pcall(vim.fn.eval, expr)
+    if ok then
+      local new_line = line:sub(1, col + 1) .. tostring(result)
+      vim.api.nvim_set_current_line(new_line)
+    else
+      print("Eval error")
+    end
+  else
+    print("Cursor not after ' = '")
   end
 end
 
