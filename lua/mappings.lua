@@ -44,11 +44,11 @@ local buffers = {
 
 local code = {
   navigate = {
-    map('n', '<leader>cs', vim.lsp.buf.signature_help, { desc = 'code function signature' }),
-    map('n', '<leader>cd', function() DIA.open_float(nil, { focusable = false }) end, { desc = 'code show diagnostics' }),
-    map('n', '<leader>cD', vim.diagnostic.setloclist, { desc = 'code show all diagnostics' }),
-    map('n', '<leader>cn', DIA.goto_next, { desc = 'code next diagnostic' }),
-    map('n', '<leader>cp', DIA.goto_prev, { desc = 'code prev diagnostic' }),
+    map('n', '<leader>cs', vim.lsp.buf.signature_help, { desc = 'function signature' }),
+    map('n', '<leader>cd', function() DIA.open_float(nil, { focusable = false }) end, { desc = 'line diagnostics' }),
+    map('n', '<leader>cD', vim.diagnostic.setloclist, { desc = 'all diagnostics' }),
+    map('n', '<leader>cn', DIA.goto_next, { desc = 'next diagnostic' }),
+    map('n', '<leader>cp', DIA.goto_prev, { desc = 'prev diagnostic' }),
     map('n', 'gd', vim.lsp.buf.definition, { desc = 'goto definition' }),
     map('n', 'gu', Find.usages, { desc = 'goto usages' }),
     map('n', 'gi', Find.impls, { desc = 'goto implementations' }),
