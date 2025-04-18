@@ -121,10 +121,6 @@ EnsureLazy().setup({
   	},
   },
 
-  { 'yacineMTB/dingllm.nvim',
-    dependencies = { 'nvim-lua/plenary.nvim' },
-  },
-
   {
     "nvim-lualine/lualine.nvim",
     dependencies = { 'nvim-tree/nvim-web-devicons' }

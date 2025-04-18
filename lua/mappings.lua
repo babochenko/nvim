@@ -5,7 +5,6 @@ local GS = require 'gitsigns'
 local TABS = require 'nvchad.tabufline'
 local TERM = require "nvchad.term"
 
-local LLM = require 'ext/llm'
 local Find = require 'ext/find'
 local Buf = require 'ext/buffers'
 local Code = require 'ext/code'
@@ -34,7 +33,6 @@ local buffers = {
     map("n", "<leader>tv", function() TERM.new { pos = "vsp" } end, { desc = "terminal new v" }),
   },
   modify = {
-    map('n', '<leader>bb', Buf.rename, { desc = 'buffer rename' }),
     map('n', '<leader>bn', Buf.move_right, { desc = 'buffer move right' }),
     map('n', '<leader>bp', Buf.move_left, { desc = 'buffer move left' }),
     map('n', '<leader>fb', Buf.find_all, { desc = 'find buffers' }),
@@ -85,11 +83,6 @@ local search = {
   map('n', '<leader>fh', Find.files_history, { desc = 'files history' }),
   map("n", "<leader>fz", "<cmd>Telescope current_buffer_fuzzy_find<CR>", { desc = "find in current buffer" }),
   map("n", "<leader>fa", "<cmd>Telescope find_files follow=true no_ignore=true hidden=true<CR>", { desc = "telescope find all files" }),
-}
-
-local llm = {
-  map({ 'n', 'v' }, '<leader>k', LLM.run_completion, { desc = 'llm completion' }),
-  map({ 'n', 'v' }, '<leader>l', LLM.run_help, { desc = 'llm help' }),
 }
 
 local git = {

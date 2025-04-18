@@ -1,5 +1,4 @@
 local _visual = require('ext/getvisual').getvisual
-local _print = require('ext/myprint')._print
 
 local function _writeln(line, value)
   local head = vim.fn.getline(line.line):sub(1, line.lcol-1)
