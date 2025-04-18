@@ -1,3 +1,6 @@
+-- returns current visual selection. Used in e.g. mymath.lua
+-- for modifying exactly the selected text
+
 local function _lines_objs(l1, l2, lcol, rcol)
   local res = {}
   for row = l1, l2 do
