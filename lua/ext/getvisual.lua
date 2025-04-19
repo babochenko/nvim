@@ -28,6 +28,10 @@ local function _visual_lines(l1, l2, lcol, rcol)
   return _lines_objs(l1, l2, 0, -1)
 end
 
+local vis_char = 'v'
+local vis_line = 'V'
+local vis_block = '\22'
+
 local function _visual()
   local l = vim.fn.getpos("'<")
   local r = vim.fn.getpos("'>")
@@ -38,9 +42,9 @@ local function _visual()
     return _visual_line(l1, lcol, rcol)
   else
     local mode = vim.fn.visualmode()
-    if mode == "v" or mode == "V" then
+    if mode == vis_char or mode == vis_line then
       return _visual_lines(l1, l2, lcol, rcol)
-    elseif mode == "\22" then -- Block mode ("\22" is Ctrl+V)
+    elseif mode == vis_block then
       return _visual_block(l1, l2, lcol, rcol)
     else
       return {}
@@ -50,5 +54,8 @@ end
 
 return {
   getvisual = _visual,
+  vis_char = vis_char,
+  vis_line = vis_line,
+  vis_block = vis_block,
 }
 
