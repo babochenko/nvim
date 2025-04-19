@@ -126,6 +126,9 @@ EnsureLazy().setup({
     dependencies = { 'nvim-tree/nvim-web-devicons' }
   },
 
+  -- used for tests only now
+  { "nvim-lua/plenary.nvim", lazy = true },
+
   -- These are some examples, uncomment them if you want to see them work!
   -- {
   --   'neovim/nvim-lspconfig',

@@ -54,12 +54,12 @@ local function _eval(line)
     local safe_expr = expr:gsub("%^", "**")
     local result = load("return " .. safe_expr)
     if result then
-      print("Result: " .. result())
+      return "Result: " .. result()
     else
-      print("Invalid expression: " .. safe_expr)
+      return "Invalid expression: " .. safe_expr
     end
   else
-    print("Invalid expression: " .. expr)
+    return "Invalid expression: " .. expr
   end
 end
 
@@ -86,7 +86,12 @@ make_cmd0('Eval', function()
   if vis == nil then return end
 
   for _, line in ipairs(vis) do
-    _eval(line)
+    local res = _eval(line)
+    print(res)
   end
 end)
+
+return {
+  _eval = _eval
+}
 
