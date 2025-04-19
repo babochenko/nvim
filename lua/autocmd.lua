@@ -1,3 +1,5 @@
+if #vim.api.nvim_list_uis() == 0 then return end
+
 local TREE = require('nvim-tree.api')
 
 local function set_tabstop(size)

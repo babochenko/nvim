@@ -21,6 +21,8 @@ vim.schedule(function()
   require 'mappings'
 end)
 
+if #vim.api.nvim_list_uis() == 0 then return end
+
 local lsp = require 'lspconfig'
 
 local venv_path = vim.fn.expand '~/Developer/venv'

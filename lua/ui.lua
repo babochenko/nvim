@@ -1,3 +1,5 @@
+if #vim.api.nvim_list_uis() == 0 then return end
+
 vim.diagnostic.config({
   virtual_text = false,  -- Disable inline virtual text
   signs = true,          -- Keep gutter signs
