@@ -36,7 +36,6 @@ local buffers = {
     map('n', '<leader>bn', Buf.move_right, { desc = 'buffer move right' }),
     map('n', '<leader>bp', Buf.move_left, { desc = 'buffer move left' }),
     map('n', '<leader>fb', Buf.find_all, { desc = 'find buffers' }),
-    map('n', '<leader>X', Buf.close_other_buffers, { desc = 'buffer close all but current' }),
   },
 }
 
@@ -71,7 +70,9 @@ local tabs = {
   map("t", "<C-x>", "<C-\\><C-N>", { desc = "terminal escape terminal mode" }),
   map('n', '<tab>', TABS.next, { desc = 'buffer goto next' }),
   map('n', '<S-tab>', TABS.prev, { desc = 'buffer goto prev' }),
-  map('n', '<leader>x', TABS.close_buffer, { desc = 'buffer close' }),
+  map('n', '<leader>x', TABS.close_buffer, { desc = 'close buffer' }),
+  map('n', '<leader>X', Buf.close_other_buffers, { desc = 'close other buffers' }),
+  map('n', '<leader>q', "<C-W>q", { desc = 'close window' }),
   map("n", "<C-n>", "<cmd>NvimTreeToggle<CR>", { desc = "nvimtree toggle window" }),
 }
 
