@@ -29,8 +29,8 @@ local buffers = {
   create = {
     map('n', '<leader>nn', ':enew<CR>', { desc = 'new file' }),
     map('n', '<leader>tt', ':term<CR>', { desc = 'new terminal' }),
-    map("n", "<leader>th", function() TERM.new { pos = "sp" } end, { desc = "terminal new h" }),
-    map("n", "<leader>tv", function() TERM.new { pos = "vsp" } end, { desc = "terminal new v" }),
+    map("n", "<leader>th", function() TERM.new { pos = "sp" } end, { desc = "new terminal h" }),
+    map("n", "<leader>tv", function() TERM.new { pos = "vsp" } end, { desc = "new terminal v" }),
   },
   modify = {
     map('n', '<leader>bn', Buf.move_right, { desc = 'buffer move right' }),
