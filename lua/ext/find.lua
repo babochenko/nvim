@@ -147,6 +147,24 @@ local find_words = function(literal)
   TSC.live_grep(opt)
 end
 
+local function files_history(cwd)
+  local prompt
+  if cwd then
+    prompt = "Old Files"
+  else
+    prompt = "All Old Files"
+  end
+
+  TSC.oldfiles(vertical_layout(prompt, {
+    only_cwd = cwd,
+    entry_maker = function(entry)
+      entry = make_entry.gen_from_file({})(entry)
+      entry.display = display_modified_path
+      return entry
+    end,
+  }))
+end
+
 return {
 
   HL_COMMENT = HL_COMMENT,
@@ -189,16 +207,8 @@ return {
     }))
   end,
 
-  files_history = function()
-    TSC.oldfiles(vertical_layout("Old Files", {
-      only_cwd = true,
-      entry_maker = function(entry)
-        entry = make_entry.gen_from_file({})(entry)
-        entry.display = display_modified_path
-        return entry
-      end,
-    }))
-  end,
+  files_history = function() files_history(true) end,
+  all_files_history = function() files_history(false) end,
 
   testfile = function()
     local full_path = vim.fn.expand("%:p") -- Full path of the current file

@@ -81,7 +81,8 @@ local search = {
   map('n', '<leader>fw', Find.words_literal, { desc = 'find words' }),
   map('n', '<leader>fW', Find.words, { desc = 'grep words' }),
   map('n', '<leader>ft', Find.testfile, { desc = 'find test file' }),
-  map('n', '<leader>fh', Find.files_history, { desc = 'files history' }),
+  map('n', '<leader>fh', Find.files_history, { desc = 'files history in proj' }),
+  map('n', '<leader>fH', Find.all_files_history, { desc = 'files history everywhere' }),
   map("n", "<leader>fz", "<cmd>Telescope current_buffer_fuzzy_find<CR>", { desc = "find in current buffer" }),
   map("n", "<leader>fa", "<cmd>Telescope find_files follow=true no_ignore=true hidden=true<CR>", { desc = "telescope find all files" }),
 }
@@ -97,7 +98,7 @@ local git = {
 local marks = {
   map('n', '<leader>mm', Mark.toggle_mark, { desc = 'mark toggle' }),
   map('n', '<leader>mn', Mark.name_mark, { desc = 'mark name' }),
-  map('n', '<leader>fm', Mark.list_marks, { desc = 'find marks in current project' }),
-  map('n', '<leader>fM', Mark.list_all_marks, { desc = 'find all marks' }),
+  map('n', '<leader>fm', Mark.list_marks, { desc = 'find marks in proj' }),
+  map('n', '<leader>fM', Mark.list_all_marks, { desc = 'find marks everywhere' }),
 }
 
