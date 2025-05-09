@@ -13,6 +13,7 @@ local Sys = require 'ext/system'
 
 local nvim_defaults = {
   map('n', '<leader>vl', function() vim.cmd("edit ~/.local/state/nvim/lsp.log") end, { desc = 'open LSP logs' }),
+  map('n', ',', '*'),
 }
 
 local general_helpers = {
