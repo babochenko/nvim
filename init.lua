@@ -19,6 +19,7 @@ require 'ext/mymath'
 
 vim.schedule(function()
   require 'mappings'
+  require 'python'
 end)
 
 if #vim.api.nvim_list_uis() == 0 then return end
