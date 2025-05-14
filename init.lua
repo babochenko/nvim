@@ -25,16 +25,16 @@ if #vim.api.nvim_list_uis() == 0 then return end
 
 local lsp = require 'lspconfig'
 
-local venv_path = vim.fn.expand '~/Developer/venv'
-lsp.pyright.setup{
-  settings = {
-    python = {
-      pythonPath = vim.fn.isdirectory(venv_path) and (venv_path .. '/bin/python') or vim.fn.exepath('python'),
-      analysis = {
-        useLibraryCodeForTypes = true,
-      }
-    }
-  }
+-- local venv_path = vim.fn.expand '~/Developer/venv'
+lsp.pylsp.setup{
+  -- settings = {
+  --   python = {
+  --     pythonPath = vim.fn.isdirectory(venv_path) and (venv_path .. '/bin/python') or vim.fn.exepath('python'),
+  --     analysis = {
+  --       useLibraryCodeForTypes = true,
+  --     }
+  --   }
+  -- }
 }
 
 lsp.ts_ls.setup{}
