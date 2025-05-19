@@ -18,7 +18,7 @@ local nvim_defaults = {
 
 local general_helpers = {
   -- map({'n', 'v', 'c', 'o', 's'}, ',', '<CR>'),
-  map('n', '<leader>fo', Sys.open_system, { desc = 'open this file in system viewer' }),
+  map('n', '<leader>o', Sys.open_system, { desc = 'open this file in system viewer' }),
   map('n', '<leader>tm', Sys.toggle_mouse, { silent = true, desc = 'toggle mouse' }),
   map('n', ';', ':', { desc = 'command mode' }),
   map('n', '<Esc>', '<cmd>noh<CR>', { desc = 'general clear highlights' }),
