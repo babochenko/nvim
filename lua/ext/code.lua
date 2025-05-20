@@ -5,6 +5,7 @@ local Runs = {
   ['py'] = 'python3',
   ['java'] = 'java --enable-preview',
   ['sh'] = 'bash',
+  ['zsh'] = 'zsh',
 }
 
 return {
