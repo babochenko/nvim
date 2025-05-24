@@ -11,6 +11,14 @@ local Code = require 'ext/code'
 local Mark = require 'ext/marks'
 local Sys = require 'ext/system'
 
+local function cmd1(name, func)
+  vim.api.nvim_create_user_command(name, func, { nargs = 1 })
+end
+
+cmd1('Fmt', function(opts)
+  vim.cmd('!' .. 'prettier --parser ' .. opts.args)
+end)
+
 local nvim_defaults = {
   map('n', '<leader>vl', function() vim.cmd("edit ~/.local/state/nvim/lsp.log") end, { desc = 'open LSP logs' }),
   map('n', ',', '*'),
@@ -24,6 +32,7 @@ local general_helpers = {
   map('n', '<Esc>', '<cmd>noh<CR>', { desc = 'general clear highlights' }),
   map('n', '<leader>db', ':DBUI<CR>', { desc = 'open database ui' }),
   map('n', '<leader>fp', '<cmd>echo expand("%:p")<CR>' , { desc = 'show file path' }),
+  map({'n', 'v'}, '<leader>fl', Code.format_file, { desc = 'lint file' }),
 }
 
 local buffers = {
