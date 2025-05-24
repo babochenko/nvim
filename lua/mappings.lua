@@ -11,14 +11,6 @@ local Code = require 'ext/code'
 local Mark = require 'ext/marks'
 local Sys = require 'ext/system'
 
-local function cmd(name, nargs, func)
-  vim.api.nvim_create_user_command(name, func, { nargs = nargs, range = true })
-end
-
-cmd('Fmt', 1, function(opts)
-  vim.cmd('!' .. 'prettier --parser ' .. opts.args)
-end)
-
 local nvim_defaults = {
   map('n', '<leader>vl', function() vim.cmd("edit ~/.local/state/nvim/lsp.log") end, { desc = 'open LSP logs' }),
   map('n', ',', '*'),
