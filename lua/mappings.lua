@@ -11,11 +11,11 @@ local Code = require 'ext/code'
 local Mark = require 'ext/marks'
 local Sys = require 'ext/system'
 
-local function cmd1(name, func)
-  vim.api.nvim_create_user_command(name, func, { nargs = 1 })
+local function cmd(name, nargs, func)
+  vim.api.nvim_create_user_command(name, func, { nargs = nargs, range = true })
 end
 
-cmd1('Fmt', function(opts)
+cmd('Fmt', 1, function(opts)
   vim.cmd('!' .. 'prettier --parser ' .. opts.args)
 end)
 
