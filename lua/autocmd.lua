@@ -17,7 +17,7 @@ autocmd('FileType', { pattern = '*', callback = function()
   set_tabstop(2)
 end })
 
-autocmd('FileType', { pattern = { 'java', 'groovy' }, callback = function()
+autocmd('FileType', { pattern = { 'java', 'groovy', 'py' }, callback = function()
   set_tabstop(4)
 end })
 
