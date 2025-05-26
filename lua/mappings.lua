@@ -44,6 +44,7 @@ local buffers = {
 local code = {
   navigate = {
     map('n', '<leader>cs', vim.lsp.buf.signature_help, { desc = 'function signature' }),
+    map('n', '<leader>ch', vim.lsp.buf.hover, { desc = 'function help' }),
     map('n', '<leader>cd', function() DIA.open_float(nil, { focusable = false }) end, { desc = 'line diagnostics' }),
     map('n', '<leader>cD', vim.diagnostic.setloclist, { desc = 'all diagnostics' }),
     map('n', '<leader>cn', DIA.goto_next, { desc = 'next diagnostic' }),
