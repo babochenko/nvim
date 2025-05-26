@@ -25,15 +25,20 @@ local function format_file()
         end
     end
 
+    local fmt = 'prettier --parser ' .. ext
+    if ext == 'py' then
+        fmt = 'black ' .. filename
+    end
+
     if has_selection then
         -- Get selected line range
         local start_line = vim.fn.line("'<")
         local end_line = vim.fn.line("'>")
         local cmd = start_line .. ',' .. end_line .. '!'
-        vim.cmd(cmd .. 'prettier --parser ' .. ext)
+        vim.cmd(cmd .. fmt)
     else
         -- Whole file
-        vim.cmd('%!prettier --parser ' .. ext)
+        vim.cmd('%!' .. fmt)
     end
 
     print('Formatted with Prettier.')
