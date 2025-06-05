@@ -24,6 +24,7 @@ local general_helpers = {
   map('n', '<Esc>', '<cmd>noh<CR>', { desc = 'general clear highlights' }),
   map('n', '<leader>db', ':DBUI<CR>', { desc = 'open database ui' }),
   map('n', '<leader>fp', '<cmd>echo expand("%:p")<CR>' , { desc = 'show file path' }),
+  map({'n', 'v'}, '<leader>fl', Code.format_file, { desc = 'lint file' }),
 }
 
 local buffers = {
@@ -43,6 +44,7 @@ local buffers = {
 local code = {
   navigate = {
     map('n', '<leader>cs', vim.lsp.buf.signature_help, { desc = 'function signature' }),
+    map('n', '<leader>ch', vim.lsp.buf.hover, { desc = 'function help' }),
     map('n', '<leader>cd', function() DIA.open_float(nil, { focusable = false }) end, { desc = 'line diagnostics' }),
     map('n', '<leader>cD', vim.diagnostic.setloclist, { desc = 'all diagnostics' }),
     map('n', '<leader>cn', DIA.goto_next, { desc = 'next diagnostic' }),
