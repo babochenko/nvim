@@ -32,9 +32,60 @@ local Find = require 'ext/find'
 local marks_file = vim.fn.expand("~/.local/share/nvim/marks.json") -- File to save marks
 local global_marks = {} -- Stores all marks with file, line, and optional name
 
+local function load_marks_file()
+  local file = io.open(marks_file, "r")
+  local res = {}
+  if file then
+    local json = file:read("*a")
+    file:close()
+    if json and #json > 0 then
+      res = vim.fn.json_decode(json) or {}
+      print("Marks loaded!")
+    else
+      res = {}
+      print("Marks file is empty.")
+    end
+  else
+    res = {}
+    print("No marks file found.")
+  end
+  return res
+end
+
+local function load_marks()
+  global_marks = load_marks_file()
+end
+
+local function merge_marks(old, new)
+  local map = {}
+
+  -- Add old marks to the map
+  for _, mark in ipairs(old) do
+    if mark.name then
+      map[mark.name] = mark
+    end
+  end
+
+  -- Override with new marks (global_marks has priority)
+  for _, mark in ipairs(new) do
+    if mark.name then
+      map[mark.name] = mark
+    end
+  end
+
+  -- Convert back to array
+  local merged = {}
+  for _, mark in pairs(map) do
+    table.insert(merged, mark)
+  end
+
+  return merged
+end
 
 local function save_marks()
-  local json = vim.fn.json_encode(global_marks)
+  local marks = merge_marks(load_marks_file(), global_marks)
+
+  local json = vim.fn.json_encode(marks)
   if json and #json > 0 then
     local file = io.open(marks_file, "w")
     if file then
@@ -46,24 +97,6 @@ local function save_marks()
     end
   else
     print("No marks to save.")
-  end
-end
-
-local function load_marks()
-  local file = io.open(marks_file, "r")
-  if file then
-    local json = file:read("*a")
-    file:close()
-    if json and #json > 0 then
-      global_marks = vim.fn.json_decode(json) or {}
-      print("Marks loaded!")
-    else
-      global_marks = {}
-      print("Marks file is empty.")
-    end
-  else
-    global_marks = {}
-    print("No marks file found.")
   end
 end
 

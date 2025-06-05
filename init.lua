@@ -41,3 +41,8 @@ lsp.pylsp.setup{
 lsp.ts_ls.setup{}
 lsp.clangd.setup{}
 
+lsp.sourcekit.setup({
+  cmd = { 'xcrun', 'sourcekit-lsp' },
+  root_dir = require('lspconfig.util').root_pattern('*.xcodeproj', '*.xcworkspace', '.git'),
+})
+
