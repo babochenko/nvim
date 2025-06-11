@@ -1,5 +1,11 @@
 return {
 
+  copy_file_path = function()
+    local path = vim.fn.expand("%:p")
+    vim.fn.setreg("+", path)
+    print(path)
+  end,
+
   toggle_mouse = function()
     if vim.o.mouse == 'a' then
       vim.o.mouse = ''

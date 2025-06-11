@@ -18,12 +18,13 @@ local nvim_defaults = {
 
 local general_helpers = {
   -- map({'n', 'v', 'c', 'o', 's'}, ',', '<CR>'),
+  map('n', 'gb', '%' , { desc = 'goto matching bracket' }),
   map('n', '<leader>o', Sys.open_system, { desc = 'open this file in system viewer' }),
   map('n', '<leader>tm', Sys.toggle_mouse, { silent = true, desc = 'toggle mouse' }),
   map('n', ';', ':', { desc = 'command mode' }),
   map('n', '<Esc>', '<cmd>noh<CR>', { desc = 'general clear highlights' }),
   map('n', '<leader>db', ':DBUI<CR>', { desc = 'open database ui' }),
-  map('n', '<leader>fp', '<cmd>echo expand("%:p")<CR>' , { desc = 'show file path' }),
+  map('n', '<leader>fp', Sys.copy_file_path, { desc = 'show file path' }),
   map({'n', 'v'}, '<leader>fl', Code.format_file, { desc = 'lint file' }),
 }
 
