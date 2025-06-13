@@ -6,6 +6,12 @@ return {
     print(path)
   end,
 
+  copy_file_name = function()
+    local file = vim.fn.expand("%:t")
+    vim.fn.setreg("+", file)
+    print(file)
+  end,
+
   toggle_mouse = function()
     if vim.o.mouse == 'a' then
       vim.o.mouse = ''

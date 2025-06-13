@@ -25,6 +25,7 @@ local general_helpers = {
   map('n', '<Esc>', '<cmd>noh<CR>', { desc = 'general clear highlights' }),
   map('n', '<leader>db', ':DBUI<CR>', { desc = 'open database ui' }),
   map('n', '<leader>fp', Sys.copy_file_path, { desc = 'show file path' }),
+  map('n', '<leader>fP', Sys.copy_file_name, { desc = 'show file name' }),
   map({'n', 'v'}, '<leader>fl', Code.format_file, { desc = 'lint file' }),
 }
 
