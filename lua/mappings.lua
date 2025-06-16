@@ -12,7 +12,8 @@ local Mark = require 'ext/marks'
 local Sys = require 'ext/system'
 
 local nvim_defaults = {
-  map('n', '<leader>vl', function() vim.cmd("edit ~/.local/state/nvim/lsp.log") end, { desc = 'open LSP logs' }),
+  map('n', '<leader>el', function() vim.cmd("edit ~/.local/state/nvim/lsp.log") end, { desc = 'open LSP logs' }),
+  map('n', '<leader>en', function() vim.cmd("edit ~/.local/share/nvim/notes.md") end, { desc = 'open notes' }),
   map('n', ',', '*'),
 }
 
