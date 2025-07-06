@@ -86,7 +86,7 @@ EnsureLazy().setup({
       })
     end,
   },
-  
+
   { 'akinsho/bufferline.nvim',
     version = "*",
     dependencies = 'nvim-tree/nvim-web-devicons',
@@ -121,7 +121,7 @@ EnsureLazy().setup({
       })
     end,
   },
-  
+
   { 'hrsh7th/nvim-cmp',
     dependencies = {
       'hrsh7th/cmp-nvim-lsp',
@@ -136,7 +136,7 @@ EnsureLazy().setup({
       local cmp = require('cmp')
       local luasnip = require('luasnip')
       require('luasnip.loaders.from_vscode').lazy_load()
-      
+
       cmp.setup({
         snippet = {
           expand = function(args)
@@ -169,14 +169,14 @@ EnsureLazy().setup({
       })
     end,
   },
-  
+
   { 'neovim/nvim-lspconfig',
     dependencies = { 'hrsh7th/cmp-nvim-lsp' },
     event = { "BufReadPre", "BufNewFile" },
     config = function()
       local capabilities = require('cmp_nvim_lsp').default_capabilities()
       local lspconfig = require('lspconfig')
-      
+
       -- Add on_attach function for keybindings
       local on_attach = function(client, bufnr)
         local opts = { noremap=true, silent=true, buffer=bufnr }
@@ -191,7 +191,7 @@ EnsureLazy().setup({
         vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
         vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
       end
-      
+
       lspconfig.pylsp.setup({ 
         capabilities = capabilities,
         on_attach = on_attach,
@@ -235,20 +235,20 @@ EnsureLazy().setup({
       })
     end,
   },
-  
+
   { 'lewis6991/gitsigns.nvim',
     config = function()
       require('gitsigns').setup()
     end,
   },
-  
+
   { 'folke/which-key.nvim',
     event = "VeryLazy",
     config = function()
       require('which-key').setup()
     end,
   },
-  
+
   { 'lukas-reineke/indent-blankline.nvim',
     main = "ibl",
     config = function()
@@ -258,7 +258,7 @@ EnsureLazy().setup({
       })
     end,
   },
-  
+
   { 'akinsho/toggleterm.nvim',
     version = "*",
     config = function()
@@ -272,7 +272,7 @@ EnsureLazy().setup({
       })
     end,
   },
-  
+
   { 'navarasu/onedark.nvim',
     priority = 1000,
     config = function()

@@ -122,13 +122,13 @@ local find_words = function(literal)
     path_display = function(_, path)
       local filename = vim.fn.fnamemodify(path, ":t")
       filename = filename .. string.rep(" ", 20 - #filename) .. "  "
-  
+
       local filepath = vim.fn.fnamemodify(path, ":~:.")
       filepath = filepath:match("(.*/)") or filepath -- Remove everything after the last "/"
-  
+
       local display, filenamelen, pathlen = string.format("%s%s", filename, filepath), #filename, #filepath
       local style = merge_styles({}, HL_COMMENT, filenamelen + 1, pathlen)
-  
+
       return display, style
     end
   })
