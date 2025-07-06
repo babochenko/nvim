@@ -17,13 +17,28 @@ require('telescope').setup {
       winblend = 10, -- Add transparency if desired
     },
     border = true, -- Enable the border
+    layout_strategy = 'horizontal',
+    layout_config = {
+      horizontal = {
+        prompt_position = 'top',
+        preview_width = 0.5,
+        results_width = 0.8,
+      },
+      vertical = {
+        mirror = false,
+      },
+      width = 0.87,
+      height = 0.80,
+      preview_cutoff = 120,
+    },
+    sorting_strategy = 'ascending',
   },
 }
 
 require('lualine').setup {
   options = {
     icons_enabled = true,
-    theme = 'base16',
+    theme = 'onedark',
     component_separators = { left = '', right = ''},
     section_separators = { left = '', right = ''},
     disabled_filetypes = {

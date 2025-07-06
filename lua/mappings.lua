@@ -2,8 +2,7 @@ local map = vim.keymap.set
 
 local DIA = vim.diagnostic
 local GS = require 'gitsigns'
-local TABS = require 'nvchad.tabufline'
-local TERM = require "nvchad.term"
+-- Replaced with bufferline and toggleterm
 
 local Find = require 'ext/find'
 local Buf = require 'ext/buffers'
@@ -34,8 +33,8 @@ local buffers = {
   create = {
     map('n', '<leader>nn', ':enew<CR>', { desc = 'new file' }),
     map('n', '<leader>tt', ':term<CR>', { desc = 'new terminal' }),
-    map("n", "<leader>th", function() TERM.new { pos = "sp" } end, { desc = "new terminal h" }),
-    map("n", "<leader>tv", function() TERM.new { pos = "vsp" } end, { desc = "new terminal v" }),
+    map("n", "<leader>th", ":ToggleTerm direction=horizontal<CR>", { desc = "new terminal h" }),
+    map("n", "<leader>tv", ":ToggleTerm direction=vertical<CR>", { desc = "new terminal v" }),
   },
   modify = {
     map('n', '<leader>bn', Buf.move_right, { desc = 'buffer move right' }),
@@ -74,9 +73,9 @@ local tabs = {
   map('n', '<C-j>', '<C-w>j', { desc = 'switch window down' }),
   map('n', '<C-k>', '<C-w>k', { desc = 'switch window up' }),
   map("t", "<C-x>", "<C-\\><C-N>", { desc = "terminal escape terminal mode" }),
-  map('n', '<tab>', TABS.next, { desc = 'buffer goto next' }),
-  map('n', '<S-tab>', TABS.prev, { desc = 'buffer goto prev' }),
-  map('n', '<leader>x', TABS.close_buffer, { desc = 'close buffer' }),
+  map('n', '<tab>', function() require('bufferline').cycle(1) end, { desc = 'buffer goto next' }),
+  map('n', '<S-tab>', function() require('bufferline').cycle(-1) end, { desc = 'buffer goto prev' }),
+  map('n', '<leader>x', ':bdelete<CR>', { desc = 'close buffer' }),
   map('n', '<leader>X', Buf.close_other_buffers, { desc = 'close other buffers' }),
   map('n', '<leader>q', "<C-W>q", { desc = 'close window' }),
   map("n", "<C-n>", "<cmd>NvimTreeToggle<CR>", { desc = "nvimtree toggle window" }),

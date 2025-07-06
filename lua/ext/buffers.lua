@@ -6,7 +6,6 @@
 --
 local Find = require 'ext/find'
 
-local Tabs = require "nvchad.tabufline" 
 local Telescope = require("telescope.builtin")
 
 return {
@@ -33,11 +32,11 @@ return {
   end,
 
   move_left = function()
-    Tabs.move_buf(-1)
+    require('bufferline').move(-1)
   end,
 
   move_right = function()
-    Tabs.move_buf(1)
+    require('bufferline').move(1)
   end,
 
 }

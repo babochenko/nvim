@@ -1,4 +1,3 @@
-vim.g.base46_cache = vim.fn.stdpath 'data' .. '/nvchad/base46/'
 vim.g.mapleader = ' '
 vim.opt.fixendofline = false
 
@@ -23,26 +22,22 @@ end)
 
 if #vim.api.nvim_list_uis() == 0 then return end
 
-local lsp = require 'lspconfig'
-
--- local venv_path = vim.fn.expand '~/Developer/venv'
-lsp.pylsp.setup{
-  -- settings = {
-  --   python = {
-  --     pythonPath = vim.fn.isdirectory(venv_path) and (venv_path .. '/bin/python') or vim.fn.exepath('python'),
-  --     analysis = {
-  --       useLibraryCodeForTypes = true,
-  --     }
-  --   }
-  -- }
-}
-
-lsp.ts_ls.setup{}
-lsp.clangd.setup{}
-
-lsp.sourcekit.setup({
-  cmd = { 'xcrun', 'sourcekit-lsp' },
-  root_dir = require('lspconfig.util').root_pattern('*.xcodeproj', '*.xcworkspace', '.git'),
+-- Add error handling for invalid window operations
+vim.api.nvim_create_autocmd("User", {
+  pattern = "LazyVimStarted",
+  callback = function()
+    -- Suppress treesitter errors for invalid windows
+    local original_nvim_redraw = vim.api.nvim__redraw
+    vim.api.nvim__redraw = function(opts)
+      local ok, err = pcall(original_nvim_redraw, opts)
+      if not ok and string.match(err, "Invalid window id") then
+        -- Silently ignore invalid window errors
+        return
+      elseif not ok then
+        error(err)
+      end
+    end
+  end,
 })
 
 -- transparency
