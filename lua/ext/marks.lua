@@ -31,6 +31,7 @@ local Find = require 'ext/find'
 
 local marks_file = vim.fn.expand("~/.local/share/nvim/marks.json") -- File to save marks
 local global_marks = {} -- Stores all marks with file, line, and optional name
+local deleted_marks = {} -- Tracks marks that were explicitly deleted
 
 local function load_marks_file()
   local file = io.open(marks_file, "r")
@@ -61,16 +62,19 @@ local function merge_marks(old, new)
 
   -- Add old marks to the map
   for _, mark in ipairs(old) do
-    if mark.name then
-      map[mark.name] = mark
-    end
+    local key = mark.name or (mark.file .. ":" .. mark.line)
+    map[key] = mark
   end
 
   -- Override with new marks (global_marks has priority)
   for _, mark in ipairs(new) do
-    if mark.name then
-      map[mark.name] = mark
-    end
+    local key = mark.name or (mark.file .. ":" .. mark.line)
+    map[key] = mark
+  end
+
+  -- Remove explicitly deleted marks
+  for deleted_key, _ in pairs(deleted_marks) do
+    map[deleted_key] = nil
   end
 
   -- Convert back to array
@@ -109,8 +113,10 @@ local function toggle_mark()
     if mark.file == file and mark.line == line then
       local confirm = vim.fn.input("Remove mark? (y/n): ")
       if confirm:lower() == "y" or confirm:lower() == "yes" then
+        local key = mark.name or (mark.file .. ":" .. mark.line)
+        deleted_marks[key] = true
         table.remove(global_marks, i)
-        vim.fn.sign_unplace("MarksGroup", { buffer = vim.fn.bufnr("%"), id = 0 })
+        vim.fn.sign_unplace("MarksGroup", { buffer = vim.fn.bufnr("%") })
         print("Mark removed from " .. file .. ":" .. line)
       else
         print("Mark removal cancelled")
@@ -121,6 +127,8 @@ local function toggle_mark()
   end
 
   if not mark_exists then
+    local key = file .. ":" .. line
+    deleted_marks[key] = nil -- Clear any previous deletion
     global_marks[#global_marks + 1] = { file = file, line = line, name = nil }
     vim.fn.sign_place(0, "MarksGroup", "MarkSign", vim.fn.bufnr("%"), { lnum = line })
     print("Mark added at " .. file .. ":" .. line)
@@ -190,6 +198,10 @@ local function name_mark()
         default = current_name,
       })
       if name ~= "" then
+        -- Mark the old key as deleted to prevent duplicates
+        local old_key = mark.name or (mark.file .. ":" .. mark.line)
+        deleted_marks[old_key] = true
+        
         mark.name = name
         save_marks() -- Save marks immediately
         print("Mark at " .. file .. ":" .. line .. " named '" .. name .. "'")
