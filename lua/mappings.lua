@@ -2,7 +2,7 @@ local map = vim.keymap.set
 
 local DIA = vim.diagnostic
 local GS = require 'gitsigns'
--- Replaced with bufferline and toggleterm
+local BUFLINE = require 'bufferline'
 
 local Find = require 'ext/find'
 local Buf = require 'ext/buffers'
@@ -73,8 +73,8 @@ local tabs = {
   map('n', '<C-j>', '<C-w>j', { desc = 'switch window down' }),
   map('n', '<C-k>', '<C-w>k', { desc = 'switch window up' }),
   map("t", "<C-x>", "<C-\\><C-N>", { desc = "terminal escape terminal mode" }),
-  map('n', '<tab>', function() require('bufferline').cycle(1) end, { desc = 'buffer goto next' }),
-  map('n', '<S-tab>', function() require('bufferline').cycle(-1) end, { desc = 'buffer goto prev' }),
+  map('n', '<tab>', function() BUFLINE.cycle(1) end, { desc = 'buffer goto next' }),
+  map('n', '<S-tab>', function() BUFLINE.cycle(-1) end, { desc = 'buffer goto prev' }),
   map('n', '<leader>x', ':bdelete<CR>', { desc = 'close buffer' }),
   map('n', '<leader>X', Buf.close_other_buffers, { desc = 'close other buffers' }),
   map('n', '<leader>q', "<C-W>q", { desc = 'close window' }),
