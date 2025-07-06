@@ -95,10 +95,29 @@ EnsureLazy().setup({
         options = {
           diagnostics = "nvim_lsp",
           separator_style = "none",
-          indicator_style = "none",
+          indicator = {
+            style = "none",
+          },
           show_buffer_close_icons = true,
           show_close_icon = true,
-        }
+          show_tab_indicators = false,
+          enforce_regular_tabs = true,
+          always_show_bufferline = true,
+        },
+        highlights = {
+          separator = {
+            fg = {attribute = "bg", highlight = "TabLine"},
+            bg = {attribute = "bg", highlight = "TabLine"},
+          },
+          separator_selected = {
+            fg = {attribute = "bg", highlight = "Normal"},
+            bg = {attribute = "bg", highlight = "Normal"},
+          },
+          separator_visible = {
+            fg = {attribute = "bg", highlight = "TabLine"},
+            bg = {attribute = "bg", highlight = "TabLine"},
+          },
+        },
       })
     end,
   },
