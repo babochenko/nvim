@@ -172,17 +172,66 @@ EnsureLazy().setup({
   
   { 'neovim/nvim-lspconfig',
     dependencies = { 'hrsh7th/cmp-nvim-lsp' },
+    event = { "BufReadPre", "BufNewFile" },
     config = function()
       local capabilities = require('cmp_nvim_lsp').default_capabilities()
       local lspconfig = require('lspconfig')
       
-      lspconfig.pylsp.setup({ capabilities = capabilities })
-      lspconfig.ts_ls.setup({ capabilities = capabilities })
-      lspconfig.clangd.setup({ capabilities = capabilities })
+      -- Add on_attach function for keybindings
+      local on_attach = function(client, bufnr)
+        local opts = { noremap=true, silent=true, buffer=bufnr }
+        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+        vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+        vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+        vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+        vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+        vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+        vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+        vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, opts)
+        vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+        vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+      end
+      
+      lspconfig.pylsp.setup({ 
+        capabilities = capabilities,
+        on_attach = on_attach,
+        settings = {
+          pylsp = {
+            plugins = {
+              pycodestyle = { enabled = false },
+              mccabe = { enabled = false },
+              pyflakes = { enabled = false },
+              jedi_completion = { fuzzy = true },
+              jedi_hover = { enabled = true },
+              jedi_references = { enabled = true },
+              jedi_signature_help = { enabled = true },
+              jedi_symbols = { enabled = true, all_scopes = true },
+            },
+          },
+        },
+        before_init = function(_, config)
+          -- Auto-detect virtual environment
+          local venv_path = os.getenv("VIRTUAL_ENV")
+          if venv_path then
+            config.settings.pylsp.plugins.jedi = {
+              environment = venv_path .. "/bin/python"
+            }
+          end
+        end,
+      })
+      lspconfig.ts_ls.setup({ 
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+      lspconfig.clangd.setup({ 
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
       lspconfig.sourcekit.setup({
         cmd = { 'xcrun', 'sourcekit-lsp' },
         root_dir = require('lspconfig.util').root_pattern('*.xcodeproj', '*.xcworkspace', '.git'),
         capabilities = capabilities,
+        on_attach = on_attach,
       })
     end,
   },
