@@ -10,7 +10,6 @@ vim.defer_fn(function()
   vim.opt.timeoutlen = 200
 end, 0)
 
-dofile(vim.g.base46_cache .. 'statusline')
 
 require 'plugins'
 require 'autocmd'
@@ -45,4 +44,16 @@ lsp.sourcekit.setup({
   cmd = { 'xcrun', 'sourcekit-lsp' },
   root_dir = require('lspconfig.util').root_pattern('*.xcodeproj', '*.xcworkspace', '.git'),
 })
+
+-- transparency
+vim.cmd [[
+  highlight Normal      ctermbg=none guibg=none
+  highlight NormalNC    ctermbg=none guibg=none
+  highlight SignColumn  ctermbg=none guibg=none
+  highlight VertSplit   ctermbg=none guibg=none
+  highlight StatusLine  ctermbg=none guibg=none
+  highlight LineNr      ctermbg=none guibg=none
+  highlight EndOfBuffer ctermbg=none guibg=none
+]]
+
 

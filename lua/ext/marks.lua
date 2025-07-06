@@ -137,6 +137,22 @@ local marks_previewer = TSC.make_previewer({
   define_preview = function(self, entry)
     -- Read the file content
     local bufnr = self.state.bufnr
+    
+    -- Check if file exists and is not empty
+    if not entry.value.file or entry.value.file == "" then
+      vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {"Invalid file path"})
+      return
+    end
+    
+    -- Create file if it doesn't exist
+    if not vim.fn.filereadable(entry.value.file) then
+      local dir = vim.fn.fnamemodify(entry.value.file, ":h")
+      vim.fn.mkdir(dir, "p")
+      local file = io.open(entry.value.file, "w")
+      if file then
+        file:close()
+      end
+    end
 
     -- Set filetype using bo instead of nvim_buf_set_option
     vim.bo[bufnr].filetype = vim.filetype.match({ filename = entry.value.file }) or ""
