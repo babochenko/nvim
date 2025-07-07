@@ -11,6 +11,8 @@ vim.defer_fn(function()
   vim.opt.relativenumber = true
   vim.opt.smoothscroll = true
   vim.opt.timeoutlen = 200
+  vim.opt.ignorecase = true
+  vim.opt.smartcase = true
 end, 0)
 
 

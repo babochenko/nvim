@@ -132,6 +132,18 @@ local find_words = function(literal)
       return display, style
     end
   })
+  
+  -- Enable case-insensitive search
+  opt.vimgrep_arguments = {
+    'rg',
+    '--color=never',
+    '--no-heading',
+    '--with-filename',
+    '--line-number',
+    '--column',
+    '--smart-case',
+    '--ignore-case'
+  }
 
   local node = NvimTree.tree.get_node_under_cursor()
   if node and node.type == "directory" then
@@ -203,7 +215,9 @@ return {
         entry = make_entry.gen_from_file({})(entry)
         entry.display = display_modified_path
         return entry
-      end
+      end,
+      file_ignore_patterns = {},
+      find_command = { 'rg', '--files', '--hidden', '--follow', '--no-ignore-vcs', '--ignore-case' }
     }))
   end,
 

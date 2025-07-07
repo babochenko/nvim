@@ -83,6 +83,15 @@ EnsureLazy().setup({
         filters = { dotfiles = false },
         disable_netrw = true,
         hijack_netrw = true,
+        live_filter = {
+          prefix = "[FILTER]: ",
+          always_show_folders = false,
+        },
+        actions = {
+          open_file = {
+            quit_on_open = false,
+          },
+        },
       })
     end,
   },
