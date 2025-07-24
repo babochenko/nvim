@@ -9,6 +9,7 @@ local Buf = require 'ext/buffers'
 local Code = require 'ext/code'
 local Mark = require 'ext/marks'
 local Sys = require 'ext/system'
+local Db = require 'ext/db'
 
 local nvim_defaults = {
   map('n', '<leader>el', function() vim.cmd("edit ~/.local/state/nvim/lsp.log") end, { desc = 'open LSP logs' }),
@@ -24,6 +25,7 @@ local general_helpers = {
   map('n', ';', ':', { desc = 'command mode' }),
   map('n', '<Esc>', '<cmd>noh<CR>', { desc = 'general clear highlights' }),
   map('n', '<leader>db', ':DBUI<CR>', { desc = 'open database ui' }),
+  map('n', '<leader>dc', Db.open_config_file, { desc = 'open database config' }),
   map('n', '<leader>fp', Sys.copy_file_path, { desc = 'show file path' }),
   map('n', '<leader>fP', Sys.copy_file_name, { desc = 'show file name' }),
   map({'n', 'v'}, '<leader>fl', Code.format_file, { desc = 'lint file' }),
