@@ -80,7 +80,14 @@ EnsureLazy().setup({
     config = function()
       require('nvim-tree').setup({
         view = { width = 30 },
-        filters = { dotfiles = false },
+        filters = {
+            dotfiles = false,
+            git_ignored = false,
+        },
+        git = {
+          enable = true,
+          ignore = false,
+        },
         disable_netrw = true,
         hijack_netrw = true,
         live_filter = {
