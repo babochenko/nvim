@@ -21,6 +21,8 @@ require 'autocmd'
 require 'ui'
 require 'ext/mymath'
 
+require('ext/testing').setup_autocmds()
+
 vim.schedule(function()
   require 'mappings'
   require 'python'

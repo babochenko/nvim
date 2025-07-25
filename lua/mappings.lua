@@ -10,6 +10,7 @@ local Code = require 'ext/code'
 local Mark = require 'ext/marks'
 local Sys = require 'ext/system'
 local Db = require 'ext/db'
+local Test = require 'ext/testing'
 
 local nvim_defaults = {
   map('n', '<leader>el', function() vim.cmd("edit ~/.local/state/nvim/lsp.log") end, { desc = 'open LSP logs' }),
@@ -64,8 +65,8 @@ local code = {
   },
   run = {
     map('n', '<leader>fr', Code.run_file, { desc = 'run file' }),
-    map('n', '<leader>rt', Code.test_func, { desc = 'test this function' }),
-    map('n', '<leader>rf', Code.test_file, { desc = 'test this file' }),
+    map('n', '<leader>rt', Test.run_test_at_cursor, { desc = 'test function' }),
+    map('n', '<leader>rf', Test.run_file_tests, { desc = 'test entire file' }),
   },
 }
 
