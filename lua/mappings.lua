@@ -64,9 +64,9 @@ local code = {
     map("v", "<leader>/", "gc", { desc = "toggle comment", remap = true }),
   },
   run = {
-    map('n', '<leader>fr', Code.run_file, { desc = 'run file' }),
     map('n', '<leader>rt', Test.run_test_at_cursor, { desc = 'test function' }),
-    map('n', '<leader>rf', Test.run_file_tests, { desc = 'test entire file' }),
+    map('n', '<leader>rT', Test.run_file_tests, { desc = 'test entire file' }),
+    map('n', '<leader>rf', Code.run_file, { desc = 'execute file' }),
   },
 }
 
