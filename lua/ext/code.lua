@@ -46,14 +46,6 @@ end
 
 return {
 
-  test_func = function()
-    Java.test_nearest_method()
-  end,
-
-  test_file = function()
-    Java.test_class()
-  end,
-
   run_file = function()
     local file_path = vim.fn.expand('%:p')
     local file_extension = vim.fn.expand('%:e')
