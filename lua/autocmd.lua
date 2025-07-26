@@ -17,6 +17,10 @@ end
 --   set_tabstop(2)
 -- end })
 
+autocmd("FileType", { pattern = "csv", callback = function()
+    vim.cmd("CsvViewEnable")
+end })
+
 autocmd('FileType', { pattern = { 'java', 'groovy', 'py' }, callback = function()
   set_tabstop(4)
 end })
