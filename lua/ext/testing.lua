@@ -79,12 +79,23 @@ local function get_test_functions()
   local tests = {}
   
   for i, line in ipairs(lines) do
-    local test_name = string.match(line, runner.test_function_pattern)
-    if test_name then
-      table.insert(tests, {
-        name = test_name,
-        line = i,
-      })
+    if lang == "javascript" or lang == "typescript" then
+      -- For JS/TS, we need the second capture group
+      local _, test_name = string.match(line, runner.test_function_pattern)
+      if test_name then
+        table.insert(tests, {
+          name = test_name,
+          line = i,
+        })
+      end
+    else
+      local test_name = string.match(line, runner.test_function_pattern)
+      if test_name then
+        table.insert(tests, {
+          name = test_name,
+          line = i,
+        })
+      end
     end
   end
   
@@ -214,6 +225,7 @@ return {
     run_file_tests = run_file_tests,
     add_test_indicators = add_test_indicators,
     detect_language = detect_language,
+    get_test_functions = get_test_functions,
     setup_autocmds = setup_autocmds,
 }
 
