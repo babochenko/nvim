@@ -8,8 +8,8 @@ function assertTable(actual, expected)
     assert.equals(#actual, #expected)
 
     for i, act in ipairs(actual) do
-      assert.equals(act.name, expected[i].name)
       assert.equals(act.line, expected[i].line)
+      assert.equals(act.name, expected[i].name)
     end
 end
 
@@ -154,9 +154,9 @@ describe("get_test_functions()", function()
         ]])
 
         assertTable(testing.get_test_functions(), {
-            { name = "test_addition", line = 2 },
-            { name = "test_subtraction", line = 6 },
-            { name = "test_multiplication", line = 8 },
+            { line = 2, name = "test_addition" },
+            { line = 6, name = "test_subtraction" },
+            { line = 8, name = "test_multiplication" },
         })
 
 		restore_vim()
@@ -185,17 +185,11 @@ describe("get_test_functions()", function()
 			return
 		end
 
-		assert.equals(#functions, 3)
-
-		-- For JavaScript, the pattern captures the second group which is the test name
-		assert.equals(functions[1].name, "should add numbers")
-		assert.equals(functions[1].line, 1)
-
-		assert.equals(functions[2].name, "should subtract numbers")
-		assert.equals(functions[2].line, 5)
-
-		assert.equals(functions[3].name, "should multiply numbers")
-		assert.equals(functions[3].line, 9)
+		assertTable(functions, {
+			{ line = 1, name = "should add numbers" },
+			{ line = 5, name = "should subtract numbers" },
+			{ line = 9, name = "should multiply numbers" },
+		})
 
 		restore_vim()
 	end)
@@ -221,17 +215,11 @@ describe("get_test_functions()", function()
             }
         ]])
 
-		local functions = testing.get_test_functions()
-		assert.equals(#functions, 3)
-
-		assert.equals(functions[1].name, "TestAddition")
-		assert.equals(functions[1].line, 2)
-
-		assert.equals(functions[2].name, "TestSubtraction")
-		assert.equals(functions[2].line, 8)
-
-		assert.equals(functions[3].name, "TestMultiplication")
-		assert.equals(functions[3].line, 11)
+		assertTable(testing.get_test_functions(), {
+			{ line = 2, name = "TestAddition" },
+			{ line = 8, name = "TestSubtraction" },
+			{ line = 11, name = "TestMultiplication" },
+		})
 
 		restore_vim()
 	end)
@@ -255,17 +243,11 @@ describe("get_test_functions()", function()
             }
         ]])
 
-		local functions = testing.get_test_functions()
-		assert.equals(#functions, 3)
-
-		assert.equals(functions[1].name, "test_addition")
-		assert.equals(functions[1].line, 1)
-
-		assert.equals(functions[2].name, "test_subtraction")
-		assert.equals(functions[2].line, 9)
-
-		assert.equals(functions[3].name, "test_multiplication")
-		assert.equals(functions[3].line, 13)
+		assertTable(testing.get_test_functions(), {
+			{ line = 1, name = "test_addition" },
+			{ line = 9, name = "test_subtraction" },
+			{ line = 13, name = "test_multiplication" },
+		})
 
 		restore_vim()
 	end)
@@ -279,8 +261,7 @@ describe("get_test_functions()", function()
                 return "hello"
         ]])
 
-		local functions = testing.get_test_functions()
-		assert.equals(#functions, 0)
+		assertTable(testing.get_test_functions(), {})
 
 		restore_vim()
 	end)
@@ -296,8 +277,7 @@ describe("get_test_functions()", function()
                 return "not a test"
         ]])
 
-		local functions = testing.get_test_functions()
-		assert.equals(#functions, 0)
+		assertTable(testing.get_test_functions(), {})
 
 		restore_vim()
 	end)
