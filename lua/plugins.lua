@@ -336,7 +336,9 @@ EnsureLazy().setup({
 
   { 'nvim-treesitter/nvim-treesitter',
   	opts = {
-  		ensure_installed = { 'vim', 'lua', 'vimdoc', 'html', 'css' },
+  		ensure_installed = { 'vim', 'lua', 'vimdoc', 'html', 'css', 'markdown', 'markdown_inline' },
+        auto_install = true,
+        highlight = { enable = true },
   	},
   },
 
