@@ -1,3 +1,5 @@
+local home = vim.fn.expand("$HOME")
+
 local plugins_cfg = {
   defaults = { lazy = true },
   install = { colorscheme = { 'onedark' } },
@@ -208,33 +210,21 @@ EnsureLazy().setup({
         vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
       end
 
-      lspconfig.pylsp.setup({ 
-        capabilities = capabilities,
-        on_attach = on_attach,
+      lspconfig.pyright.setup({
         settings = {
-          pylsp = {
-            plugins = {
-              pycodestyle = { enabled = false },
-              mccabe = { enabled = false },
-              pyflakes = { enabled = false },
-              jedi_completion = { fuzzy = true },
-              jedi_hover = { enabled = true },
-              jedi_references = { enabled = true },
-              jedi_signature_help = { enabled = true },
-              jedi_symbols = { enabled = true, all_scopes = true },
+          python = {
+            venvPath = home .. '/Developer',
+            venv = ".venv",
+            analysis = {
+              autoSearchPaths = true,
+              useLibraryCodeForTypes = true,
+              diagnosticMode = "workspace", -- or "openFilesOnly"
+              typeCheckingMode = "basic", -- or "strict"
             },
           },
         },
-        before_init = function(_, config)
-          -- Auto-detect virtual environment
-          local venv_path = os.getenv("VIRTUAL_ENV")
-          if venv_path then
-            config.settings.pylsp.plugins.jedi = {
-              environment = venv_path .. "/bin/python"
-            }
-          end
-        end,
       })
+
       lspconfig.ts_ls.setup({ 
         capabilities = capabilities,
         on_attach = on_attach,
