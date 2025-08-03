@@ -10,11 +10,11 @@ local Code = require 'ext/code'
 local Mark = require 'ext/marks'
 local Sys = require 'ext/system'
 local Db = require 'ext/db'
-local Test = require 'ext/testing'
+local CodeRunner = require 'ext/coderunner'
 
 local nvim_defaults = {
-  map('n', '<leader>el', function() vim.cmd("edit ~/.local/state/nvim/lsp.log") end, { desc = 'open LSP logs' }),
-  map('n', '<leader>en', function() vim.cmd("edit ~/.local/share/nvim/notes.md") end, { desc = 'open notes' }),
+  map('n', '<leader>el', function() vim.cmd('edit ~/.local/state/nvim/lsp.log') end, { desc = 'open LSP logs' }),
+  map('n', '<leader>en', function() vim.cmd('edit ~/.local/share/nvim/notes.md') end, { desc = 'open notes' }),
   map('n', ',', '*'),
 }
 
@@ -36,8 +36,8 @@ local buffers = {
   create = {
     map('n', '<leader>nn', ':enew<CR>', { desc = 'new file' }),
     map('n', '<leader>tt', ':term<CR>', { desc = 'new terminal' }),
-    map("n", "<leader>th", ":ToggleTerm direction=horizontal<CR>", { desc = "new terminal h" }),
-    map("n", "<leader>tv", ":ToggleTerm direction=vertical<CR>", { desc = "new terminal v" }),
+    map('n', '<leader>th', ':ToggleTerm direction=horizontal<CR>', { desc = 'new terminal h' }),
+    map('n', '<leader>tv', ':ToggleTerm direction=vertical<CR>', { desc = 'new terminal v' }),
   },
   modify = {
     map('n', '<leader>bn', Buf.move_right, { desc = 'buffer move right' }),
@@ -60,12 +60,12 @@ local code = {
   },
   edit = {
     map('n', 'cr', vim.lsp.buf.rename, { desc = 'rename symbol' }),
-    map("n", "<leader>/", "gcc", { desc = "toggle comment", remap = true }),
-    map("v", "<leader>/", "gc", { desc = "toggle comment", remap = true }),
+    map('n', '<leader>/', 'gcc', { desc = 'toggle comment', remap = true }),
+    map('v', '<leader>/', 'gc', { desc = 'toggle comment', remap = true }),
   },
   run = {
-    map('n', '<leader>rt', Test.run_test_at_cursor, { desc = 'test function' }),
-    map('n', '<leader>rT', Test.run_file_tests, { desc = 'test entire file' }),
+    map('n', '<leader>rt', CodeRunner.run_line, { desc = 'test function' }),
+    map('n', '<leader>rT', CodeRunner.run_file, { desc = 'test entire file' }),
     map('n', '<leader>rf', Code.run_file, { desc = 'execute file' }),
   },
 }
@@ -75,13 +75,13 @@ local tabs = {
   map('n', '<C-l>', '<C-w>l', { desc = 'switch window right' }),
   map('n', '<C-j>', '<C-w>j', { desc = 'switch window down' }),
   map('n', '<C-k>', '<C-w>k', { desc = 'switch window up' }),
-  map("t", "<C-x>", "<C-\\><C-N>", { desc = "terminal escape terminal mode" }),
+  map('t', '<C-x>', '<C-\\><C-N>', { desc = 'terminal escape terminal mode' }),
   map('n', '<tab>', function() BUFLINE.cycle(1) end, { desc = 'buffer goto next' }),
   map('n', '<S-tab>', function() BUFLINE.cycle(-1) end, { desc = 'buffer goto prev' }),
   map('n', '<leader>x', ':bdelete<CR>', { desc = 'close buffer' }),
   map('n', '<leader>X', Buf.close_other_buffers, { desc = 'close other buffers' }),
-  map('n', '<leader>q', "<C-W>q", { desc = 'close window' }),
-  map("n", "<C-n>", "<cmd>NvimTreeToggle<CR>", { desc = "nvimtree toggle window" }),
+  map('n', '<leader>q', '<C-W>q', { desc = 'close window' }),
+  map('n', '<C-n>', '<cmd>NvimTreeFindFileToggle<CR>', { desc = 'nvimtree' }),
 }
 
 local search = {
@@ -91,8 +91,8 @@ local search = {
   map('n', '<leader>ft', Find.testfile, { desc = 'find test file' }),
   map('n', '<leader>fh', Find.files_history, { desc = 'files history in proj' }),
   map('n', '<leader>fH', Find.all_files_history, { desc = 'files history everywhere' }),
-  map("n", "<leader>fz", "<cmd>Telescope current_buffer_fuzzy_find<CR>", { desc = "find in current buffer" }),
-  map("n", "<leader>fa", "<cmd>Telescope find_files follow=true no_ignore=true hidden=true<CR>", { desc = "telescope find all files" }),
+  map('n', '<leader>fz', '<cmd>Telescope current_buffer_fuzzy_find<CR>', { desc = 'find in current buffer' }),
+  map('n', '<leader>fa', '<cmd>Telescope find_files follow=true no_ignore=true hidden=true<CR>', { desc = 'telescope find all files' }),
 }
 
 local git = {
@@ -101,8 +101,8 @@ local git = {
   map('n', '<leader>gr', GS.reset_hunk, { desc = 'git reset hunk' }),
   map('n', '<leader>gp', GS.preview_hunk, { desc = 'git preview hunk' }),
   map('n', '<leader>gs', ':Git<CR>', { desc = 'git status' }),
-  map("n", "<leader>gh", "<cmd>Telescope git_commits<CR>", { desc = "git history" }),
-  map("n", "<leader>gg", "<cmd>Flog<CR>", { desc = "git graph" }),
+  map('n', '<leader>gh', '<cmd>Telescope git_commits<CR>', { desc = 'git history' }),
+  map('n', '<leader>gg', '<cmd>Flog<CR>', { desc = 'git graph' }),
 }
 
 local marks = {

@@ -139,7 +139,7 @@ local function run_test_function(test_name)
 end
 
 -- Run all tests in current file
-local function run_file_tests()
+local function run_file()
   local lang = detect_language()
   if not lang then
     print("No test runner configured for this file type")
@@ -197,7 +197,7 @@ end
 -- Define test sign with green triangle
 vim.fn.sign_define("TestSign", { text = "▶", texthl = "String", numhl = "" })
 
-local function run_test_at_cursor()
+local function run_line()
   local test_name = get_test_at_cursor()
   if test_name then
     run_test_function(test_name)
@@ -221,8 +221,8 @@ local function setup_autocmds()
 end
 
 return {
-    run_test_at_cursor = run_test_at_cursor,
-    run_file_tests = run_file_tests,
+    run_line = run_line,
+    run_file = run_file,
     add_test_indicators = add_test_indicators,
     detect_language = detect_language,
     get_test_functions = get_test_functions,

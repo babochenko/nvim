@@ -1,4 +1,4 @@
-local testing = require("ext.testing")
+local coderunner = require("ext.coderunner")
 
 -- Store original vim functions
 local original_expand = vim.fn.expand
@@ -63,14 +63,14 @@ end
 describe("detect_language()", function()
 	it(".py", function()
 		mock_file("test_example.py")
-		local result = testing.detect_language()
+		local result = coderunner.detect_language()
 		assert.equals(result, "python")
 		restore_vim()
 	end)
 
 	it(".py empty", function()
 		mock_file("test_empty.py", "")
-		local lang = testing.detect_language()
+		local lang = coderunner.detect_language()
 		assert.equals(lang, "python")
 		restore_vim()
 	end)
@@ -80,28 +80,28 @@ describe("detect_language()", function()
             # This is a test file
             # with only comments
         ]])
-		local lang = testing.detect_language()
+		local lang = coderunner.detect_language()
 		assert.equals(lang, "python")
 		restore_vim()
 	end)
 
 	it(".js", function()
 		mock_file("example.test.js")
-		local result = testing.detect_language()
+		local result = coderunner.detect_language()
 		assert.equals(result, "javascript")
 		restore_vim()
 	end)
 
 	it(".ts", function()
 		mock_file("example.test.ts")
-		local result = testing.detect_language()
+		local result = coderunner.detect_language()
 		assert.equals(result, "typescript")
 		restore_vim()
 	end)
 
 	it(".go", function()
 		mock_file("example_test.go")
-		local result = testing.detect_language()
+		local result = coderunner.detect_language()
 		assert.equals(result, "go")
 		restore_vim()
 	end)
@@ -112,14 +112,14 @@ describe("detect_language()", function()
             fn test_something() {
             }
         ]])
-		local result = testing.detect_language()
+		local result = coderunner.detect_language()
 		assert.equals(result, "rust")
 		restore_vim()
 	end)
 
 	it("<- nil for non-test .py", function()
 		mock_file("regular_file.py")
-		local result = testing.detect_language()
+		local result = coderunner.detect_language()
 		assert.equals(result, nil)
 		restore_vim()
 	end)
@@ -129,7 +129,7 @@ describe("detect_language()", function()
             fn main() {
             }
         ]])
-		local result = testing.detect_language()
+		local result = coderunner.detect_language()
 		assert.equals(result, nil)
 		restore_vim()
 	end)
@@ -153,7 +153,7 @@ describe("get_test_functions()", function()
                 assert 2 * 3 == 6
         ]])
 
-        assertTable(testing.get_test_functions(), {
+        assertTable(coderunner.get_test_functions(), {
             { line = 2, name = "test_addition" },
             { line = 6, name = "test_subtraction" },
             { line = 8, name = "test_multiplication" },
@@ -177,7 +177,7 @@ describe("get_test_functions()", function()
             });
         ]])
 
-		local functions = testing.get_test_functions()
+		local functions = coderunner.get_test_functions()
 		-- JavaScript functions are not being found, let's check if functions array is empty
 		if #functions == 0 then
 			-- Skip this test for now since pattern matching isn't working
@@ -198,24 +198,24 @@ describe("get_test_functions()", function()
 		mock_file("example_test.go", [[
             package main
             
-            func TestAddition(t *testing.T) {
+            func TestAddition(t *coderunner.T) {
                 // test addition
             }
             
-            func helper(t *testing.T) {
+            func helper(t *coderunner.T) {
                 // not a test
             }
             
-            func TestSubtraction(t *testing.T) {
+            func TestSubtraction(t *coderunner.T) {
                 // test subtraction
             }
             
-            func TestMultiplication(t *testing.T) {
+            func TestMultiplication(t *coderunner.T) {
                 // test multiplication  
             }
         ]])
 
-		assertTable(testing.get_test_functions(), {
+		assertTable(coderunner.get_test_functions(), {
 			{ line = 2, name = "TestAddition" },
 			{ line = 8, name = "TestSubtraction" },
 			{ line = 11, name = "TestMultiplication" },
@@ -243,7 +243,7 @@ describe("get_test_functions()", function()
             }
         ]])
 
-		assertTable(testing.get_test_functions(), {
+		assertTable(coderunner.get_test_functions(), {
 			{ line = 1, name = "test_addition" },
 			{ line = 9, name = "test_subtraction" },
 			{ line = 13, name = "test_multiplication" },
@@ -261,7 +261,7 @@ describe("get_test_functions()", function()
                 return "hello"
         ]])
 
-		assertTable(testing.get_test_functions(), {})
+		assertTable(coderunner.get_test_functions(), {})
 
 		restore_vim()
 	end)
@@ -277,7 +277,7 @@ describe("get_test_functions()", function()
                 return "not a test"
         ]])
 
-		assertTable(testing.get_test_functions(), {})
+		assertTable(coderunner.get_test_functions(), {})
 
 		restore_vim()
 	end)
