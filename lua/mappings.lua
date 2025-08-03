@@ -12,6 +12,11 @@ local Sys = require 'ext/system'
 local Db = require 'ext/db'
 local CodeRunner = require 'ext/coderunner'
 
+local function nvimTree()
+    vim.cmd("NvimTreeFindFileToggle")
+    vim.cmd("normal! zz")
+end
+
 local nvim_defaults = {
   map('n', '<leader>el', function() vim.cmd('edit ~/.local/state/nvim/lsp.log') end, { desc = 'open LSP logs' }),
   map('n', '<leader>en', function() vim.cmd('edit ~/.local/share/nvim/notes.md') end, { desc = 'open notes' }),
@@ -81,7 +86,7 @@ local tabs = {
   map('n', '<leader>x', ':bdelete<CR>', { desc = 'close buffer' }),
   map('n', '<leader>X', Buf.close_other_buffers, { desc = 'close other buffers' }),
   map('n', '<leader>q', '<C-W>q', { desc = 'close window' }),
-  map('n', '<C-n>', '<cmd>NvimTreeFindFileToggle<CR>', { desc = 'nvimtree' }),
+  map('n', '<C-n>', nvimTree, { desc = 'nvimtree' }),
 }
 
 local search = {
