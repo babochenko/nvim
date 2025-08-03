@@ -371,7 +371,36 @@ EnsureLazy().setup({
         },
       },
       cmd = { "CsvViewEnable", "CsvViewDisable", "CsvViewToggle" },
-    }
+    },
+
+    {
+      "rest-nvim/rest.nvim",
+      ft = 'http',
+      dependencies = {
+        "nvim-treesitter/nvim-treesitter",
+        opts = function (_, opts)
+          opts.ensure_installed = opts.ensure_installed or {}
+          table.insert(opts.ensure_installed, "http")
+        end,
+      },
+      config = function()
+        require("rest-nvim").setup({
+          result = {
+            split = {
+              horizontal = false, -- or true, doesn't matter if you're disabling split entirely
+              in_place = false,
+              stay_in_current_window_after_split = false,
+            },
+            behavior = {
+              show_url = true,
+              decode_url = true,
+              highlight = true,
+              jump_to_request = false,
+            },
+          },
+        })
+      end,
+    },
 
   -- These are some examples, uncomment them if you want to see them work!
   -- {

@@ -23,6 +23,12 @@ require 'ext/mymath'
 
 require('ext/coderunner').setup_autocmds()
 
+require("nvim-treesitter.configs").setup({
+  ensure_installed = {
+    "http", -- <- this is the missing one
+  },
+})
+
 vim.schedule(function()
   require 'mappings'
   require 'python'
