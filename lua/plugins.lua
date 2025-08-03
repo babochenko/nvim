@@ -249,6 +249,24 @@ EnsureLazy().setup({
         capabilities = capabilities,
         on_attach = on_attach,
       })
+      lspconfig.rust_analyzer.setup({
+        settings = {
+          ["rust-analyzer"] = {
+            cargo = { allFeatures = true },
+            check = {
+              command = "clippy",
+            }
+          },
+        },
+      })
+    end,
+  },
+
+  {
+    "simrat39/rust-tools.nvim",
+    dependencies = { "neovim/nvim-lspconfig" },
+    config = function()
+      require("rust-tools").setup({})
     end,
   },
 
