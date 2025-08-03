@@ -385,19 +385,12 @@ EnsureLazy().setup({
       },
       config = function()
         require("rest-nvim").setup({
-          result = {
-            split = {
-              horizontal = false, -- or true, doesn't matter if you're disabling split entirely
-              in_place = false,
-              stay_in_current_window_after_split = false,
+            ui = {
+                keybinds = {
+                    prev = "<S-Tab>",
+                    next = "<Tab>",
+                },
             },
-            behavior = {
-              show_url = true,
-              decode_url = true,
-              highlight = true,
-              jump_to_request = false,
-            },
-          },
         })
       end,
     },
