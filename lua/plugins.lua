@@ -213,13 +213,14 @@ EnsureLazy().setup({
       lspconfig.pyright.setup({
         settings = {
           python = {
-            venvPath = home .. '/Developer',
+            pythonPath = home .. "/Developer/.venv/bin/python",
+            venvPath = home .. "/Developer",
             venv = ".venv",
             analysis = {
               autoSearchPaths = true,
               useLibraryCodeForTypes = true,
-              diagnosticMode = "workspace", -- or "openFilesOnly"
-              typeCheckingMode = "basic", -- or "strict"
+              diagnosticMode = "workspace",
+              typeCheckingMode = "basic",
             },
           },
         },
