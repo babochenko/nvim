@@ -32,7 +32,7 @@ local TestRunners = {
   },
   http = {
     regex_file = ".*%.http$",
-    regex_line = "^(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)%s+",
+    regex_line = "^%s*([A-Z]+%s+https?://.*)",
     run_file = ":Rest run",
     run_line = ":Rest run",
   },

@@ -5,11 +5,11 @@ local original_expand = vim.fn.expand
 local original_buf_get_lines = vim.api.nvim_buf_get_lines
 
 function assertTable(actual, expected)
-    assert.equals(#actual, #expected)
+    assert.equals(#expected, #actual)
 
     for i, act in ipairs(actual) do
-      assert.equals(act.line, expected[i].line)
-      assert.equals(act.name, expected[i].name)
+      assert.equals(expected[i].line, act.line)
+      assert.equals(expected[i].name, act.name)
     end
 end
 
@@ -276,8 +276,8 @@ describe("get_test_functions()", function()
         ]])
 
 		assertTable(coderunner.get_test_functions(), {
-			{ line = 1, name = "GET https://jsonplaceholder.typicode.com/posts/1" },
-			{ line = 13, name = "POST https://jsonplaceholder.typicode.com/posts" },
+			{ line = 2, name = "GET https://jsonplaceholder.typicode.com/posts/1" },
+			{ line = 4, name = "POST https://jsonplaceholder.typicode.com/posts" },
 		})
 
 		restore_vim()

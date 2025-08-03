@@ -18,3 +18,8 @@ then, save as htmlx and convert to epub:
 pandoc full.html -o report.epub --metadata title="Robinhood 10-K"
 ```
 
+## Running tests
+```
+./test.sh
+```
+
