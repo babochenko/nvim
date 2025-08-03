@@ -106,6 +106,13 @@ describe("detect_language()", function()
 		restore_vim()
 	end)
 
+	it(".http", function()
+		mock_file("example_test.http")
+		local result = coderunner.detect_language()
+		assert.equals(result, "http")
+		restore_vim()
+	end)
+
 	it(".rs + #[test]", function()
 		mock_file("lib.rs", [[
             #[test]
@@ -247,6 +254,30 @@ describe("get_test_functions()", function()
 			{ line = 1, name = "test_addition" },
 			{ line = 9, name = "test_subtraction" },
 			{ line = 13, name = "test_multiplication" },
+		})
+
+		restore_vim()
+	end)
+
+	it(".http", function()
+		mock_file("requests.http", [[
+            ### Get post
+            GET https://jsonplaceholder.typicode.com/posts/1
+
+            ### Create post
+            POST https://jsonplaceholder.typicode.com/posts
+            Content-Type: application/json
+
+            {
+              "title": "foo",
+              "body": "bar",
+              "userId": 1
+            }
+        ]])
+
+		assertTable(coderunner.get_test_functions(), {
+			{ line = 1, name = "GET https://jsonplaceholder.typicode.com/posts/1" },
+			{ line = 13, name = "POST https://jsonplaceholder.typicode.com/posts" },
 		})
 
 		restore_vim()

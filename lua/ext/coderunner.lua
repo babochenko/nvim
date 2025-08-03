@@ -1,34 +1,40 @@
 -- Test runners for different languages
 local TestRunners = {
   python = {
-    file_pattern = "test_.*%.py$",
-    test_function_pattern = "def (test_[%w_]+)",
+    regex_file = "test_.*%.py$",
+    regex_line = "def (test_[%w_]+)",
     run_file = "python -m pytest %s -v",
-    run_function = "python -m pytest %s::%s -v",
+    run_line = "python -m pytest %s::%s -v",
   },
   javascript = {
-    file_pattern = ".*%.test%.js$",
-    test_function_pattern = "(test|it)%s*%(%s*['\"]([^'\"]+)['\"]",
+    regex_file = ".*%.test%.js$",
+    regex_line = "(test|it)%s*%(%s*['\"]([^'\"]+)['\"]",
     run_file = "npm test %s",
-    run_function = "npm test -- --testNamePattern='%s'",
+    run_line = "npm test -- --testNamePattern='%s'",
   },
   typescript = {
-    file_pattern = ".*%.test%.ts$",
-    test_function_pattern = "(test|it)%s*%(%s*['\"]([^'\"]+)['\"]",
+    regex_file = ".*%.test%.ts$",
+    regex_line = "(test|it)%s*%(%s*['\"]([^'\"]+)['\"]",
     run_file = "npm test %s",
-    run_function = "npm test -- --testNamePattern='%s'",
+    run_line = "npm test -- --testNamePattern='%s'",
   },
   go = {
-    file_pattern = ".*_test%.go$",
-    test_function_pattern = "func (Test[%w_]+)",
+    regex_file = ".*_test%.go$",
+    regex_line = "func (Test[%w_]+)",
     run_file = "go test %s -v",
-    run_function = "go test %s -run %s -v",
+    run_line = "go test %s -run %s -v",
   },
   rust = {
-    file_pattern = ".*%.rs$",
-    test_function_pattern = "#%[test%]%s*fn ([%w_]+)",
+    regex_file = ".*%.rs$",
+    regex_line = "#%[test%]%s*fn ([%w_]+)",
     run_file = "cargo test",
-    run_function = "cargo test %s",
+    run_line = "cargo test %s",
+  },
+  http = {
+    regex_file = ".*%.http$",
+    regex_line = "^(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)%s+",
+    run_file = ":Rest run",
+    run_line = ":Rest run",
   },
 }
 
@@ -66,6 +72,11 @@ local function detect_language()
     end
   end
   
+  -- HTTP detection
+  if ext == "http" then
+    return "http"
+  end
+  
   return nil
 end
 
@@ -77,37 +88,42 @@ local function get_test_functions()
   local runner = TestRunners[lang]
   local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
   local tests = {}
+
+  local function _add(test_name, i)
+      if test_name then
+        table.insert(tests, {
+          name = test_name,
+          line = i,
+        })
+      end
+  end
   
   for i, line in ipairs(lines) do
     if lang == "javascript" or lang == "typescript" then
       -- For JS/TS, we need the second capture group
-      local _, test_name = string.match(line, runner.test_function_pattern)
-      if test_name then
-        table.insert(tests, {
-          name = test_name,
-          line = i,
-        })
-      end
+      local _, test = string.match(line, runner.regex_line)
+      _add(test, i)
+
     else
-      local test_name = string.match(line, runner.test_function_pattern)
-      if test_name then
-        table.insert(tests, {
-          name = test_name,
-          line = i,
-        })
-      end
+      local test = string.match(line, runner.regex_line)
+      _add(test, i)
     end
   end
   
   return tests
 end
 
--- Run terminal command
+-- Run terminal command or vim command
 local function run_in_terminal(cmd)
-  vim.cmd('tabnew')
-  vim.cmd('terminal')
-  vim.cmd('startinsert')
-  vim.fn.chansend(vim.b.terminal_job_id, cmd .. '\n')
+  local iscmd = cmd:sub(1, 1) == ":"
+  if iscmd then
+    vim.cmd(cmd)
+  else
+    vim.cmd('tabnew')
+    vim.cmd('terminal')
+    vim.cmd('startinsert')
+    vim.fn.chansend(vim.b.terminal_job_id, cmd .. '\n')
+  end
 end
 
 -- Run specific test function
@@ -123,14 +139,16 @@ local function run_test_function(test_name)
   local cmd
   
   if lang == "python" then
-    cmd = string.format(runner.run_function, file_path, test_name)
+    cmd = string.format(runner.run_line, file_path, test_name)
   elseif lang == "javascript" or lang == "typescript" then
-    cmd = string.format(runner.run_function, test_name)
+    cmd = string.format(runner.run_line, test_name)
   elseif lang == "go" then
     local dir = vim.fn.expand('%:h')
-    cmd = string.format("cd %s && " .. runner.run_function, dir, ".", test_name)
+    cmd = string.format("cd %s && " .. runner.run_line, dir, ".", test_name)
   elseif lang == "rust" then
-    cmd = string.format(runner.run_function, test_name)
+    cmd = string.format(runner.run_line, test_name)
+  elseif lang == "http" then
+    cmd = runner.run_line
   end
   
   if cmd then
@@ -158,6 +176,8 @@ local function run_file()
     local dir = vim.fn.expand('%:h')
     cmd = string.format("cd %s && " .. runner.run_file, dir, ".")
   elseif lang == "rust" then
+    cmd = runner.run_file
+  elseif lang == "http" then
     cmd = runner.run_file
   end
   
