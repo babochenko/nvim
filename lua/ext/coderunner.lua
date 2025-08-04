@@ -234,7 +234,9 @@ local function setup_autocmds()
     group = group,
     callback = function()
       if detect_language() then
-        add_test_indicators()
+        vim.defer_fn(function()
+          add_test_indicators()
+        end, 0)
       end
     end,
   })
