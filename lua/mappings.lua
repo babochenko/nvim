@@ -69,8 +69,9 @@ local code = {
     map('v', '<leader>/', 'gc', { desc = 'toggle comment', remap = true }),
   },
   run = {
-    map('n', '<leader>rr', CodeRunner.run_line, { desc = 'run function' }),
-    map('n', '<leader>rf', CodeRunner.run_file, { desc = 'run file' }),
+    map('n', '<leader>rr', CodeRunner.do_test_line, { desc = 'test function' }),
+    map('n', '<leader>ra', CodeRunner.do_test_file, { desc = 'test file' }),
+    map('n', '<leader>rf', CodeRunner.do_run_file, { desc = 'run file' }),
     -- map('n', '<leader>rf', Code.run_file, { desc = 'execute file' }),
   },
 }
