@@ -1,7 +1,7 @@
 -- Test runners for different languages
 local TestRunners = {
   python = {
-    regex_file = "test_.*%.py$",
+    regex_file = ".*%.py$",
     regex_line = "def (test_[%w_]+)",
     run_file = "python -m pytest %s -v",
     run_line = "python -m pytest %s::%s -v",
@@ -48,7 +48,7 @@ local function detect_language()
   local ext = vim.fn.expand('%:e')
   
   -- Python detection
-  if ext == "py" and (string.match(file_name, "test_.*%.py$") or string.match(file_name, ".*_test%.py$")) then
+  if ext == "py" then
     return "python"
   end
   

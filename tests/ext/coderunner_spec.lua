@@ -68,6 +68,13 @@ describe("detect_language()", function()
 		restore_vim()
 	end)
 
+	it(".py 2", function()
+		mock_file("example.py")
+		local result = coderunner.detect_language()
+		assert.equals(result, "python")
+		restore_vim()
+	end)
+
 	it(".py empty", function()
 		mock_file("test_empty.py", "")
 		local lang = coderunner.detect_language()
