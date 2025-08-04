@@ -3,8 +3,8 @@ local TestRunners = {
   python = {
     regex_file = ".*%.py$",
     regex_line = "def (test_[%w_]+)",
-    run_file = "python -m pytest %s -v",
-    run_line = "python -m pytest %s::%s -v",
+    run_file = "venv; python -m pytest %s -v",
+    run_line = "venv; python -m pytest %s::%s -v",
   },
   javascript = {
     regex_file = ".*%.test%.js$",
