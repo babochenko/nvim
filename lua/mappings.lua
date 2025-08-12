@@ -106,8 +106,10 @@ local git = {
   map('n', '<leader>gb', GS.blame_line, { desc = 'git blame line' }),
   map('n', '<leader>gr', GS.reset_hunk, { desc = 'git reset hunk' }),
   map('n', '<leader>gp', GS.preview_hunk, { desc = 'git preview hunk' }),
+  map('n', '<leader>gd', ':DiffviewOpen<CR>', { desc = 'git preview hunk' }),
+  map('n', '<leader>gh', ':DiffviewFileHistory %<CR>', { desc = 'git preview hunk' }),
   map('n', '<leader>gs', ':Git<CR>', { desc = 'git status' }),
-  map('n', '<leader>gh', '<cmd>Telescope git_commits<CR>', { desc = 'git history' }),
+  map('n', '<leader>gH', '<cmd>Telescope git_commits<CR>', { desc = 'git history' }),
   map('n', '<leader>gg', '<cmd>Flog<CR>', { desc = 'git graph' }),
 }
 

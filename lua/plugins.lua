@@ -65,6 +65,29 @@ EnsureLazy().setup({
   { 'mfussenegger/nvim-jdtls' },
 
   { 'tpope/vim-fugitive', lazy = false, },
+
+  {
+    'sindrets/diffview.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    lazy = false,
+    config = true,
+    opts = {
+      view = {
+        default = {
+          layout = "diff2_vertical", -- stacked diffs
+        },
+      },
+      file_panel = {
+        listing_style = "list",     -- or "tree"
+        win_config = {
+          position = "bottom",      -- bottom of the screen
+          height = 5,               -- fixed height in lines
+          win_opts = {}
+        },
+      },
+    },
+  },
+
   {
     "rbong/vim-flog",
     lazy = true,
