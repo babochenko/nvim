@@ -1,8 +1,7 @@
-local map = vim.keymap.set
-
 local DIA = vim.diagnostic
 local GS = require 'gitsigns'
 local BUFLINE = require 'bufferline'
+local KEYS = require 'which-key'
 
 local Find = require 'ext/find'
 local Buf = require 'ext/buffers'
@@ -11,6 +10,12 @@ local Mark = require 'ext/marks'
 local Sys = require 'ext/system'
 local Db = require 'ext/db'
 local CodeRunner = require 'ext/coderunner'
+
+local map = vim.keymap.set
+
+local function group(prefix, name)
+    KEYS.add({{ prefix, name = name }})
+end
 
 local function nvimTree()
     vim.cmd("NvimTreeFindFileToggle")
@@ -39,19 +44,21 @@ local general_helpers = {
 
 local buffers = {
   create = {
-    map('n', '<leader>nn', ':enew<CR>', { desc = 'new file' }),
-    map('n', '<leader>tt', ':term<CR>', { desc = 'new terminal' }),
-    map('n', '<leader>th', ':ToggleTerm direction=horizontal<CR>', { desc = 'new terminal h' }),
-    map('n', '<leader>tv', ':ToggleTerm direction=vertical<CR>', { desc = 'new terminal v' }),
+    group('<leader>n', 'New'),
+    map('n', '<leader>nn', ':enew<CR>', { desc = 'New file' }),
+    group('<leader>t', 'Terminal'),
+    map('n', '<leader>tt', ':term<CR>', { desc = 'New term' }),
   },
   modify = {
-    map('n', '<leader>bn', Buf.move_right, { desc = 'buffer move right' }),
-    map('n', '<leader>bp', Buf.move_left, { desc = 'buffer move left' }),
-    map('n', '<leader>fb', Buf.find_all, { desc = 'find buffers' }),
+    group('<leader>b', 'Buffers'),
+    map('n', '<leader>bn', Buf.move_right, { desc = 'Move buffer right' }),
+    map('n', '<leader>bp', Buf.move_left, { desc = 'Move buffer left' }),
+    map('n', '<leader>fb', Buf.find_all, { desc = 'Find buffers' }),
   },
 }
 
 local code = {
+  group('<leader>c', 'Code'),
   navigate = {
     map('n', '<leader>cs', vim.lsp.buf.signature_help, { desc = 'function signature' }),
     map('n', '<leader>ch', vim.lsp.buf.hover, { desc = 'function help' }),
@@ -69,9 +76,10 @@ local code = {
     map('v', '<leader>/', 'gc', { desc = 'toggle comment', remap = true }),
   },
   run = {
-    map('n', '<leader>rr', CodeRunner.do_test_line, { desc = 'test function' }),
-    map('n', '<leader>ra', CodeRunner.do_test_file, { desc = 'test file' }),
-    map('n', '<leader>rf', CodeRunner.do_run_file, { desc = 'run file' }),
+    group('<leader>r', 'Run'),
+    map('n', '<leader>rr', CodeRunner.do_test_line, { desc = 'Run this line' }),
+    map('n', '<leader>ra', CodeRunner.do_test_file, { desc = 'Run tests in file' }),
+    map('n', '<leader>rf', CodeRunner.do_run_file, { desc = 'Run file' }),
     -- map('n', '<leader>rf', Code.run_file, { desc = 'execute file' }),
   },
 }
@@ -91,32 +99,37 @@ local tabs = {
 }
 
 local search = {
-  map('n', '<leader>ff', Find.files, { desc = 'find files' }),
-  map('n', '<leader>fw', Find.words_literal, { desc = 'find words' }),
-  map('n', '<leader>fW', Find.words, { desc = 'grep words' }),
-  map('n', '<leader>ft', Find.testfile, { desc = 'find test file' }),
-  map('n', '<leader>fh', Find.files_history, { desc = 'files history in proj' }),
-  map('n', '<leader>fH', Find.all_files_history, { desc = 'files history everywhere' }),
-  map('n', '<leader>fz', '<cmd>Telescope current_buffer_fuzzy_find<CR>', { desc = 'find in current buffer' }),
-  map('n', '<leader>fa', '<cmd>Telescope find_files follow=true no_ignore=true hidden=true<CR>', { desc = 'telescope find all files' }),
+  group('<leader>f', 'Find'),
+  map('n', '<leader>ff', Find.files, { desc = 'Find files' }),
+  map('n', '<leader>fa', '<cmd>Telescope find_files follow=true no_ignore=true hidden=true<CR>', { desc = 'Find all files' }),
+
+  map('n', '<leader>fw', Find.words_literal, { desc = 'Find words' }),
+  map('n', '<leader>fz', '<cmd>Telescope current_buffer_fuzzy_find<CR>', { desc = 'Find words in current file' }),
+  map('n', '<leader>fW', Find.words, { desc = 'Grep words' }),
+
+  map('n', '<leader>ft', Find.testfile, { desc = 'Find test file' }),
+  map('n', '<leader>fh', Find.files_history, { desc = 'Files history' }),
+  map('n', '<leader>fH', Find.all_files_history, { desc = 'Files history everywhere' }),
 }
 
 local git = {
-  map('n', '<leader>gB', GS.blame, { desc = 'git blame' }),
-  map('n', '<leader>gb', GS.blame_line, { desc = 'git blame line' }),
-  map('n', '<leader>gr', GS.reset_hunk, { desc = 'git reset hunk' }),
-  map('n', '<leader>gp', GS.preview_hunk, { desc = 'git preview hunk' }),
-  map('n', '<leader>gd', ':DiffviewOpen<CR>', { desc = 'git preview hunk' }),
-  map('n', '<leader>gh', ':DiffviewFileHistory %<CR>', { desc = 'git preview hunk' }),
-  map('n', '<leader>gs', ':Git<CR>', { desc = 'git status' }),
-  map('n', '<leader>gH', '<cmd>Telescope git_commits<CR>', { desc = 'git history' }),
-  map('n', '<leader>gg', '<cmd>Flog<CR>', { desc = 'git graph' }),
+  group('<leader>g', 'Git'),
+  map('n', '<leader>gB', GS.blame, { desc = 'Git blame file' }),
+  map('n', '<leader>gb', GS.blame_line, { desc = 'Git blame line' }),
+  map('n', '<leader>gr', GS.reset_hunk, { desc = 'Git reset hunk' }),
+  map('n', '<leader>gp', GS.preview_hunk, { desc = 'Git preview hunk' }),
+  map('n', '<leader>gd', ':DiffviewOpen<CR>', { desc = 'Git preview hunk' }),
+  map('n', '<leader>gh', ':DiffviewFileHistory %<CR>', { desc = 'Git preview hunk' }),
+  map('n', '<leader>gs', ':Git<CR>', { desc = 'Git Status' }),
+  map('n', '<leader>gH', '<cmd>Telescope git_commits<CR>', { desc = 'Git History' }),
+  map('n', '<leader>gg', '<cmd>Flog<CR>', { desc = 'Git Graph' }),
 }
 
 local marks = {
-  map('n', '<leader>mm', Mark.toggle_mark, { desc = 'mark toggle' }),
-  map('n', '<leader>mn', Mark.name_mark, { desc = 'mark name' }),
-  map('n', '<leader>fm', Mark.list_marks, { desc = 'find marks in proj' }),
-  map('n', '<leader>fM', Mark.list_all_marks, { desc = 'find marks everywhere' }),
+  group('<leader>m', 'Marks'),
+  map('n', '<leader>mm', Mark.toggle_mark, { desc = 'Toggle mark' }),
+  map('n', '<leader>mn', Mark.name_mark, { desc = 'Name this mark' }),
+  map('n', '<leader>fm', Mark.list_marks, { desc = 'Find marks' }),
+  map('n', '<leader>fM', Mark.list_all_marks, { desc = 'Find marks everywhere' }),
 }
 
