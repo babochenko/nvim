@@ -41,7 +41,7 @@ local function load_marks_file()
     file:close()
     if json and #json > 0 then
       res = vim.fn.json_decode(json) or {}
-      print("Marks loaded!")
+      -- print("Marks loaded!")
     else
       res = {}
       print("Marks file is empty.")
