@@ -7,3 +7,7 @@ function gh() {
     nvim -c "DiffviewFileHistory $file"
 }
 
+git config --global alias.s status
+git config --global alias.g \
+"log --graph --oneline --decorate --date=format:'%Y-%m-%d %H:%M' --pretty=format:'%C(auto)%h %Cgreen%ad %C(auto)%d %s'"
+
