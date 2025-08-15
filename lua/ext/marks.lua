@@ -9,7 +9,7 @@ local TSC = (function ()
   local entry_display = require "telescope.pickers.entry_display"
   local conf = require('telescope.config').values
   local utils = require "telescope.utils"
-local strings = require "plenary.strings"
+  local strings = require "plenary.strings"
 
   return {
     make_table = finders.new_table,

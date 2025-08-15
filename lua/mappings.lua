@@ -114,8 +114,8 @@ local search = {
 
 local git = {
   group('<leader>g', 'Git'),
-  map('n', '<leader>gB', GS.blame, { desc = 'Git blame file' }),
-  map('n', '<leader>gb', GS.blame_line, { desc = 'Git blame line' }),
+  map('n', '<leader>gb', GS.blame, { desc = 'Git blame file' }),
+  map('n', '<leader>gl', GS.blame_line, { desc = 'Git blame line' }),
   map('n', '<leader>gr', GS.reset_hunk, { desc = 'Git reset hunk' }),
   map('n', '<leader>gp', GS.preview_hunk, { desc = 'Git preview hunk' }),
   map('n', '<leader>gd', ':DiffviewOpen<CR>', { desc = 'Git preview hunk' }),
