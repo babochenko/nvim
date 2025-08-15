@@ -74,14 +74,14 @@ EnsureLazy().setup({
     opts = {
       view = {
         default = {
-          layout = "diff2_vertical", -- stacked diffs
+          layout = "diff2_horizontal", -- horizontal diffs
         },
       },
       file_panel = {
         listing_style = "list",     -- or "tree"
         win_config = {
           position = "bottom",      -- bottom of the screen
-          height = 5,               -- fixed height in lines
+          height = 10,              -- fixed height in lines
           win_opts = {}
         },
       },
