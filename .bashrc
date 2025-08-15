@@ -3,6 +3,7 @@ function gd() {
 }
 
 function gh() {
-    nvim -c "DiffviewFileHistory"
+    local file="$1"
+    nvim -c "DiffviewFileHistory $file"
 }
 

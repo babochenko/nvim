@@ -118,13 +118,13 @@ local git = {
   group('<leader>g', 'Git'),
   map('n', '<leader>gb', GS.blame, { desc = 'Git blame' }),
   map('n', '<leader>gc', ":Git add . | Git commit<CR>", { desc = 'Git commit' }),
-  map('n', '<leader>gl', GS.blame_line, { desc = 'Git blame this line line' }),
+  map('n', '<leader>gl', GS.blame_line, { desc = 'Git blame this line' }),
   map({'n', 'v'}, '<leader>gr', GS.reset_hunk, { desc = 'Git reset hunk' }),
   map({'n', 'v'}, '<leader>gp', GS.preview_hunk, { desc = 'Git preview hunk' }),
   map('n', '<leader>gd', ':DiffviewOpen<CR>', { desc = 'Git diffthis' }),
-  map('n', '<leader>gh', ':DiffviewFileHistory %<CR>', { desc = 'Git history' }),
+  map('n', '<leader>gh', ':DiffviewFileHistory %<CR>', { desc = 'Git History' }),
+  map('n', '<leader>gH', ':DiffviewFileHistory %:p<CR>', { desc = 'Git History this file' }),
   map('n', '<leader>gs', ':Git<CR>', { desc = 'Git Status' }),
-  map('n', '<leader>gH', '<cmd>Telescope git_commits<CR>', { desc = 'Git History' }),
   map('n', '<leader>gg', '<cmd>Flog<CR>', { desc = 'Git Graph' }),
 }
 
