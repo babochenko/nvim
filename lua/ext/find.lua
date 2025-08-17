@@ -177,6 +177,50 @@ local function files_history(cwd)
   }))
 end
 
+local function find_testfile()
+  local full_path = vim.fn.expand("%:p") -- Full path of the current file
+
+  -- Replace "main" with "test" and "testFunctional"
+  local test_path = full_path:gsub("/main/", "/test/")
+  local test_functional_path = full_path:gsub("/main/", "/testFunctional/")
+
+  -- Extract the base name and test possible file paths
+  local file_name = vim.fn.fnamemodify(full_path, ":t:r") -- Base name without extension
+  local extensions = { ".java", ".groovy" }
+  local target_files = {}
+
+  -- Check if files exist in the target paths
+  for _, ext in ipairs(extensions) do
+    local test_file = test_path:gsub("%.java$", ext)
+    local test_functional_file = test_functional_path:gsub("%.java$", ext)
+
+    if vim.loop.fs_stat(test_file) then
+      table.insert(target_files, test_file)
+    end
+    if vim.loop.fs_stat(test_functional_file) then
+      table.insert(target_files, test_functional_file)
+    end
+  end
+
+  -- Handle results
+  if #target_files == 0 then
+    vim.notify("No matching test files found!", vim.log.levels.WARN)
+  elseif #target_files == 1 then
+    -- Open the single match
+    vim.cmd("edit " .. target_files[1])
+  else
+    -- Prompt user to choose from multiple matches
+    vim.ui.select(target_files, {
+      prompt = "Select a file to open:",
+      format_item = function(item)
+        return vim.fn.fnamemodify(item, ":.")
+      end,
+    }, function(choice)
+      if choice then vim.cmd("edit " .. choice) end
+    end)
+  end
+end
+
 return {
 
   HL_COMMENT = HL_COMMENT,
@@ -197,11 +241,6 @@ return {
   usages = function()
     TSC.lsp_references(vertical_layout("Find Usages", {
       include_declaration = false,
-      -- entry_maker = function(entry)
-      --   entry = make_entry.gen_from_quickfix({})(entry)
-      --   entry.display = display_modified_path
-      --   return entry
-      -- end,
     }))
   end,
 
@@ -224,49 +263,6 @@ return {
   files_history = function() files_history(true) end,
   all_files_history = function() files_history(false) end,
 
-  testfile = function()
-    local full_path = vim.fn.expand("%:p") -- Full path of the current file
-
-    -- Replace "main" with "test" and "testFunctional"
-    local test_path = full_path:gsub("/main/", "/test/")
-    local test_functional_path = full_path:gsub("/main/", "/testFunctional/")
-
-    -- Extract the base name and test possible file paths
-    local file_name = vim.fn.fnamemodify(full_path, ":t:r") -- Base name without extension
-    local extensions = { ".java", ".groovy" }
-    local target_files = {}
-
-    -- Check if files exist in the target paths
-    for _, ext in ipairs(extensions) do
-      local test_file = test_path:gsub("%.java$", ext)
-      local test_functional_file = test_functional_path:gsub("%.java$", ext)
-
-      if vim.loop.fs_stat(test_file) then
-        table.insert(target_files, test_file)
-      end
-      if vim.loop.fs_stat(test_functional_file) then
-        table.insert(target_files, test_functional_file)
-      end
-    end
-
-    -- Handle results
-    if #target_files == 0 then
-      vim.notify("No matching test files found!", vim.log.levels.WARN)
-    elseif #target_files == 1 then
-      -- Open the single match
-      vim.cmd("edit " .. target_files[1])
-    else
-      -- Prompt user to choose from multiple matches
-      vim.ui.select(target_files, {
-        prompt = "Select a file to open:",
-        format_item = function(item)
-          return vim.fn.fnamemodify(item, ":.")
-        end,
-      }, function(choice)
-        if choice then vim.cmd("edit " .. choice) end
-      end)
-    end
-  end,
-
+  testfile = find_testfile,
 }
 
