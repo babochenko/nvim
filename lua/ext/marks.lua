@@ -248,7 +248,8 @@ local function list_marks(all_marks)
   local project_root = vim.fn.getcwd() -- Get the current working directory (project root)
   local mark_list = {}
   for _, mark in ipairs(global_marks) do
-    if all_marks or vim.startswith(mark.file, project_root) then -- Check if showing all marks or if mark is within project root
+    if (all_marks or vim.startswith(mark.file, project_root)) and vim.fn.filereadable(mark.file) == 1 then
+      -- Check if showing all marks or if mark is within project root, and file exists
       local file, dir = Find.split_path(mark.file)
       local mark_name = mark.name or string.format("%s:%d", vim.fn.fnamemodify(mark.file, ":t"), mark.line)
       local ordinal = mark_name .. ' ' .. file .. ' ' .. dir
