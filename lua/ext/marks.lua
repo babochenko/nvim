@@ -29,7 +29,7 @@ end)()
 
 local Find = require 'ext/find'
 
-local marks_file = vim.fn.expand("~/.local/share/nvim/marks.json") -- File to save marks
+local marks_file = vim.fn.expand(vim.env.NVIM_MARKS_FILE or "~/.local/share/nvim/marks.json") -- File to save marks
 local global_marks = {} -- Stores all marks with file, line, and optional name
 local deleted_marks = {} -- Tracks marks that were explicitly deleted
 
