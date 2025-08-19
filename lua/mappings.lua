@@ -132,6 +132,7 @@ local marks = {
   group('<leader>m', 'Marks'),
   map('n', '<leader>mm', Mark.toggle_mark, { desc = 'Toggle mark' }),
   map('n', '<leader>mn', Mark.name_mark, { desc = 'Name this mark' }),
+  map('n', '<leader>mf', Mark.open_mark_file, { desc = 'Open mark file' }),
   map('n', '<leader>fm', Mark.list_marks, { desc = 'Find marks' }),
   map('n', '<leader>fM', Mark.list_all_marks, { desc = 'Find marks everywhere' }),
 }

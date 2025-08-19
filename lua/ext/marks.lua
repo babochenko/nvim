@@ -312,6 +312,10 @@ local function place_marks()
   end
 end
 
+local function open_mark_file()
+    vim.cmd('edit ' .. marks_file) 
+end
+
 -- display a red "m" where the mark is
 vim.fn.sign_define("MarkSign", { text = "m", texthl = "Error", numhl = "" })
 
@@ -325,6 +329,7 @@ return {
   list_marks = function() list_marks(false) end,
   list_all_marks = function() list_marks(true) end,
   on_buf_read = place_marks,
+  open_mark_file = open_mark_file,
 
   global_marks = global_marks,
 }
