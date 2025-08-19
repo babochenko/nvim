@@ -88,12 +88,13 @@ end
 
 local function save_marks()
   local marks = merge_marks(load_marks_file(), global_marks)
-
+  
   local json = vim.fn.json_encode(marks)
   if json and #json > 0 then
     local file = io.open(marks_file, "w")
     if file then
-      file:write(json)
+      local json_f = vim.fn.system({ "jq", "sort_by(.file, .line)", "-M" }, json)
+      file:write(json_f)
       file:close()
       print("Marks saved!")
     else
