@@ -128,7 +128,7 @@ end
 local getcwd = function(text)
   local cwd
   local node = NvimTree.tree.get_node_under_cursor()
-  if node and node.type == "directory" then
+  if node then
     cwd = vim.fn.fnamemodify(node.absolute_path, ":h")
     text = text .. " (" .. shorten_path(cwd) .. ")"
   else
@@ -150,6 +150,7 @@ local find_words = function(literal)
   cwd, text = getcwd(text)
 
   local opt = vertical_layout(text, {
+    cwd = cwd,
     path_display = function(_, path)
       local filename = vim.fn.fnamemodify(path, ":t")
       filename = filename .. string.rep(" ", 20 - #filename) .. "  "
@@ -163,8 +164,6 @@ local find_words = function(literal)
       return display, style
     end
   })
-  
-  opt.cwd = cwd
 
   -- Enable case-insensitive search
   opt.vimgrep_arguments = {
@@ -277,23 +276,18 @@ return {
   end,
 
   files = function()
-    local text = "Find Files"
-    local cwd
-    cwd, text = getcwd(text)
+    local cwd, text = getcwd("Find Files")
 
-    local opts = vertical_layout(text, {
+    TSC.find_files(vertical_layout(text, {
       entry_maker = function(entry)
         entry = make_entry.gen_from_file({})(entry)
         entry.display = display_modified_path
         return entry
       end,
+      cwd = cwd,
       file_ignore_patterns = {},
       find_command = { 'rg', '--files', '--hidden', '--follow', '--no-ignore-vcs', '--ignore-case' }
-    })
-
-    opts.cwd = cwd
-
-    TSC.find_files(opts)
+    }))
   end,
 
   files_history = function() files_history(true) end,
