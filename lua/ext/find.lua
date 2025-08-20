@@ -111,6 +111,20 @@ local function vertical_layout(prompt, other)
   return opts
 end
 
+local function shorten_path(path)
+  -- replace home dir with ~
+  local home = vim.loop.os_homedir()
+  path = path:gsub("^" .. vim.pesc(home), "~")
+
+  -- shorten if longer than 43 chars
+  if #path > 43 then
+    local left = path:sub(1, 20)
+    local right = path:sub(-20)
+    path = left .. "..." .. right
+  end
+  return path
+end
+
 local find_words = function(literal)
   local text
   if literal then
@@ -118,6 +132,17 @@ local find_words = function(literal)
   else
     text = "Grep Words (regex)"
   end
+
+  local cwd
+  local node = NvimTree.tree.get_node_under_cursor()
+  if node and node.type == "directory" then
+    cwd = shorten_path(vim.fn.fnamemodify(node.absolute_path, ":h"))
+    text = text .. " (" .. cwd .. ")"
+  else
+    -- Fallback to current working directory if no valid NvimTree node
+    cwd = vim.fn.getcwd()
+  end
+
   local opt = vertical_layout(text, {
     path_display = function(_, path)
       local filename = vim.fn.fnamemodify(path, ":t")
@@ -133,6 +158,8 @@ local find_words = function(literal)
     end
   })
   
+  opt.cwd = cwd
+
   -- Enable case-insensitive search
   opt.vimgrep_arguments = {
     'rg',
@@ -144,14 +171,6 @@ local find_words = function(literal)
     '--smart-case',
     '--ignore-case'
   }
-
-  local node = NvimTree.tree.get_node_under_cursor()
-  if node and node.type == "directory" then
-    opt.cwd = vim.fn.fnamemodify(node.absolute_path, ":h")
-  else
-    -- Fallback to current working directory if no valid NvimTree node
-    opt.cwd = vim.fn.getcwd()
-  end
 
   if literal then
     opt.additional_args = function()
