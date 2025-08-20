@@ -125,14 +125,7 @@ local function shorten_path(path)
   return path
 end
 
-local find_words = function(literal)
-  local text
-  if literal then
-    text = "Find Words"
-  else
-    text = "Grep Words (regex)"
-  end
-
+local getcwd = function(text)
   local cwd
   local node = NvimTree.tree.get_node_under_cursor()
   if node and node.type == "directory" then
@@ -142,6 +135,19 @@ local find_words = function(literal)
     -- Fallback to current working directory if no valid NvimTree node
     cwd = vim.fn.getcwd()
   end
+  return cwd, text
+end
+
+local find_words = function(literal)
+  local text
+  if literal then
+    text = "Find Words"
+  else
+    text = "Grep Words (regex)"
+  end
+
+  local cwd
+  cwd, text = getcwd(text)
 
   local opt = vertical_layout(text, {
     path_display = function(_, path)
@@ -271,7 +277,11 @@ return {
   end,
 
   files = function()
-    TSC.find_files(vertical_layout("Find Files", {
+    local text = "Find Files"
+    local cwd
+    cwd, text = getcwd(text)
+
+    local opts = vertical_layout(text, {
       entry_maker = function(entry)
         entry = make_entry.gen_from_file({})(entry)
         entry.display = display_modified_path
@@ -279,7 +289,11 @@ return {
       end,
       file_ignore_patterns = {},
       find_command = { 'rg', '--files', '--hidden', '--follow', '--no-ignore-vcs', '--ignore-case' }
-    }))
+    })
+
+    opts.cwd = cwd
+
+    TSC.find_files(opts)
   end,
 
   files_history = function() files_history(true) end,
