@@ -136,8 +136,8 @@ local find_words = function(literal)
   local cwd
   local node = NvimTree.tree.get_node_under_cursor()
   if node and node.type == "directory" then
-    cwd = shorten_path(vim.fn.fnamemodify(node.absolute_path, ":h"))
-    text = text .. " (" .. cwd .. ")"
+    cwd = vim.fn.fnamemodify(node.absolute_path, ":h")
+    text = text .. " (" .. shorten_path(cwd) .. ")"
   else
     -- Fallback to current working directory if no valid NvimTree node
     cwd = vim.fn.getcwd()
