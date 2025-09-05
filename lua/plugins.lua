@@ -417,6 +417,16 @@ EnsureLazy().setup({
       },
       config = function()
         require("rest-nvim").setup({
+            env_file = function()
+                -- use .env in the same dir as the current buffer (.http file)
+                local http_file = vim.api.nvim_buf_get_name(0)
+                local dir = vim.fn.fnamemodify(http_file, ":h")
+                local env_path = dir .. "/.env"
+                if vim.fn.filereadable(env_path) == 1 then
+                  return env_path
+                end
+                return nil -- fallback, no .env found
+            end,
             ui = {
                 keybinds = {
                     prev = "<S-Tab>",
