@@ -183,7 +183,10 @@ local find_words = function(literal)
     end
   end
 
-  TSC.live_grep(opt)
+  local success, error_msg = pcall(TSC.live_grep, opt)
+  if not success then
+    vim.api.nvim_echo({{ "Error: " .. tostring(error_msg), "ErrorMsg" }}, false, {})
+  end
 end
 
 local function files_history(cwd)
