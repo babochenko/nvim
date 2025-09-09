@@ -13,6 +13,13 @@ vim.defer_fn(function()
   vim.opt.timeoutlen = 200
   vim.opt.ignorecase = true
   vim.opt.smartcase = true
+
+  -- Enable Tree-sitter based folding globally
+  vim.o.foldmethod = "expr"
+  vim.o.foldexpr = "nvim_treesitter#foldexpr()"
+  vim.o.foldlevel = 99     -- start unfolded
+  vim.o.foldlevelstart = 99
+  vim.o.foldnestmax = 3    -- optional: limit nesting
 end, 0)
 
 

@@ -3,8 +3,27 @@ function gd() {
 }
 
 function gh() {
-    local file="$1"
-    nvim -c "DiffviewFileHistory $file"
+  local file="" mode="history" arg=""
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -c|--commit) mode="commit"; arg="$2"; shift 2;;
+      -r|--range)  mode="range";  arg="$2"; shift 2;;
+      *) file="$1"; shift;;
+    esac
+  done
+
+  if [[ "$mode" == "commit" ]]; then
+    # show just that commit for the file
+    nvim -c "DiffviewOpen ${arg}^! -- $file"
+
+  elif [[ "$mode" == "range" ]]; then
+    # show for range - e.g. a1b2c3d^..HEAD
+    nvim -c "DiffviewFileHistory --range=${arg} -- $file"
+
+  else
+    # full history
+    nvim -c "DiffviewFileHistory -- $file"
+  fi
 }
 
 function ipy() {
