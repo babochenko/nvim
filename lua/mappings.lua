@@ -10,6 +10,7 @@ local Mark = require 'ext/marks'
 local Sys = require 'ext/system'
 local Db = require 'ext/db'
 local CodeRunner = require 'ext/coderunner'
+local Clipboard = require 'ext/clipboard'
 
 local map = vim.keymap.set
 
@@ -112,6 +113,8 @@ local search = {
   map('n', '<leader>ft', Find.testfile, { desc = 'Find test file' }),
   map('n', '<leader>fh', Find.files_history, { desc = 'Files history' }),
   map('n', '<leader>fH', Find.all_files_history, { desc = 'Files history everywhere' }),
+  map('n', '<leader>fy', Clipboard.show_clipboard_history, { desc = 'Clipboard history' }),
+
 }
 
 local git = {

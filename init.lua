@@ -29,6 +29,7 @@ require 'ui'
 require 'ext/mymath'
 
 require('ext/coderunner').setup_autocmds()
+require('ext/clipboard').setup_autocmds()
 
 require("nvim-treesitter.configs").setup({
   ensure_installed = {
