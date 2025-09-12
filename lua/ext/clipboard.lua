@@ -160,6 +160,7 @@ local function show_clipboard_history()
 end
 
 return {
+  get_clipboard_file = get_clipboard_file,
   show_clipboard_history = show_clipboard_history,
   setup_autocmds = setup_autocmds,
 }

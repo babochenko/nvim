@@ -114,6 +114,7 @@ local search = {
   map('n', '<leader>fh', Find.files_history, { desc = 'Files history' }),
   map('n', '<leader>fH', Find.all_files_history, { desc = 'Files history everywhere' }),
   map('n', '<leader>fy', Clipboard.show_clipboard_history, { desc = 'Clipboard history' }),
+  map('n', '<leader>fY', function() vim.cmd('edit ' .. Clipboard.get_clipboard_file()) end, { desc = 'Clipboard history' }),
 
 }
 
