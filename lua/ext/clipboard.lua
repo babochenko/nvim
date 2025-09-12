@@ -63,7 +63,9 @@ local function add_to_clipboard_history(text)
   
   -- Limit history size to 100 entries
   if #history > 100 then
-    history[101] = nil
+    for i = 101, #history do
+      history[i] = nil
+    end
   end
   
   write_clipboard_history(history)
