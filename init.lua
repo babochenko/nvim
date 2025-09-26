@@ -3,25 +3,33 @@ vim.opt.fixendofline = false
 
 vim.opt.tabstop = 4       -- Number of visual spaces per TAB
 vim.opt.shiftwidth = 4    -- Number of spaces to use for autoindent
+vim.opt.softtabstop = 4   -- Number of spaces to use for autoindent
 vim.opt.expandtab = true  -- Use spaces instead of tabs
 
 vim.defer_fn(function()
-  vim.opt.clipboard = 'unnamedplus'
-  vim.opt.number = true
-  vim.opt.relativenumber = true
-  vim.opt.smoothscroll = true
-  vim.opt.timeoutlen = 200
-  vim.opt.ignorecase = true
-  vim.opt.smartcase = true
+  function setup_defaults()
+    vim.opt.clipboard = 'unnamedplus'
+    vim.opt.number = true
+    vim.opt.relativenumber = true
+    vim.opt.smoothscroll = true
+    vim.opt.timeoutlen = 200
+    vim.opt.ignorecase = true
+    vim.opt.smartcase = true
+  end
+  setup_defaults()
 
-  -- Enable Tree-sitter based folding globally
-  vim.o.foldmethod = "expr"
-  vim.o.foldexpr = "nvim_treesitter#foldexpr()"
-  vim.o.foldlevel = 99     -- start unfolded
-  vim.o.foldlevelstart = 99
-  vim.o.foldnestmax = 3    -- optional: limit nesting
+  function setup_treesitter_folding()
+    vim.o.foldmethod = "expr"
+    vim.o.foldexpr = "nvim_treesitter#foldexpr()"
+    vim.o.foldlevel = 99     -- start unfolded
+    vim.o.foldlevelstart = 99
+    vim.o.foldnestmax = 3    -- optional: limit nesting
+  end
+  setup_treesitter_folding()
+
+  require 'mappings'
+  require 'snippets'
 end, 0)
-
 
 require 'plugins'
 require 'autocmd'
@@ -31,38 +39,9 @@ require 'ext/mymath'
 require('ext/coderunner').setup_autocmds()
 require('ext/clipboard').setup_autocmds()
 
-require("nvim-treesitter.configs").setup({
-  ensure_installed = {
-    "http", -- <- this is the missing one
-  },
-})
-
-vim.schedule(function()
-  require 'mappings'
-  require 'python'
-end)
-
 if #vim.api.nvim_list_uis() == 0 then return end
 
--- Add error handling for invalid window operations
-vim.api.nvim_create_autocmd("User", {
-  pattern = "LazyVimStarted",
-  callback = function()
-    -- Suppress treesitter errors for invalid windows
-    local original_nvim_redraw = vim.api.nvim__redraw
-    vim.api.nvim__redraw = function(opts)
-      local ok, err = pcall(original_nvim_redraw, opts)
-      if not ok and string.match(err, "Invalid window id") then
-        -- Silently ignore invalid window errors
-        return
-      elseif not ok then
-        error(err)
-      end
-    end
-  end,
-})
-
--- transparency
+function setup_transparency()
 vim.cmd [[
   highlight Normal      ctermbg=none guibg=none
   highlight NormalNC    ctermbg=none guibg=none
@@ -72,5 +51,6 @@ vim.cmd [[
   highlight LineNr      ctermbg=none guibg=none
   highlight EndOfBuffer ctermbg=none guibg=none
 ]]
-
+end
+setup_transparency()
 

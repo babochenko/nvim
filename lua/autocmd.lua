@@ -2,35 +2,16 @@ if #vim.api.nvim_list_uis() == 0 then return end
 
 local TREE = require('nvim-tree.api')
 
-local function set_tabstop(size)
-  vim.bo.tabstop = size
-  vim.bo.shiftwidth = size
-  vim.bo.softtabstop = size
-  vim.bo.expandtab = true
-end
-
 local function autocmd(name, opts)
   vim.api.nvim_create_autocmd(name, opts)
 end
 
--- autocmd('FileType', { pattern = '*', callback = function()
---   set_tabstop(2)
--- end })
-
 autocmd("FileType", { pattern = "csv", callback = function()
-    vim.cmd("CsvViewEnable")
-end })
-
-autocmd('FileType', { pattern = { 'java', 'groovy', 'py' }, callback = function()
-  set_tabstop(4)
+  vim.cmd("CsvViewEnable")
 end })
 
 autocmd('FileType', { pattern = 'sql', callback = function()
   vim.bo.commentstring = '-- %s'
-end })
-
-autocmd('FileType', { pattern = 'NvimTree', callback = function()
-  vim.keymap.set('n', ',', TREE.node.open.edit, { buffer = true, noremap = true, silent = true })
 end })
 
 autocmd('FileType', { pattern = { 'yml', 'yaml' }, command = 'syntax off' })
@@ -68,6 +49,24 @@ autocmd({ 'UIEnter', 'BufReadPost', 'BufNewFile' }, {
           require('editorconfig').config(args.buf)
         end
       end)
+    end
+  end,
+})
+
+-- Add error handling for invalid window operations
+vim.api.nvim_create_autocmd("User", {
+  pattern = "LazyVimStarted",
+  callback = function()
+    -- Suppress treesitter errors for invalid windows
+    local original_nvim_redraw = vim.api.nvim__redraw
+    vim.api.nvim__redraw = function(opts)
+      local ok, err = pcall(original_nvim_redraw, opts)
+      if not ok and string.match(err, "Invalid window id") then
+        -- Silently ignore invalid window errors
+        return
+      elseif not ok then
+        error(err)
+      end
     end
   end,
 })
