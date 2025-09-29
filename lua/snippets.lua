@@ -8,6 +8,17 @@ local function get_db()
   return db:match(".*/([^/?]+)$") or ""
 end
 
+local function concat(a, b)
+  local result = {}
+  for i = 1, #a do
+    result[#result+1] = a[i]
+  end
+  for i = 1, #b do
+    result[#result+1] = b[i]
+  end
+  return result
+end
+
 snip.add_snippets("python", {
   s("main", t({
     'if __name__ == "__main__":',
@@ -16,12 +27,15 @@ snip.add_snippets("python", {
 })
 
 local function sql_snippets()
-  local snippets = {}
+  local snippets = {
+      s('1d', t({ "and created_date > now() - interval '1 day'" }))
+  }
+
   local db_name = get_db()
   vim.g.db = db_name
 
   if db_name == "authentication" then
-    snippets = {
+    concat(snippets, {
       s("devices", t({
         "select id, last_used_date, state, brand, app_name, device_token",
         "from devices",
@@ -31,7 +45,7 @@ local function sql_snippets()
       s("apple", t({ "and brand = 'Apple'" })),
       s("browser", t({ "and brand = 'Browser'" })),
       s("active", t({ "and state = 'ACTIVE'" })),
-    }
+    })
 
   end
   
