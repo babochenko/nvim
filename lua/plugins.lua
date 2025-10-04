@@ -66,8 +66,7 @@ EnsureLazy().setup({
 
   { 'tpope/vim-fugitive', lazy = false, },
 
-  {
-    'sindrets/diffview.nvim',
+  { 'sindrets/diffview.nvim',
     dependencies = { 'nvim-lua/plenary.nvim' },
     lazy = false,
     config = true,
@@ -96,10 +95,9 @@ EnsureLazy().setup({
       "tpope/vim-fugitive",
     },
   },
-  { 'nvim-telescope/telescope.nvim' },
-  -- { 'rcarriga/nvim-notify' }, -- just to stop prompting me to press ENTER on notifications
 
-  -- Replace NvChad with individual plugins
+  { 'nvim-telescope/telescope.nvim' },
+
   { 'nvim-tree/nvim-tree.lua',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
@@ -249,20 +247,34 @@ EnsureLazy().setup({
         },
       })
 
+      lspconfig.lua_ls.setup({
+        on_attach = on_attach,
+        settings = {
+          Lua = {
+            diagnostics = {
+              globals = { "vim" },
+            },
+          },
+        },
+      })
+
       lspconfig.ts_ls.setup({ 
         capabilities = capabilities,
         on_attach = on_attach,
       })
+
       lspconfig.clangd.setup({ 
         capabilities = capabilities,
         on_attach = on_attach,
       })
+
       lspconfig.sourcekit.setup({
         cmd = { 'xcrun', 'sourcekit-lsp' },
         root_dir = require('lspconfig.util').root_pattern('*.xcodeproj', '*.xcworkspace', '.git'),
         capabilities = capabilities,
         on_attach = on_attach,
       })
+
       lspconfig.rust_analyzer.setup({
         settings = {
           ["rust-analyzer"] = {
@@ -276,8 +288,7 @@ EnsureLazy().setup({
     end,
   },
 
-  {
-    "simrat39/rust-tools.nvim",
+  { "simrat39/rust-tools.nvim",
     dependencies = { "neovim/nvim-lspconfig" },
     config = function()
       require("rust-tools").setup({})
@@ -383,8 +394,7 @@ EnsureLazy().setup({
   	},
   },
 
-  {
-    "nvim-lualine/lualine.nvim",
+  { "nvim-lualine/lualine.nvim",
     dependencies = { 'nvim-tree/nvim-web-devicons' }
   },
 
@@ -414,8 +424,7 @@ EnsureLazy().setup({
       cmd = { "CsvViewEnable", "CsvViewDisable", "CsvViewToggle" },
     },
 
-    {
-      "rest-nvim/rest.nvim",
+    { "rest-nvim/rest.nvim",
       ft = 'http',
       dependencies = {
         "nvim-treesitter/nvim-treesitter",
@@ -446,16 +455,6 @@ EnsureLazy().setup({
       end,
     },
 
-  -- These are some examples, uncomment them if you want to see them work!
-  -- {
-  --   'neovim/nvim-lspconfig',
-  --   config = function()
-  --     require('nvchad.configs.lspconfig').defaults()
-  --     require 'configs.lspconfig'
-  --   end,
-  -- },
-  --
-  -- {
   -- 	'williamboman/mason.nvim',
   -- 	opts = {
   -- 		ensure_installed = {
