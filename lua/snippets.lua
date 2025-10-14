@@ -35,7 +35,7 @@ local function sql_snippets()
   vim.g.db = db_name
 
   if db_name == "authentication" then
-    concat(snippets, {
+    snippets = concat(snippets, {
       s("devices", t({
         "select id, last_used_date, state, brand, app_name, device_token",
         "from devices",
