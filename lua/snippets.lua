@@ -51,7 +51,9 @@ local function sql_snippets()
     snippets = concat(snippets, {
         s('recipients', t({
             "select * from NOTIFICATION_RECIPIENTS",
-            "-- where base_currency = 'AAVE'",
+            "where 1 = 1",
+            "-- and user_id = ''",
+            "-- and base_currency = ''",
         }))
     })
 
