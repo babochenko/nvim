@@ -47,6 +47,14 @@ local function sql_snippets()
       s("active", t({ "and state = 'ACTIVE'" })),
     })
 
+  elseif db_name == 'market-comms' then
+    snippets = concat(snippets, {
+        s('recipients', t({
+            "select * from NOTIFICATION_RECIPIENTS",
+            "-- where base_currency = 'AAVE'",
+        }))
+    })
+
   end
   
   return snippets
