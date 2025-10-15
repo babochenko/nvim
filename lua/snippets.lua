@@ -39,12 +39,13 @@ local function sql_snippets()
       s("devices", t({
         "select id, last_used_date, state, brand, app_name, device_token",
         "from devices",
-        "where owner_id = ''",
+        "where 1 = 1",
+        "-- and owner_id = ''",
+        "-- and brand = 'Apple'",
+        "-- and brand = 'Browser'",
+        "-- and state = 'ACTIVE'",
         "order by last_used_date desc",
       })),
-      s("apple", t({ "and brand = 'Apple'" })),
-      s("browser", t({ "and brand = 'Browser'" })),
-      s("active", t({ "and state = 'ACTIVE'" })),
     })
 
   elseif db_name == 'market-comms' then
@@ -54,7 +55,8 @@ local function sql_snippets()
             "where 1 = 1",
             "-- and user_id = ''",
             "-- and base_currency = ''",
-        }))
+            "order by created_date desc",
+        })),
     })
 
   end
