@@ -45,7 +45,13 @@ snip.add_snippets("python", {
 
 local function sql_snippets()
   local snippets = {
-      s('1d', t({ "and created_date > now() - interval '1 day'" }))
+      s('1d', t({ "and created_date > now() - interval '1 day'" })),
+      s('json', t_multiline([[
+        SELECT json_agg(t) AS data
+        FROM (
+
+        ) AS t;
+      ]])),
   }
 
   local db_name = get_db()

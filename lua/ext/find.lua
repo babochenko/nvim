@@ -297,5 +297,163 @@ return {
   all_files_history = function() files_history(false) end,
 
   testfile = find_testfile,
+
+  snippets_current = function()
+    local pickers = require('telescope.pickers')
+    local finders = require('telescope.finders')
+    local conf = require('telescope.config').values
+    local actions = require('telescope.actions')
+    local action_state = require('telescope.actions.state')
+    local luasnip = require('luasnip')
+
+    local filetype = vim.bo.filetype
+    local snippets = luasnip.get_snippets(filetype, { type = "snippets" })
+
+    local results = {}
+    for _, snip in ipairs(snippets or {}) do
+      local name = snip.name or snip.trigger or ""
+      local body_lines = {}
+
+      -- Try to get the snippet body
+      if type(snip.get_docstring) == "function" then
+        body_lines = snip:get_docstring()
+      elseif snip.docstring then
+        if type(snip.docstring) == "table" then
+          body_lines = snip.docstring
+        else
+          body_lines = { tostring(snip.docstring) }
+        end
+      elseif snip.dscr then
+        if type(snip.dscr) == "table" then
+          body_lines = snip.dscr
+        else
+          body_lines = { tostring(snip.dscr) }
+        end
+      end
+
+      local preview = table.concat(body_lines, "\n")
+      if #preview > 30 then
+        preview = preview:sub(1, 30) .. "..."
+      end
+      preview = preview:gsub("\n", " ")
+
+      table.insert(results, {
+        name = name,
+        preview = preview,
+        snippet = snip,
+        body_lines = body_lines,
+        display = name .. " " .. string.rep(" ", math.max(1, 20 - #name)) .. "  " .. preview,
+      })
+    end
+
+    pickers.new(vertical_layout("Snippets: " .. filetype), {
+      finder = finders.new_table({
+        results = results,
+        entry_maker = function(entry)
+          return {
+            value = entry,
+            display = entry.display,
+            ordinal = entry.name .. " " .. entry.preview,
+          }
+        end,
+      }),
+      sorter = conf.generic_sorter({}),
+      attach_mappings = function(prompt_bufnr, map)
+        actions.select_default:replace(function()
+          actions.close(prompt_bufnr)
+          local selection = action_state.get_selected_entry()
+          if selection then
+            vim.schedule(function()
+              local body = table.concat(selection.value.body_lines, "\n")
+              local pos = vim.api.nvim_win_get_cursor(0)
+              local row, col = pos[1] - 1, pos[2]
+              vim.api.nvim_buf_set_text(0, row, col, row, col, vim.split(body, "\n"))
+            end)
+          end
+        end)
+        return true
+      end,
+    }):find()
+  end,
+
+  snippets_all = function()
+    local pickers = require('telescope.pickers')
+    local finders = require('telescope.finders')
+    local conf = require('telescope.config').values
+    local actions = require('telescope.actions')
+    local action_state = require('telescope.actions.state')
+    local luasnip = require('luasnip')
+
+    local all_snippets = luasnip.get_snippets()
+
+    local results = {}
+    for ft, snippets in pairs(all_snippets) do
+      for _, snip in ipairs(snippets) do
+        local name = snip.name or snip.trigger or ""
+        local body_lines = {}
+
+        -- Try to get the snippet body
+        if type(snip.get_docstring) == "function" then
+          body_lines = snip:get_docstring()
+        elseif snip.docstring then
+          if type(snip.docstring) == "table" then
+            body_lines = snip.docstring
+          else
+            body_lines = { tostring(snip.docstring) }
+          end
+        elseif snip.dscr then
+          if type(snip.dscr) == "table" then
+            body_lines = snip.dscr
+          else
+            body_lines = { tostring(snip.dscr) }
+          end
+        end
+
+        local preview = table.concat(body_lines, "\n")
+        if #preview > 30 then
+          preview = preview:sub(1, 30) .. "..."
+        end
+        preview = preview:gsub("\n", " ")
+
+        table.insert(results, {
+          filetype = ft,
+          name = name,
+          preview = preview,
+          snippet = snip,
+          body_lines = body_lines,
+          display = name .. " " .. string.rep(" ", math.max(1, 20 - #name)) .. "  " .. ft .. " " .. string.rep(" ", math.max(1, 10 - #ft)) .. "  " .. preview,
+        })
+      end
+    end
+
+    pickers.new(vertical_layout("All Snippets"), {
+      finder = finders.new_table({
+        results = results,
+        entry_maker = function(entry)
+          return {
+            value = entry,
+            display = entry.display,
+            ordinal = entry.name .. " " .. entry.filetype .. " " .. entry.preview,
+          }
+        end,
+      }),
+      sorter = conf.generic_sorter({}),
+      attach_mappings = function(prompt_bufnr, map)
+        actions.select_default:replace(function()
+          actions.close(prompt_bufnr)
+          local selection = action_state.get_selected_entry()
+          if selection then
+            vim.schedule(function()
+              local body = table.concat(selection.value.body_lines, "\n")
+              local pos = vim.api.nvim_win_get_cursor(0)
+              local row, col = pos[1] - 1, pos[2]
+              vim.api.nvim_buf_set_text(0, row, col, row, col, vim.split(body, "\n"))
+            end)
+          end
+        end)
+        return true
+      end,
+    }):find()
+  end,
 }
 

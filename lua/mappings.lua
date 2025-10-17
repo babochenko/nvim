@@ -116,6 +116,9 @@ local search = {
   map('n', '<leader>p', Clipboard.show_clipboard_history, { desc = 'Clipboard history' }),
   map('n', '<leader>P', function() vim.cmd('edit ' .. Clipboard.get_clipboard_file()) end, { desc = 'Clipboard history' }),
 
+  map('n', '<leader>fs', Find.snippets_current, { desc = 'Find snippets for this file' }),
+  map('n', '<leader>fS', Find.snippets_all, { desc = 'Find all snippets' }),
+
 }
 
 local git = {
